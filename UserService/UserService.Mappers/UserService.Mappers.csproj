@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="9.0.0" />
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference ReplaceParameters="true" Include="..\UserService.Core\UserService.Core.csproj">
+			<Name >UserService.Core</Name>
+		</ProjectReference>
+		<ProjectReference ReplaceParameters="true" Include="..\UserService.Repo\UserService.Repo.csproj">
+			<Name >UserService.Repo</Name>
+		</ProjectReference>
+	</ItemGroup>
+</Project>
