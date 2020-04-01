@@ -20,15 +20,15 @@ namespace UserService.Handlers
 
         public Task<FunctionAResponse> Handle(FunctionARequest request, CancellationToken cancellationToken)
         {
-            _repository.AddPostCode(new Core.Dto.PostCodeDTO()
-            {
-                PostalCode = "PG"
-            });
-            var response = new FunctionAResponse()
-            {
-                Status = "Active"
-            };
-            return Task.FromResult(response);
+            //_repository.AddPostCode(new Core.Dto.PostCodeDTO()
+            //{
+            //    PostalCode = "PG"
+            //});
+            //var response = new FunctionAResponse()
+            //{
+            //    Status = "Active"
+            //};
+            return Task.FromResult(new FunctionAResponse());
         }
     }
 }

@@ -17,7 +17,7 @@ namespace UserService.AzureFunction
         public override void Configure(IFunctionsHostBuilder builder)
         {
             builder.Services.AddMediatR(typeof(FunctionAHandler).Assembly);
-            builder.Services.AddAutoMapper(typeof(AddressDetailsProfile).Assembly);
+            //builder.Services.AddAutoMapper(typeof(AddressDetailsProfile).Assembly);
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                    options.UseInMemoryDatabase(databaseName: "UserService.AzureFunction"));

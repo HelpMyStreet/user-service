@@ -11,10 +11,10 @@ namespace UserService.Mappers
     {
         public PostCodeProfile()
         {
-            CreateMap<PostCode, PostCodeDTO>()
-                .ForMember(dest => dest.AddressDetails, opt => opt.Ignore());
-            CreateMap<PostCodeDTO, PostCode>()
-                .ForMember(dest => dest.AddressDetails, opt => opt.Ignore());
+            //CreateMap<PostCode, PostCodeDTO>()
+            //    .ForMember(dest => dest.AddressDetails, opt => opt.Ignore());
+            //CreateMap<PostCodeDTO, PostCode>()
+            //    .ForMember(dest => dest.AddressDetails, opt => opt.Ignore());
         }
     }
 }
