@@ -80,6 +80,6 @@ CREATE TABLE [User].[SupportActivity]
     UserID          int not null, 
     ActivityID      tinyint not null,
     CONSTRAINT PK_SupportActivity PRIMARY KEY (UserID, ActivityID),
-    CONSTRAINT FK_SupportActivity_User FOREIGN KEY (UserID) REFERENCES [User].[User] (UserID)
+    CONSTRAINT FK_SupportActivity_User FOREIGN KEY (UserID) REFERENCES [User].[User] (ID)
 )
 
