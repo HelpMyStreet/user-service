@@ -1,11 +1,12 @@
-﻿using System;
+﻿using MediatR;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace UserService.Core.Domains.Entities
 {
-    public class FunctionBResponse
+    public class PostCreateUserResponse
     {
-        public string Status { get; set; }
+        public string ID { get; set; }
     }
 }

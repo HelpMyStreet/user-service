@@ -9,25 +9,25 @@ using UserService.Core.Domains.Entities;
 
 namespace UserService.AzureFunction
 {
-    public class FunctionB
+    public class GetVolunteerCountByPostcode
     {
         private readonly IMediator _mediator;
 
-        public FunctionB(IMediator mediator)
+        public GetVolunteerCountByPostcode(IMediator mediator)
         {
             _mediator = mediator;
         }
 
-        [FunctionName("FunctionB")]
+        [FunctionName("GetVolunteerCountByPostcode")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] FunctionBRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] GetVolunteerCountByPostcodeRequest req,
             ILogger log)
         {
             try
             {
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
-                FunctionBResponse response = await _mediator.Send(req);
+                GetVolunteerCountByPostcodeResponse response = await _mediator.Send(req);
                 return new OkObjectResult(response);
             }
             catch (Exception exc)

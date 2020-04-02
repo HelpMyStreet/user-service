@@ -9,25 +9,25 @@ using UserService.Core.Domains.Entities;
 
 namespace UserService.AzureFunction
 {
-    public class FunctionA
+    public class GetUserIsVerified
     {
         private readonly IMediator _mediator;
 
-        public FunctionA(IMediator mediator)
+        public GetUserIsVerified(IMediator mediator)
         {
             _mediator = mediator;
         }
 
-        [FunctionName("FunctionA")]
+        [FunctionName("GetUserIsVerified")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] FunctionARequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] GetUserIsVerifiedRequest req,
             ILogger log)
         {
             try
             {
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
-                FunctionAResponse response = await _mediator.Send(req);
+                GetUserIsVerifiedResponse response = await _mediator.Send(req);
                 return new OkObjectResult(response);
             }
             catch (Exception exc)
