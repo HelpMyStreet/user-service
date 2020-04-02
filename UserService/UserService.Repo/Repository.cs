@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using UserService.Core.Domains.Entities;
 using model = HelpMyStreet.Utils.Models;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace UserService.Repo
 {
@@ -22,26 +23,11 @@ namespace UserService.Repo
             _mapper = mapper;
         }
 
-        private model.User MapEFUserToModelUser(User user)
-        {
-            return new model.User()
-            {
-                DateCreated = user.DateCreated,
-                ID = user.Id,
-                FirebaseUID = user.FirebaseUid,
-                EmailSharingConsent = user.EmailSharingConsent,
-                HMSContactConsent = user.HmscontactConsent,
-                IsVerified = user.IsVerified,
-                IsVolunteer = user.IsVolunteer,
-                MobileSharingConsent = user.MobileSharingConsent,
-                OtherPhoneSharingConsent = user.OtherPhoneSharingConsent,
-                PostalCode = user.PostalCode
-            };
-        }
-
         public model.User GetUserByID(string userId)
         {
-            User user = _context.User.Where(x => x.Id.ToString() == userId).FirstOrDefault();
+            User user = _context.User
+                .Include(i => i.PersonalDetails)
+                .Where(x => x.Id.ToString() == userId).FirstOrDefault();
 
             return MapEFUserToModelUser(user);
         }
@@ -104,7 +90,126 @@ namespace UserService.Repo
 
         public int PostCreateUser(model.User user)
         {
-            throw new NotImplementedException();
+            var EFuser = MapModelUserToEFUser(user);
+            _context.User.Add(EFuser);
+            _context.SaveChanges();
+            return EFuser.Id;
+        }
+
+        private model.User MapEFUserToModelUser(User user)
+        {
+            return new model.User()
+            {
+                DateCreated = user.DateCreated,
+                ID = user.Id,
+                FirebaseUID = user.FirebaseUid,
+                EmailSharingConsent = user.EmailSharingConsent,
+                HMSContactConsent = user.HmscontactConsent,
+                IsVerified = user.IsVerified,
+                IsVolunteer = user.IsVolunteer,
+                MobileSharingConsent = user.MobileSharingConsent,
+                OtherPhoneSharingConsent = user.OtherPhoneSharingConsent,
+                PostalCode = user.PostalCode,
+                UserPersonalDetails = MapEFPersonalDetailsToModelPersonalDetails(user.PersonalDetails)
+            };
+        }
+
+        private model.UserPersonalDetails MapEFPersonalDetailsToModelPersonalDetails(PersonalDetails personalDetails)
+        {
+            return new model.UserPersonalDetails()
+            {
+                FirstName = personalDetails.FirstName,
+                LastName = personalDetails.LastName,
+                DisplayName = personalDetails.DisplayName,
+                DateOfBirth = personalDetails.DateOfBirth,
+                EmailAddress = personalDetails.EmailAddress,
+                MobilePhone = personalDetails.MobilePhone,
+                OtherPhone = personalDetails.OtherPhone,
+                Address = new model.Address()
+                {
+                    AddressLine1 = personalDetails.AddressLine1,
+                    AddressLine2 = personalDetails.AddressLine2,
+                    AddressLine3 = personalDetails.AddressLine3,
+                    Locality = personalDetails.Locality,
+                    Postcode = personalDetails.Postcode
+                }
+            };
+        }
+
+        private PersonalDetails MapModelPersonalDetailsToEFPersonalDetails(model.UserPersonalDetails userPersonalDetails)
+        {
+            return new PersonalDetails()
+            {
+                FirstName = userPersonalDetails.FirstName,
+                LastName = userPersonalDetails.LastName,
+                DisplayName = userPersonalDetails.DisplayName,
+                DateOfBirth = userPersonalDetails.DateOfBirth,
+                EmailAddress = userPersonalDetails.EmailAddress,
+                MobilePhone = userPersonalDetails.MobilePhone,
+                OtherPhone = userPersonalDetails.OtherPhone,
+                Postcode = userPersonalDetails.Address.Postcode,
+                AddressLine1 = userPersonalDetails.Address.AddressLine1,
+                AddressLine2 = userPersonalDetails.Address.AddressLine2,
+                AddressLine3 = userPersonalDetails.Address.AddressLine3,
+                Locality = userPersonalDetails.Address.Locality
+            };
+        }
+
+        private User MapModelUserToEFUser(model.User user)
+        {
+            return new User()
+            {
+                DateCreated = user.DateCreated,
+                FirebaseUid = user.FirebaseUID,
+                EmailSharingConsent = user.EmailSharingConsent,
+                HmscontactConsent = user.HMSContactConsent,
+                IsVerified = user.IsVerified,
+                IsVolunteer = user.IsVolunteer,
+                MobileSharingConsent = user.MobileSharingConsent,
+                OtherPhoneSharingConsent = user.OtherPhoneSharingConsent,
+                PostalCode = user.PostalCode,
+                PersonalDetails = MapModelPersonalDetailsToEFPersonalDetails(user.UserPersonalDetails)
+            };
+        }
+
+        public void CreateChampionForPostCode(string userId, string postCode)
+        {
+            var user = _context.User.Where(a => a.Id.ToString() == userId).FirstOrDefault();
+
+            if(user!=null)
+            {
+                var result = _context.ChampionPostcode.Where(a => a.User == user && a.PostalCode == postCode).FirstOrDefault();
+
+                if(result==null)
+                {
+                    _context.ChampionPostcode.Add(new ChampionPostcode()
+                    {
+                        User = user,
+                        PostalCode = postCode
+                    });
+                    _context.SaveChanges();
+                }
+            }
+        }
+
+        public void CreateSupportForPostCode(string userId, string postCode)
+        {
+            var user = _context.User.Where(a => a.Id.ToString() == userId).FirstOrDefault();
+
+            if (user != null)
+            {
+                var result = _context.SupportPostcode.Where(a => a.User == user && a.PostalCode == postCode).FirstOrDefault();
+
+                if (result == null)
+                {
+                    _context.SupportPostcode.Add(new SupportPostcode()
+                    {
+                        User = user,
+                        PostalCode = postCode
+                    });
+                    _context.SaveChanges();
+                }
+            }
         }
     }
 }
