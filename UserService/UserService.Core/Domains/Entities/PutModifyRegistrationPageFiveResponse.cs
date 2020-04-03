@@ -5,7 +5,7 @@ using System.Text;
 
 namespace UserService.Core.Domains.Entities
 {
-    public class PostCreateUserResponse
+    public class PutModifyRegistrationPageFiveResponse
     {
         public int ID { get; set; }
     }

@@ -6,8 +6,8 @@ using System.Text;
 
 namespace UserService.Core.Domains.Entities
 {
-    public class PostCreateUserRequest : IRequest<PostCreateUserResponse>
+    public class GetUserByFirebaseUIDResponse
     {
-        public RegistrationStepOne RegistrationStepOne { get; set; }
+        public User User { get; set; }
     }
 }

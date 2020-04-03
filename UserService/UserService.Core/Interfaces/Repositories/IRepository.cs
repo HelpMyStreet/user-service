@@ -10,7 +10,9 @@ namespace UserService.Core.Interfaces.Repositories
 {
     public interface IRepository
     {
-        User GetUserByID(string userId);
+        User GetUserByID(int userId);
+
+        User GetUserByFirebaseUserID(string firebaseUID);
 
         List<User> GetVolunteersByPostCode(string postCode);
 
@@ -26,9 +28,17 @@ namespace UserService.Core.Interfaces.Repositories
 
         bool GetUserIsVerified(string userId);
 
-        int PostCreateUser(string firebaseUserId, string emailAddress);
+        int PostCreateUser(string firebaseUserId, string emailAddress, DateTime? dateCreated);
 
         int ModifyUser(User user);
+
+        int ModifyUserRegistrationPageTwo(RegistrationStepTwo registrationStepTwo);
+
+        int ModifyUserRegistrationPageThree(RegistrationStepThree registrationStepThree);
+
+        int ModifyUserRegistrationPageFour(RegistrationStepFour registrationStepFour);
+
+        int ModifyUserRegistrationPageFive(RegistrationStepFive registrationStepFive);
 
         bool SetUserVerfication(string userId, bool isVerified);
 

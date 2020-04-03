@@ -23,6 +23,10 @@ namespace UserService.Repo.EntityFramework.Entities
         public bool? IsVolunteer { get; set; }
         public bool? IsVerified { get; set; }
         public DateTime? DateCreated { get; set; }
+        public double? SupportRadiusMiles { get; set; }
+        public bool? SupportVolunteersByPhone { get; set; }
+
+        public bool? StreetChampionRoleUnderstood { get; set; }
 
         public virtual PersonalDetails PersonalDetails { get; set; }
         public virtual ICollection<ChampionPostcode> ChampionPostcode { get; set; }

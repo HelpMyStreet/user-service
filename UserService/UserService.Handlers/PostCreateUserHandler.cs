@@ -20,9 +20,9 @@ namespace UserService.Handlers
 
         public Task<PostCreateUserResponse> Handle(PostCreateUserRequest request, CancellationToken cancellationToken)
         {
-            int userId = _repository.PostCreateUser(request.FirebaseUID,request.EmailAddress);
+            int userId = _repository.PostCreateUser(request.RegistrationStepOne.FirebaseUID,request.RegistrationStepOne.EmailAddress, request.RegistrationStepOne.DateCreated);
 
-            return Task.FromResult(new PostCreateUserResponse() { ID = userId.ToString() });
+            return Task.FromResult(new PostCreateUserResponse() { ID = userId });
         }
     }
 }

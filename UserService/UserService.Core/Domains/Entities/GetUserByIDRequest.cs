@@ -7,6 +7,6 @@ namespace UserService.Core.Domains.Entities
 {
     public class GetUserByIDRequest : IRequest<GetUserByIDResponse>
     {
-        public string ID { get; set; }
+        public int ID { get; set; }
     }
 }

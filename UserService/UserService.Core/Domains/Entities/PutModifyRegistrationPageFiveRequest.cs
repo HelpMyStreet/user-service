@@ -6,8 +6,8 @@ using System.Text;
 
 namespace UserService.Core.Domains.Entities
 {
-    public class PostCreateUserRequest : IRequest<PostCreateUserResponse>
+    public class PutModifyRegistrationPageFiveRequest : IRequest<PutModifyRegistrationPageFiveResponse>
     {
-        public RegistrationStepOne RegistrationStepOne { get; set; }
+        public RegistrationStepFive RegistrationStepFive { get; set; }
     }
 }

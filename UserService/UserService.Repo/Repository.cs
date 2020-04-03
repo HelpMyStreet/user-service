@@ -23,11 +23,20 @@ namespace UserService.Repo
             _mapper = mapper;
         }
 
-        public model.User GetUserByID(string userId)
+        public model.User GetUserByID(int userId)
         {
             User user = _context.User
                 .Include(i => i.PersonalDetails)
-                .Where(x => x.Id.ToString() == userId).FirstOrDefault();
+                .Where(x => x.Id == userId).FirstOrDefault();
+
+            return MapEFUserToModelUser(user);
+        }
+
+        public model.User GetUserByFirebaseUserID(string firebaseUID)
+        {
+            User user = _context.User
+                .Include(i => i.PersonalDetails)
+                .Where(x => x.FirebaseUid == firebaseUID).FirstOrDefault();
 
             return MapEFUserToModelUser(user);
         }
@@ -99,11 +108,12 @@ namespace UserService.Repo
                 .Count(x => x.PostalCode == postCode && x.User.IsVerified.Value == true);
         }
 
-        public int PostCreateUser(string firebaseUserId, string emailAddress)
+        public int PostCreateUser(string firebaseUserId, string emailAddress, DateTime? dateCreated)
         {
             User user = new User()
             {
                 FirebaseUid = firebaseUserId,
+                DateCreated = dateCreated,
                 PersonalDetails = new PersonalDetails()
                 {
                     EmailAddress = emailAddress
@@ -118,7 +128,7 @@ namespace UserService.Repo
         {
             return new model.User()
             {
-                DateCreated = user.DateCreated,
+                DateCreated = user.DateCreated.Value,
                 ID = user.Id,
                 FirebaseUID = user.FirebaseUid,
                 EmailSharingConsent = user.EmailSharingConsent,
@@ -187,6 +197,7 @@ namespace UserService.Repo
             EFPersonalDetails.AddressLine2 = userPersonalDetails.Address.AddressLine2;
             EFPersonalDetails.AddressLine3 = userPersonalDetails.Address.AddressLine3;
             EFPersonalDetails.Locality = userPersonalDetails.Address.Locality;
+            EFPersonalDetails.UnderlyingMedicalCondition = userPersonalDetails.UnderlyingMedicalCondition;
         }
 
         private User MapModelUserToEFUser(model.User user)
@@ -209,7 +220,6 @@ namespace UserService.Repo
         
         private void UpdateEFUserFromUserModel(model.User user, User EFUser)
         {
-            EFUser.DateCreated = user.DateCreated;
             EFUser.FirebaseUid = user.FirebaseUID;
             EFUser.EmailSharingConsent = user.EmailSharingConsent;
             EFUser.HmscontactConsent = user.HMSContactConsent;
@@ -218,6 +228,9 @@ namespace UserService.Repo
             EFUser.MobileSharingConsent = user.MobileSharingConsent;
             EFUser.OtherPhoneSharingConsent = user.OtherPhoneSharingConsent;
             EFUser.PostalCode = user.PostalCode;
+            EFUser.StreetChampionRoleUnderstood = user.StreetChampionRoleUnderstood;
+            EFUser.SupportRadiusMiles = user.SupportRadiusMiles;
+            EFUser.SupportVolunteersByPhone = user.SupportVolunteersByPhone;
             UpdateEFPersonalDetailsFromModelPersonalDetails(user.UserPersonalDetails,EFUser.PersonalDetails);
         }
 
@@ -307,6 +320,91 @@ namespace UserService.Repo
                 .Where(x => x.IsVerified == true)
                 .Distinct()
                 .Count();
+        }
+
+        public int ModifyUserRegistrationPageTwo(model.RegistrationStepTwo registrationStepTwo)
+        {
+            User EFUser = _context.User
+                .Include(i => i.PersonalDetails)
+                .Where(a => a.Id == registrationStepTwo.UserID).FirstOrDefault();
+
+            if(EFUser!=null)
+            {
+                EFUser.PostalCode = registrationStepTwo.PostalCode;
+                EFUser.PersonalDetails.FirstName = registrationStepTwo.FirstName;
+                EFUser.PersonalDetails.LastName = registrationStepTwo.LastName;
+                EFUser.PersonalDetails.MobilePhone = registrationStepTwo.MobilePhone;
+                EFUser.PersonalDetails.OtherPhone = registrationStepTwo.OtherPhone;
+                EFUser.PersonalDetails.DateOfBirth = registrationStepTwo.DateOfBirth;
+                EFUser.PersonalDetails.DisplayName = registrationStepTwo.DisplayName;
+                EFUser.PersonalDetails.AddressLine1 = registrationStepTwo.Address.AddressLine1;
+                EFUser.PersonalDetails.AddressLine2 = registrationStepTwo.Address.AddressLine2;
+                EFUser.PersonalDetails.AddressLine3 = registrationStepTwo.Address.AddressLine3;
+                EFUser.PersonalDetails.Locality = registrationStepTwo.Address.Locality;
+                EFUser.PersonalDetails.Postcode = registrationStepTwo.Address.Postcode;
+                _context.SaveChanges();
+            }
+            return registrationStepTwo.UserID;
+        }
+
+        public int ModifyUserRegistrationPageThree(model.RegistrationStepThree registrationStepThree)
+        {
+            User EFUser = _context.User
+                .Include(i => i.PersonalDetails)
+                .Where(a => a.Id == registrationStepThree.UserID).FirstOrDefault();
+
+            if (EFUser != null)
+            {
+                EFUser.SupportRadiusMiles = registrationStepThree.SupportRadiusMiles;
+                EFUser.SupportVolunteersByPhone = registrationStepThree.SupportVolunteersByPhone;
+                EFUser.PersonalDetails.UnderlyingMedicalCondition = registrationStepThree.UnderlyingMedicalCondition;
+
+                foreach (HelpMyStreet.Utils.Enums.SupportActivities sa in registrationStepThree.Activities)
+                {
+                    _context.SupportActivity.Add(new SupportActivity
+                    {
+                        User = EFUser,
+                        ActivityId = (byte) sa
+                    });
+                }
+                _context.SaveChanges();
+            }
+            return registrationStepThree.UserID;
+        }
+
+        public int ModifyUserRegistrationPageFour(model.RegistrationStepFour registrationStepFour)
+        {
+            User EFUser = _context.User
+               .Where(a => a.Id == registrationStepFour.UserID).FirstOrDefault();
+
+            if (EFUser != null)
+            {
+                EFUser.StreetChampionRoleUnderstood = registrationStepFour.StreetChampionRoleUnderstood;
+                foreach(string cp in registrationStepFour.ChampionPostcodes)
+                {
+                    _context.ChampionPostcode.Add(new ChampionPostcode()
+                    {
+                        User = EFUser,
+                        PostalCode = cp
+                    });
+                }
+
+                _context.SaveChanges();
+            }
+            return registrationStepFour.UserID;
+        }
+
+        public int ModifyUserRegistrationPageFive(model.RegistrationStepFive registrationStepFive)
+        {
+            User EFUser = _context.User
+               .Where(a => a.Id == registrationStepFive.UserID).FirstOrDefault();
+
+            if (EFUser != null)
+            {
+                EFUser.IsVerified = registrationStepFive.IsVerified;
+                _context.SaveChanges();
+            }
+            return registrationStepFive.UserID;
         }
     }
 }

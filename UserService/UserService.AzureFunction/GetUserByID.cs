@@ -8,6 +8,7 @@ using System;
 using UserService.Core.Domains.Entities;
 using HelpMyStreet.Utils.Models;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace UserService.AzureFunction
 {
@@ -29,28 +30,38 @@ namespace UserService.AzureFunction
             {
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
-                User user = new User()
+                List<HelpMyStreet.Utils.Enums.SupportActivities> supportActivities = new System.Collections.Generic.List<HelpMyStreet.Utils.Enums.SupportActivities>();
+                supportActivities.Add(HelpMyStreet.Utils.Enums.SupportActivities.Errands);
+                supportActivities.Add(HelpMyStreet.Utils.Enums.SupportActivities.DogWalking);
+
+                RegistrationStepThree registrationStepThree = new RegistrationStepThree()
                 {
-                    UserPersonalDetails = new UserPersonalDetails()
-                    {
-                        FirstName = "John",
-                        LastName = "Smith",
-                        DisplayName = "John Smith",
-                        EmailAddress = "john@smith.com",
-                        MobilePhone = "07",
-                        OtherPhone = "01332",
-                        DateOfBirth = new DateTime(1900, 1, 1),
-                        Address = new Address()
-                        {
-                            AddressLine1 = "1 Test Street",
-                            AddressLine2 = "Test Town",
-                            Postcode = "BA133BN"
-                        }
-                    },
-                    PostalCode = "BA133BN"
+                    Activities = supportActivities
                 };
 
-                string jsonData = JsonConvert.SerializeObject(user);
+                //User user = new User()
+                //{
+                //    UserPersonalDetails = new UserPersonalDetails()
+                //    {
+                //        FirstName = "John",
+                //        LastName = "Smith",
+                //        DisplayName = "John Smith",
+                //        EmailAddress = "john@smith.com",
+                //        MobilePhone = "07",
+                //        OtherPhone = "01332",
+                //        DateOfBirth = new DateTime(1900, 1, 1),
+                //        Address = new Address()
+                //        {
+                //            AddressLine1 = "1 Test Street",
+                //            AddressLine2 = "Test Town",
+                //            Postcode = "BA133BN"
+                //        },
+                //        UnderlyingMedicalCondition = false
+                //    },
+                //    PostalCode = "BA133BN"
+                //};
+
+                string jsonData = JsonConvert.SerializeObject(registrationStepThree);
 
 
 
