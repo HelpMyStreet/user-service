@@ -38,7 +38,14 @@ namespace UserService.Repo
 
             if(user!=null)
             {
-                return user.IsVerified.Value;
+                if (user.IsVerified.HasValue)
+                {
+                    return user.IsVerified.Value;
+                }
+                else
+                {
+                    return false;
+                }
             }
             else
             {
