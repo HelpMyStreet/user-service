@@ -8,6 +8,7 @@ namespace UserService.Core.Domains.Entities
 {
     public class PostCreateUserRequest : IRequest<PostCreateUserResponse>
     {
-        public User User { get; set; }
+        public string FirebaseUID { get; set; }
+        public string EmailAddress { get; set; }
     }
 }

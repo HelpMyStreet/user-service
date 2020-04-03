@@ -95,12 +95,19 @@ namespace UserService.Repo
             return _context.ChampionPostcode.Count(x => x.PostalCode == postCode);
         }
 
-        public int PostCreateUser(model.User user)
+        public int PostCreateUser(string firebaseUserId, string emailAddress)
         {
-            var EFuser = MapModelUserToEFUser(user);
-            _context.User.Add(EFuser);
+            User user = new User()
+            {
+                FirebaseUid = firebaseUserId,
+                PersonalDetails = new PersonalDetails()
+                {
+                    EmailAddress = emailAddress
+                }
+            };
+            _context.User.Add(user);
             _context.SaveChanges();
-            return EFuser.Id;
+            return user.Id;
         }
 
         private model.User MapEFUserToModelUser(User user)
