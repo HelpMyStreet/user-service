@@ -22,7 +22,7 @@ namespace UserService.Core.Interfaces.Repositories
 
         bool GetUserIsVerified(string userId);
 
-        int PostCreateUser(User user);
+        int PostCreateUser(string firebaseUserId, string emailAddress);
 
         int ModifyUser(User user);
 
