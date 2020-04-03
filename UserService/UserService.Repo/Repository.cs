@@ -155,6 +155,22 @@ namespace UserService.Repo
             };
         }
 
+        private void UpdateEFPersonalDetailsFromModelPersonalDetails(model.UserPersonalDetails userPersonalDetails, PersonalDetails EFPersonalDetails)
+        {
+            EFPersonalDetails.FirstName = userPersonalDetails.FirstName;
+            EFPersonalDetails.LastName = userPersonalDetails.LastName;
+            EFPersonalDetails.DisplayName = userPersonalDetails.DisplayName;
+            EFPersonalDetails.DateOfBirth = userPersonalDetails.DateOfBirth;
+            EFPersonalDetails.EmailAddress = userPersonalDetails.EmailAddress;
+            EFPersonalDetails.MobilePhone = userPersonalDetails.MobilePhone;
+            EFPersonalDetails.OtherPhone = userPersonalDetails.OtherPhone;
+            EFPersonalDetails.Postcode = userPersonalDetails.Address.Postcode;
+            EFPersonalDetails.AddressLine1 = userPersonalDetails.Address.AddressLine1;
+            EFPersonalDetails.AddressLine2 = userPersonalDetails.Address.AddressLine2;
+            EFPersonalDetails.AddressLine3 = userPersonalDetails.Address.AddressLine3;
+            EFPersonalDetails.Locality = userPersonalDetails.Address.Locality;
+        }
+
         private User MapModelUserToEFUser(model.User user)
         {
             return new User()
@@ -170,6 +186,21 @@ namespace UserService.Repo
                 PostalCode = user.PostalCode,
                 PersonalDetails = MapModelPersonalDetailsToEFPersonalDetails(user.UserPersonalDetails)
             };
+        }
+
+        
+        private void UpdateEFUserFromUserModel(model.User user, User EFUser)
+        {
+            EFUser.DateCreated = user.DateCreated;
+            EFUser.FirebaseUid = user.FirebaseUID;
+            EFUser.EmailSharingConsent = user.EmailSharingConsent;
+            EFUser.HmscontactConsent = user.HMSContactConsent;
+            EFUser.IsVerified = user.IsVerified;
+            EFUser.IsVolunteer = user.IsVolunteer;
+            EFUser.MobileSharingConsent = user.MobileSharingConsent;
+            EFUser.OtherPhoneSharingConsent = user.OtherPhoneSharingConsent;
+            EFUser.PostalCode = user.PostalCode;
+            UpdateEFPersonalDetailsFromModelPersonalDetails(user.UserPersonalDetails,EFUser.PersonalDetails);
         }
 
         public void CreateChampionForPostCode(string userId, string postCode)
@@ -209,6 +240,41 @@ namespace UserService.Repo
                     });
                     _context.SaveChanges();
                 }
+            }
+        }
+
+        public bool SetUserVerfication(string userId, bool isVerified)
+        {
+            var user = _context.User.Where(a => a.Id.ToString() == userId).FirstOrDefault();
+
+            if (user != null)
+            {
+                user.IsVerified = isVerified;
+                _context.SaveChanges();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public int ModifyUser(model.User user)
+        {
+            User EFUser = _context.User
+                .Include(i=>i.PersonalDetails)
+                .Where(a => a.Id == user.ID).FirstOrDefault();
+
+            if (EFUser != null)
+            {
+
+                UpdateEFUserFromUserModel(user, EFUser);
+                _context.SaveChanges();
+                return EFUser.Id;
+            }
+            else
+            {
+                return -1;
             }
         }
     }

@@ -24,6 +24,10 @@ namespace UserService.Core.Interfaces.Repositories
 
         int PostCreateUser(User user);
 
+        int ModifyUser(User user);
+
+        bool SetUserVerfication(string userId, bool isVerified);
+
         void CreateChampionForPostCode(string userId, string postCode);
 
         void CreateSupportForPostCode(string userId, string postCode);
