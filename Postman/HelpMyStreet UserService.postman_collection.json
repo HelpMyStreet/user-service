@@ -498,6 +498,98 @@
 						"description": "PutSetVerification"
 					},
 					"response": []
+				},
+				{
+					"name": "GetDistinctChampionUserCount",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "x-functions-key",
+								"type": "text",
+								"value": "xafPvxa3FQKo9ob43Azzniv/6L6RumaKvT/jXbpVGTVMN9tL1JbohQ=="
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://helpmystreet-user-service-dev.azurewebsites.net/api/GetDistinctChampionUserCount",
+							"protocol": "https",
+							"host": [
+								"helpmystreet-user-service-dev",
+								"azurewebsites",
+								"net"
+							],
+							"path": [
+								"api",
+								"GetDistinctChampionUserCount"
+							]
+						},
+						"description": "GetDistinctChampionUserCount"
+					},
+					"response": []
+				},
+				{
+					"name": "GetChampionPostcodesCoveredCount Copy",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "x-functions-key",
+								"type": "text",
+								"value": "MWpxkaHIWOhTicPMpYjYhAOrBWYkz8rQE/1YaXTm08BrHkg9OCRK7g=="
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://helpmystreet-user-service-dev.azurewebsites.net/api/GetChampionPostcodesCoveredCount",
+							"protocol": "https",
+							"host": [
+								"helpmystreet-user-service-dev",
+								"azurewebsites",
+								"net"
+							],
+							"path": [
+								"api",
+								"GetChampionPostcodesCoveredCount"
+							]
+						},
+						"description": "GetChampionPostcodesCoveredCount"
+					},
+					"response": []
 				}
 			],
 			"event": [
