@@ -108,7 +108,7 @@ namespace UserService.Repo
                 .Count(x => x.PostalCode == postCode && x.User.IsVerified.Value == true);
         }
 
-        public int PostCreateUser(string firebaseUserId, string emailAddress, DateTime dateCreated)
+        public int PostCreateUser(string firebaseUserId, string emailAddress, DateTime? dateCreated)
         {
             User user = new User()
             {
@@ -359,7 +359,7 @@ namespace UserService.Repo
                 EFUser.SupportVolunteersByPhone = registrationStepThree.SupportVolunteersByPhone;
                 EFUser.PersonalDetails.UnderlyingMedicalCondition = registrationStepThree.UnderlyingMedicalCondition;
 
-                foreach (HelpMyStreet.Utils.Enums.SupportActivities sa in registrationStepThree.SupportActivities)
+                foreach (HelpMyStreet.Utils.Enums.SupportActivities sa in registrationStepThree.Activities)
                 {
                     _context.SupportActivity.Add(new SupportActivity
                     {
