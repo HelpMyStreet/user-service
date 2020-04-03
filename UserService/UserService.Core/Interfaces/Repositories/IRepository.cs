@@ -20,6 +20,10 @@ namespace UserService.Core.Interfaces.Repositories
 
         int GetChampionCountByPostCode(string postCode);
 
+        int GetChampionPostcodesCoveredCount();
+
+        int GetDistinctChampionUserCount();
+
         bool GetUserIsVerified(string userId);
 
         int PostCreateUser(string firebaseUserId, string emailAddress);

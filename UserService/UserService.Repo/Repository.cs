@@ -295,5 +295,18 @@ namespace UserService.Repo
                 return -1;
             }
         }
+
+        public int GetChampionPostcodesCoveredCount()
+        {
+            return _context.ChampionPostcode.Count(x=> x.User.IsVerified==true);
+        }
+
+        public int GetDistinctChampionUserCount()
+        {
+            return _context.ChampionPostcode.Select(x => x.User)
+                .Where(x => x.IsVerified == true)
+                .Distinct()
+                .Count();
+        }
     }
 }
