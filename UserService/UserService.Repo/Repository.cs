@@ -108,12 +108,12 @@ namespace UserService.Repo
                 .Count(x => x.PostalCode == postCode && x.User.IsVerified.Value == true);
         }
 
-        public int PostCreateUser(string firebaseUserId, string emailAddress)
+        public int PostCreateUser(string firebaseUserId, string emailAddress, DateTime dateCreated)
         {
             User user = new User()
             {
                 FirebaseUid = firebaseUserId,
-                DateCreated = DateTime.Now,
+                DateCreated = dateCreated,
                 PersonalDetails = new PersonalDetails()
                 {
                     EmailAddress = emailAddress
@@ -320,6 +320,91 @@ namespace UserService.Repo
                 .Where(x => x.IsVerified == true)
                 .Distinct()
                 .Count();
+        }
+
+        public int ModifyUserRegistrationPageTwo(model.RegistrationStepTwo registrationStepTwo)
+        {
+            User EFUser = _context.User
+                .Include(i => i.PersonalDetails)
+                .Where(a => a.Id == registrationStepTwo.UserID).FirstOrDefault();
+
+            if(EFUser!=null)
+            {
+                EFUser.PostalCode = registrationStepTwo.PostalCode;
+                EFUser.PersonalDetails.FirstName = registrationStepTwo.FirstName;
+                EFUser.PersonalDetails.LastName = registrationStepTwo.LastName;
+                EFUser.PersonalDetails.MobilePhone = registrationStepTwo.MobilePhone;
+                EFUser.PersonalDetails.OtherPhone = registrationStepTwo.OtherPhone;
+                EFUser.PersonalDetails.DateOfBirth = registrationStepTwo.DateOfBirth;
+                EFUser.PersonalDetails.DisplayName = registrationStepTwo.DisplayName;
+                EFUser.PersonalDetails.AddressLine1 = registrationStepTwo.Address.AddressLine1;
+                EFUser.PersonalDetails.AddressLine2 = registrationStepTwo.Address.AddressLine2;
+                EFUser.PersonalDetails.AddressLine3 = registrationStepTwo.Address.AddressLine3;
+                EFUser.PersonalDetails.Locality = registrationStepTwo.Address.Locality;
+                EFUser.PersonalDetails.Postcode = registrationStepTwo.Address.Postcode;
+                _context.SaveChanges();
+            }
+            return registrationStepTwo.UserID;
+        }
+
+        public int ModifyUserRegistrationPageThree(model.RegistrationStepThree registrationStepThree)
+        {
+            User EFUser = _context.User
+                .Include(i => i.PersonalDetails)
+                .Where(a => a.Id == registrationStepThree.UserID).FirstOrDefault();
+
+            if (EFUser != null)
+            {
+                EFUser.SupportRadiusMiles = registrationStepThree.SupportRadiusMiles;
+                EFUser.SupportVolunteersByPhone = registrationStepThree.SupportVolunteersByPhone;
+                EFUser.PersonalDetails.UnderlyingMedicalCondition = registrationStepThree.UnderlyingMedicalCondition;
+
+                foreach (HelpMyStreet.Utils.Enums.SupportActivities sa in registrationStepThree.SupportActivities)
+                {
+                    _context.SupportActivity.Add(new SupportActivity
+                    {
+                        User = EFUser,
+                        ActivityId = (byte) sa
+                    });
+                }
+                _context.SaveChanges();
+            }
+            return registrationStepThree.UserID;
+        }
+
+        public int ModifyUserRegistrationPageFour(model.RegistrationStepFour registrationStepFour)
+        {
+            User EFUser = _context.User
+               .Where(a => a.Id == registrationStepFour.UserID).FirstOrDefault();
+
+            if (EFUser != null)
+            {
+                EFUser.StreetChampionRoleUnderstood = registrationStepFour.StreetChampionRoleUnderstood;
+                foreach(string cp in registrationStepFour.ChampionPostcodes)
+                {
+                    _context.ChampionPostcode.Add(new ChampionPostcode()
+                    {
+                        User = EFUser,
+                        PostalCode = cp
+                    });
+                }
+
+                _context.SaveChanges();
+            }
+            return registrationStepFour.UserID;
+        }
+
+        public int ModifyUserRegistrationPageFive(model.RegistrationStepFive registrationStepFive)
+        {
+            User EFUser = _context.User
+               .Where(a => a.Id == registrationStepFive.UserID).FirstOrDefault();
+
+            if (EFUser != null)
+            {
+                EFUser.IsVerified = registrationStepFive.IsVerified;
+                _context.SaveChanges();
+            }
+            return registrationStepFive.UserID;
         }
     }
 }
