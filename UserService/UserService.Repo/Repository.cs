@@ -56,6 +56,7 @@ namespace UserService.Repo
         public List<model.User> GetVolunteersByPostCode(string postCode)
         {
             List<SupportPostcode> users = _context.SupportPostcode
+                .Include(i => i.User.PersonalDetails)
                 .Where(x => x.PostalCode == postCode.ToLower()
                     && x.User.IsVerified.Value == true)
                 .ToList();
@@ -72,6 +73,7 @@ namespace UserService.Repo
         public List<model.User> GetChampionsByPostCode(string postCode)
         {
             List<ChampionPostcode> users = _context.ChampionPostcode
+                .Include(i=> i.User.PersonalDetails)
                 .Where(x => x.PostalCode == postCode.ToLower() 
                         && x.User.IsVerified.Value==true)
                 .ToList();
@@ -87,12 +89,14 @@ namespace UserService.Repo
 
         public int GetVolunteerCountByPostCode(string postCode)
         {
-            return _context.SupportPostcode.Count(x => x.PostalCode == postCode);
+            return _context.SupportPostcode
+                .Count(x => x.PostalCode == postCode && x.User.IsVerified.Value == true);
         }
 
         public int GetChampionCountByPostCode(string postCode)
         {
-            return _context.ChampionPostcode.Count(x => x.PostalCode == postCode);
+            return _context.ChampionPostcode
+                .Count(x => x.PostalCode == postCode && x.User.IsVerified.Value == true);
         }
 
         public int PostCreateUser(model.User user)
