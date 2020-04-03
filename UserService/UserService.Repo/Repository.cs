@@ -23,11 +23,20 @@ namespace UserService.Repo
             _mapper = mapper;
         }
 
-        public model.User GetUserByID(string userId)
+        public model.User GetUserByID(int userId)
         {
             User user = _context.User
                 .Include(i => i.PersonalDetails)
-                .Where(x => x.Id.ToString() == userId).FirstOrDefault();
+                .Where(x => x.Id == userId).FirstOrDefault();
+
+            return MapEFUserToModelUser(user);
+        }
+
+        public model.User GetUserByFirebaseUserID(string firebaseUID)
+        {
+            User user = _context.User
+                .Include(i => i.PersonalDetails)
+                .Where(x => x.FirebaseUid == firebaseUID).FirstOrDefault();
 
             return MapEFUserToModelUser(user);
         }
@@ -104,6 +113,7 @@ namespace UserService.Repo
             User user = new User()
             {
                 FirebaseUid = firebaseUserId,
+                DateCreated = DateTime.Now,
                 PersonalDetails = new PersonalDetails()
                 {
                     EmailAddress = emailAddress
@@ -118,7 +128,7 @@ namespace UserService.Repo
         {
             return new model.User()
             {
-                DateCreated = user.DateCreated,
+                DateCreated = user.DateCreated.Value,
                 ID = user.Id,
                 FirebaseUID = user.FirebaseUid,
                 EmailSharingConsent = user.EmailSharingConsent,
@@ -187,6 +197,7 @@ namespace UserService.Repo
             EFPersonalDetails.AddressLine2 = userPersonalDetails.Address.AddressLine2;
             EFPersonalDetails.AddressLine3 = userPersonalDetails.Address.AddressLine3;
             EFPersonalDetails.Locality = userPersonalDetails.Address.Locality;
+            EFPersonalDetails.UnderlyingMedicalCondition = userPersonalDetails.UnderlyingMedicalCondition;
         }
 
         private User MapModelUserToEFUser(model.User user)
@@ -209,7 +220,6 @@ namespace UserService.Repo
         
         private void UpdateEFUserFromUserModel(model.User user, User EFUser)
         {
-            EFUser.DateCreated = user.DateCreated;
             EFUser.FirebaseUid = user.FirebaseUID;
             EFUser.EmailSharingConsent = user.EmailSharingConsent;
             EFUser.HmscontactConsent = user.HMSContactConsent;
@@ -218,6 +228,9 @@ namespace UserService.Repo
             EFUser.MobileSharingConsent = user.MobileSharingConsent;
             EFUser.OtherPhoneSharingConsent = user.OtherPhoneSharingConsent;
             EFUser.PostalCode = user.PostalCode;
+            EFUser.StreetChampionRoleUnderstood = user.StreetChampionRoleUnderstood;
+            EFUser.SupportRadiusMiles = user.SupportRadiusMiles;
+            EFUser.SupportVolunteersByPhone = user.SupportVolunteersByPhone;
             UpdateEFPersonalDetailsFromModelPersonalDetails(user.UserPersonalDetails,EFUser.PersonalDetails);
         }
 

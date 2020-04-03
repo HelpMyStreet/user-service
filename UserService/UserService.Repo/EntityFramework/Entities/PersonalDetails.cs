@@ -20,6 +20,8 @@ namespace UserService.Repo.EntityFramework.Entities
         public string MobilePhone { get; set; }
         public string OtherPhone { get; set; }
 
+        public bool? UnderlyingMedicalCondition { get; set; }
+
         public virtual User User { get; set; }
     }
 }

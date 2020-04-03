@@ -45,7 +45,8 @@ namespace UserService.AzureFunction
                             AddressLine1 = "1 Test Street",
                             AddressLine2 = "Test Town",
                             Postcode = "BA133BN"
-                        }
+                        },
+                        UnderlyingMedicalCondition = false
                     },
                     PostalCode = "BA133BN"
                 };

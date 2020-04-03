@@ -5,8 +5,8 @@ using System.Text;
 
 namespace UserService.Core.Domains.Entities
 {
-    public class GetUserByIDRequest : IRequest<GetUserByIDResponse>
+    public class GetUserByFirebaseUIDRequest : IRequest<GetUserByFirebaseUIDResponse>
     {
-        public int ID { get; set; }
+        public string FirebaseUID { get; set; }
     }
 }
