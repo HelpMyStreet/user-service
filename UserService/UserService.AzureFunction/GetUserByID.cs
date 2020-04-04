@@ -39,38 +39,14 @@ namespace UserService.AzureFunction
                     Activities = supportActivities
                 };
 
-                //User user = new User()
-                //{
-                //    UserPersonalDetails = new UserPersonalDetails()
-                //    {
-                //        FirstName = "John",
-                //        LastName = "Smith",
-                //        DisplayName = "John Smith",
-                //        EmailAddress = "john@smith.com",
-                //        MobilePhone = "07",
-                //        OtherPhone = "01332",
-                //        DateOfBirth = new DateTime(1900, 1, 1),
-                //        Address = new Address()
-                //        {
-                //            AddressLine1 = "1 Test Street",
-                //            AddressLine2 = "Test Town",
-                //            Postcode = "BA133BN"
-                //        },
-                //        UnderlyingMedicalCondition = false
-                //    },
-                //    PostalCode = "BA133BN"
-                //};
-
                 string jsonData = JsonConvert.SerializeObject(registrationStepThree);
-
-
 
                 GetUserByIDResponse response = await _mediator.Send(req);
                 return new OkObjectResult(response);
             }
             catch (Exception exc)
             {
-                log.LogInformation(exc.ToString());
+                LogError.Log(log, exc, req);
                 return new BadRequestObjectResult(exc);
             }
         }

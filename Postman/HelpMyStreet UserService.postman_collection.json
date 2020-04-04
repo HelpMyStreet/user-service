@@ -24,7 +24,7 @@
 							},
 							{
 								"key": "x-functions-key",
-								"value": "gJqS/23ukXnfoVrmnLcKHi8wUuEV4zLBnXusgkdSecYPmFdyiCJMZw==",
+								"value": "{{code}}",
 								"type": "text"
 							}
 						],
@@ -38,12 +38,9 @@
 							}
 						},
 						"url": {
-							"raw": "https://helpmystreet-user-service-dev.azurewebsites.net/api/GetChampionCountByPostcode",
-							"protocol": "https",
+							"raw": "{{url}}/api/GetChampionCountByPostcode",
 							"host": [
-								"helpmystreet-user-service-dev",
-								"azurewebsites",
-								"net"
+								"{{url}}"
 							],
 							"path": [
 								"api",
@@ -71,7 +68,7 @@
 							{
 								"key": "x-functions-key",
 								"type": "text",
-								"value": "BgaWeMJtPkRGODhmY84EGAxKLXyAAG6u366SZizT7eOK0wxB4bSxCg=="
+								"value": "{{code}}"
 							}
 						],
 						"body": {
@@ -84,12 +81,9 @@
 							}
 						},
 						"url": {
-							"raw": "https://helpmystreet-user-service-dev.azurewebsites.net/api/GetChampionsByPostcode",
-							"protocol": "https",
+							"raw": "{{ur}}/api/GetChampionsByPostcode",
 							"host": [
-								"helpmystreet-user-service-dev",
-								"azurewebsites",
-								"net"
+								"{{ur}}"
 							],
 							"path": [
 								"api",
@@ -116,7 +110,7 @@
 							},
 							{
 								"key": "x-functions-key",
-								"value": "UEpYeKxPzIPqjrMztPv4eAKUjLspwFnAu9vefkyqI2oNeR774msUwA==",
+								"value": "{{code}}",
 								"type": "text"
 							}
 						],
@@ -130,12 +124,9 @@
 							}
 						},
 						"url": {
-							"raw": "https://helpmystreet-user-service-dev.azurewebsites.net/api/GetUserByID",
-							"protocol": "https",
+							"raw": "{{url}}/api/GetUserByID",
 							"host": [
-								"helpmystreet-user-service-dev",
-								"azurewebsites",
-								"net"
+								"{{url}}"
 							],
 							"path": [
 								"api",
@@ -143,6 +134,49 @@
 							]
 						},
 						"description": "GetUserByID"
+					},
+					"response": []
+				},
+				{
+					"name": "GetUserByFirebaseUserID",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "x-functions-key",
+								"type": "text",
+								"value": "{{code}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\tFirebaseUID: \"1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/GetUserByFirebaseUserID",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"GetUserByFirebaseUserID"
+							]
+						},
+						"description": "GetUserByFirebaseUserID"
 					},
 					"response": []
 				},
@@ -163,7 +197,7 @@
 							{
 								"key": "x-functions-key",
 								"type": "text",
-								"value": "ZsGfaBaCqeaYO/DAgGOnEu9tqhaVFe/Ipa279rfB2a6q/aaUlVb8Pg=="
+								"value": "{{code}}"
 							}
 						],
 						"body": {
@@ -176,12 +210,9 @@
 							}
 						},
 						"url": {
-							"raw": "https://helpmystreet-user-service-dev.azurewebsites.net/api/GetUserIsVerified",
-							"protocol": "https",
+							"raw": "{{url}}/api/GetUserIsVerified",
 							"host": [
-								"helpmystreet-user-service-dev",
-								"azurewebsites",
-								"net"
+								"{{url}}"
 							],
 							"path": [
 								"api",
@@ -209,7 +240,7 @@
 							{
 								"key": "x-functions-key",
 								"type": "text",
-								"value": "w03lfQ7UuIPobrB9vWFCaX16khlgMgWE7dNpYgO6P4ataAf87T8aVg=="
+								"value": "{{code}}"
 							}
 						],
 						"body": {
@@ -222,12 +253,9 @@
 							}
 						},
 						"url": {
-							"raw": "https://helpmystreet-user-service-dev.azurewebsites.net/api/GetVolunteerCountByPostcode",
-							"protocol": "https",
+							"raw": "{{url}}/api/GetVolunteerCountByPostcode",
 							"host": [
-								"helpmystreet-user-service-dev",
-								"azurewebsites",
-								"net"
+								"{{url}}"
 							],
 							"path": [
 								"api",
@@ -255,7 +283,7 @@
 							{
 								"key": "x-functions-key",
 								"type": "text",
-								"value": "XI5WjmSKvm1Va8elFd8LjeowifY5kpWgY5D4kLw30uIz702UAHlNzA=="
+								"value": "{{code}}"
 							}
 						],
 						"body": {
@@ -268,12 +296,9 @@
 							}
 						},
 						"url": {
-							"raw": "https://helpmystreet-user-service-dev.azurewebsites.net/api/GetVolunteersByPostcode",
-							"protocol": "https",
+							"raw": "{{url}}/api/GetVolunteersByPostcode",
 							"host": [
-								"helpmystreet-user-service-dev",
-								"azurewebsites",
-								"net"
+								"{{url}}"
 							],
 							"path": [
 								"api",
@@ -298,7 +323,7 @@
 							{
 								"key": "x-functions-key",
 								"type": "text",
-								"value": "mEKcJg8RWnedu1cvAelsqQYxeKrwR53xajOK1XkQjXoCP8iI3DAbLg=="
+								"value": "{{code}}"
 							}
 						],
 						"body": {
@@ -311,12 +336,9 @@
 							}
 						},
 						"url": {
-							"raw": "https://helpmystreet-user-service-dev.azurewebsites.net/api/PostCreateChampionForPostCode",
-							"protocol": "https",
+							"raw": "{{url}}/api/PostCreateChampionForPostCode",
 							"host": [
-								"helpmystreet-user-service-dev",
-								"azurewebsites",
-								"net"
+								"{{url}}"
 							],
 							"path": [
 								"api",
@@ -341,7 +363,7 @@
 							{
 								"key": "x-functions-key",
 								"type": "text",
-								"value": "IXhFIWrC0lPUS6rmO2CMWyrtcfhj7mLUEn2TEa8dg2udXfQiKqnwwA=="
+								"value": "{{code}}"
 							}
 						],
 						"body": {
@@ -354,12 +376,9 @@
 							}
 						},
 						"url": {
-							"raw": "https://helpmystreet-user-service-dev.azurewebsites.net/api/PostCreateSupportForPostCode",
-							"protocol": "https",
+							"raw": "{{url}}/api/PostCreateSupportForPostCode",
 							"host": [
-								"helpmystreet-user-service-dev",
-								"azurewebsites",
-								"net"
+								"{{url}}"
 							],
 							"path": [
 								"api",
@@ -384,7 +403,7 @@
 							{
 								"key": "x-functions-key",
 								"type": "text",
-								"value": "nFIFPkGKzw0o4oNmAT4yE5Gieq9ou/SlHXtNAGI0BZUwHdRSsQ/b6Q=="
+								"value": "{{code}}"
 							}
 						],
 						"body": {
@@ -397,12 +416,9 @@
 							}
 						},
 						"url": {
-							"raw": "https://helpmystreet-user-service-dev.azurewebsites.net/api/PostCreateUser",
-							"protocol": "https",
+							"raw": "{{url}}/api/PostCreateUser",
 							"host": [
-								"helpmystreet-user-service-dev",
-								"azurewebsites",
-								"net"
+								"{{url}}"
 							],
 							"path": [
 								"api",
@@ -427,7 +443,7 @@
 							{
 								"key": "x-functions-key",
 								"type": "text",
-								"value": "WqTfvneqQR6UfDQPHlaotl/SqXYVm/ags/jhh1XVELzGyOPoaspYLg=="
+								"value": "{{code}}"
 							}
 						],
 						"body": {
@@ -440,12 +456,9 @@
 							}
 						},
 						"url": {
-							"raw": "https://helpmystreet-user-service-dev.azurewebsites.net/api/PutModifyUser",
-							"protocol": "https",
+							"raw": "{{url}}/api/PutModifyUser",
 							"host": [
-								"helpmystreet-user-service-dev",
-								"azurewebsites",
-								"net"
+								"{{url}}"
 							],
 							"path": [
 								"api",
@@ -470,7 +483,7 @@
 							{
 								"key": "x-functions-key",
 								"type": "text",
-								"value": "mGgqk21uIArpxkyLoMGKnee5ZZVzguf8urDqSLP0rtumQtPmNDdgrQ=="
+								"value": "{{code}}"
 							}
 						],
 						"body": {
@@ -483,12 +496,9 @@
 							}
 						},
 						"url": {
-							"raw": "https://helpmystreet-user-service-dev.azurewebsites.net/api/PutSetVerification",
-							"protocol": "https",
+							"raw": "{{url}}/api/PutSetVerification",
 							"host": [
-								"helpmystreet-user-service-dev",
-								"azurewebsites",
-								"net"
+								"{{url}}"
 							],
 							"path": [
 								"api",
@@ -516,7 +526,7 @@
 							{
 								"key": "x-functions-key",
 								"type": "text",
-								"value": "xafPvxa3FQKo9ob43Azzniv/6L6RumaKvT/jXbpVGTVMN9tL1JbohQ=="
+								"value": "{{code}}"
 							}
 						],
 						"body": {
@@ -529,12 +539,9 @@
 							}
 						},
 						"url": {
-							"raw": "https://helpmystreet-user-service-dev.azurewebsites.net/api/GetDistinctChampionUserCount",
-							"protocol": "https",
+							"raw": "{{url}}/api/GetDistinctChampionUserCount",
 							"host": [
-								"helpmystreet-user-service-dev",
-								"azurewebsites",
-								"net"
+								"{{url}}"
 							],
 							"path": [
 								"api",
@@ -546,7 +553,7 @@
 					"response": []
 				},
 				{
-					"name": "GetChampionPostcodesCoveredCount Copy",
+					"name": "GetChampionPostcodesCoveredCount",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -562,7 +569,7 @@
 							{
 								"key": "x-functions-key",
 								"type": "text",
-								"value": "MWpxkaHIWOhTicPMpYjYhAOrBWYkz8rQE/1YaXTm08BrHkg9OCRK7g=="
+								"value": "{{code}}"
 							}
 						],
 						"body": {
@@ -575,12 +582,9 @@
 							}
 						},
 						"url": {
-							"raw": "https://helpmystreet-user-service-dev.azurewebsites.net/api/GetChampionPostcodesCoveredCount",
-							"protocol": "https",
+							"raw": "{{url}}/api/GetChampionPostcodesCoveredCount",
 							"host": [
-								"helpmystreet-user-service-dev",
-								"azurewebsites",
-								"net"
+								"{{url}}"
 							],
 							"path": [
 								"api",
@@ -588,6 +592,166 @@
 							]
 						},
 						"description": "GetChampionPostcodesCoveredCount"
+					},
+					"response": []
+				},
+				{
+					"name": "PutModifyRegistrationPageTwo",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "x-functions-key",
+								"type": "text",
+								"value": "{{code}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"RegistrationStepTwo\": {\r\n    \"UserID\": 4,\r\n    \"PostalCode\": \"BA133BN\",\r\n      \"FirstName\": \"John\",\r\n      \"LastName\": \"Smith\",\r\n      \"Address\": {\r\n        \"AddressLine1\": \"1 Test Street\",\r\n        \"AddressLine2\": \"Test Town\",\r\n        \"AddressLine3\": null,\r\n        \"Locality\": null,\r\n        \"Postcode\": \"BA133BN\"\r\n      },\r\n      \"DisplayName\": \"John Smith\"\r\n  }\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/PutModifyRegistrationPageTwo",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"PutModifyRegistrationPageTwo"
+							]
+						},
+						"description": "PutModifyRegistrationPageTwo"
+					},
+					"response": []
+				},
+				{
+					"name": "PutModifyRegistrationPageThree",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "x-functions-key",
+								"type": "text",
+								"value": "{{code}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"RegistrationStepThree\": {\r\n    \"UserID\": 4,\r\n    \"SupportRadiusMiles\": 10,\r\n    \"SupportVolunteersByPhone\": false,\r\n    \"UnderlyingMedicalCondition\": false,\r\n    \"Activities\": [\r\n      3,\r\n      2\r\n    ]\r\n  }\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/PutModifyRegistrationPageThree",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"PutModifyRegistrationPageThree"
+							]
+						},
+						"description": "PutModifyRegistrationPageThree"
+					},
+					"response": []
+				},
+				{
+					"name": "PutModifyRegistrationPageFour",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "x-functions-key",
+								"type": "text",
+								"value": "{{code}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"RegistrationStepFour\": {\r\n    \"UserID\": 4,\r\n    \"StreetChampionRoleUnderstood\": false,\r\n    \"ChampionPostcodes\": [\r\n      \"DE236NY\",\r\n      \"DE238GD\"\r\n    ]\r\n  }\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/PutModifyRegistrationPageFour",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"PutModifyRegistrationPageFour"
+							]
+						},
+						"description": "PutModifyRegistrationPageFour"
+					},
+					"response": []
+				},
+				{
+					"name": "PutModifyRegistrationPageFive",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "x-functions-key",
+								"type": "text",
+								"value": "{{code}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"RegistrationStepFive\": {\r\n    \"UserID\": 4,\r\n    \"IsVerified\": true\r\n  }\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/PutModifyRegistrationPageFive",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"PutModifyRegistrationPageFive"
+							]
+						},
+						"description": "PutModifyRegistrationPageFive"
 					},
 					"response": []
 				}
@@ -637,6 +801,20 @@
 					""
 				]
 			}
+		}
+	],
+	"variable": [
+		{
+			"id": "4a5e8b45-569a-43f5-938c-cf575a06df11",
+			"key": "url",
+			"value": "https://helpmystreet-user-service-dev.azurewebsites.net",
+			"type": "string"
+		},
+		{
+			"id": "45b61b42-312a-4b7d-9c3a-38c170542ef0",
+			"key": "code",
+			"value": "i8aKjNG4E9sA2VfooUeBVn74mE/3cTkYWVhxjaXpYsf4e//1Q95yTg==",
+			"type": "string"
 		}
 	],
 	"protocolProfileBehavior": {}
