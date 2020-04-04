@@ -81,9 +81,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{ur}}/api/GetChampionsByPostcode",
+							"raw": "{{url}}/api/GetChampionsByPostcode",
 							"host": [
-								"{{ur}}"
+								"{{url}}"
 							],
 							"path": [
 								"api",
@@ -408,7 +408,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"FirebaseUID\": 11,\n  \"EmailAddress\": \"matthew@smith.com\"\n}",
+							"raw": "{\n\t\"RegistrationStepOne\": {\n  \"FirebaseUID\": 100,\n  \"EmailAddress\": \"matthew@smith.com\",\n  \"DateCreated\": \"2020-04-04T00:00:00\"\n\t}\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -805,13 +805,13 @@
 	],
 	"variable": [
 		{
-			"id": "4a5e8b45-569a-43f5-938c-cf575a06df11",
+			"id": "dce83963-3efc-42a0-96e2-0630355d3af5",
 			"key": "url",
 			"value": "https://helpmystreet-user-service-dev.azurewebsites.net",
 			"type": "string"
 		},
 		{
-			"id": "45b61b42-312a-4b7d-9c3a-38c170542ef0",
+			"id": "494dbcd3-1c5b-4835-a20b-338e944f2e55",
 			"key": "code",
 			"value": "i8aKjNG4E9sA2VfooUeBVn74mE/3cTkYWVhxjaXpYsf4e//1Q95yTg==",
 			"type": "string"
