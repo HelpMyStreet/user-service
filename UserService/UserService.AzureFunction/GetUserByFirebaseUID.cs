@@ -34,7 +34,7 @@ namespace UserService.AzureFunction
             }
             catch (Exception exc)
             {
-                log.LogInformation(exc.ToString());
+                LogError.Log(log, exc, req);
                 return new BadRequestObjectResult(exc);
             }
         }
