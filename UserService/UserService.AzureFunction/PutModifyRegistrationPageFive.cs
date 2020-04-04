@@ -6,6 +6,8 @@ using Microsoft.Extensions.Logging;
 using MediatR;
 using System;
 using UserService.Core.Domains.Entities;
+using System.Net;
+using AzureFunctions.Extensions.Swashbuckle.Attribute;
 
 namespace UserService.AzureFunction
 {
@@ -19,8 +21,10 @@ namespace UserService.AzureFunction
         }
 
         [FunctionName("PutModifyRegistrationPageFive")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PutModifyRegistrationPageFiveResponse))]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "put", Route = null)] PutModifyRegistrationPageFiveRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "put", Route = null)]
+            [RequestBodyType(typeof(PutModifyRegistrationPageFiveRequest), "product request")] PutModifyRegistrationPageFiveRequest req,
             ILogger log)
         {
             try

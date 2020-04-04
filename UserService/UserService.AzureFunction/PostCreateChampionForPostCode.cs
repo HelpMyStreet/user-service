@@ -6,6 +6,8 @@ using Microsoft.Extensions.Logging;
 using MediatR;
 using System;
 using UserService.Core.Domains.Entities;
+using System.Net;
+using AzureFunctions.Extensions.Swashbuckle.Attribute;
 
 namespace UserService.AzureFunction
 {
@@ -19,8 +21,10 @@ namespace UserService.AzureFunction
         }
 
         [FunctionName("PostCreateChampionForPostCode")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] PostCreateChampionForPostCodeRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]
+            [RequestBodyType(typeof(PostCreateChampionForPostCodeRequest), "product request")] PostCreateChampionForPostCodeRequest req,
             ILogger log)
         {
             try

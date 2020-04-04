@@ -6,6 +6,8 @@ using Microsoft.Extensions.Logging;
 using MediatR;
 using System;
 using UserService.Core.Domains.Entities;
+using System.Net;
+using AzureFunctions.Extensions.Swashbuckle.Attribute;
 
 namespace UserService.AzureFunction
 {
@@ -19,8 +21,10 @@ namespace UserService.AzureFunction
         }
 
         [FunctionName("GetVolunteerCountByPostcode")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetVolunteerCountByPostcodeResponse))]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] GetVolunteerCountByPostcodeRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
+            [RequestBodyType(typeof(GetVolunteerCountByPostcodeRequest), "product request")] GetVolunteerCountByPostcodeRequest req,
             ILogger log)
         {
             try

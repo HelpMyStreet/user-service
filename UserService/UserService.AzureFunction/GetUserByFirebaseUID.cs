@@ -8,6 +8,8 @@ using System;
 using UserService.Core.Domains.Entities;
 using HelpMyStreet.Utils.Models;
 using Newtonsoft.Json;
+using System.Net;
+using AzureFunctions.Extensions.Swashbuckle.Attribute;
 
 namespace UserService.AzureFunction
 {
@@ -21,8 +23,10 @@ namespace UserService.AzureFunction
         }
 
         [FunctionName("GetUserByFirebaseUserID")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetUserByFirebaseUIDResponse))]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] GetUserByFirebaseUIDRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
+            [RequestBodyType(typeof(GetUserByFirebaseUIDRequest), "product request")] GetUserByFirebaseUIDRequest req,
             ILogger log)
         {
             try
