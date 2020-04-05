@@ -45,11 +45,8 @@ steps:
     zipAfterPublish: true
     projects: '**/**/*.AzureFunction.csproj'
 
-- task: AzureFunctionApp@1
-  displayName: AzureFunctionApp
+- task: PublishBuildArtifacts@1
+  displayName: Publish Build Artefacts
   inputs:
-    azureSubscription: 'Azure subscription 1(2)(cf4b5ad9-1aa8-4960-af9c-01030b3a2662)'
-    appType: 'functionApp'
-    appName: 'helpmystreet-user-service-dev'
-    package: '$(System.DefaultWorkingDirectory)/**/*.zip'
-    deploymentMethod: 'auto'
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+    artifactName: 'drop'
