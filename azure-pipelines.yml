@@ -44,6 +44,7 @@ steps:
     publishWebProjects: false
     zipAfterPublish: true
     projects: '**/**/*.AzureFunction.csproj'
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
 
 - task: PublishBuildArtifacts@1
   displayName: Publish Build Artefacts
