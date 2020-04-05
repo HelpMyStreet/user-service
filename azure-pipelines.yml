@@ -16,9 +16,10 @@ variables:
 
 steps:
 - task: NuGetToolInstaller@1
-
+  displayName: NuGet install
 
 - task: NuGetCommand@2
+  displayName: NuGet restore
   inputs:
     command: 'restore'
     restoreSolution: '$(solution)'
@@ -26,15 +27,18 @@ steps:
     vstsFeed: 'e5c08e0c-1c28-42ca-815f-5ca90021fd46/9ff815b0-abc7-442a-98cb-d2879666c3bb'
 
 - task: DotNetCoreCLI@2
+  displayName: DotNetCore build
   inputs:
     command: 'build'
     projects: '**/**/*.AzureFunction.csproj'
 
 - task: DotNetCoreCLI@2
+  displayName: DotNetCore test
   inputs:
     command: 'test'
 
 - task: DotNetCoreCLI@2
+  displayName: DotNetCore publish
   inputs:
     command: 'publish'
     publishWebProjects: false
@@ -42,6 +46,7 @@ steps:
     projects: '**/**/*.AzureFunction.csproj'
 
 - task: AzureFunctionApp@1
+  displayName: AzureFunctionApp
   inputs:
     azureSubscription: 'Azure subscription 1(2)(cf4b5ad9-1aa8-4960-af9c-01030b3a2662)'
     appType: 'functionApp'
