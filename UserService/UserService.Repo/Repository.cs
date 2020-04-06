@@ -9,6 +9,7 @@ using UserService.Core.Domains.Entities;
 using model = HelpMyStreet.Utils.Models;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using HelpMyStreet.Utils.Enums;
 
 namespace UserService.Repo
 {
@@ -27,6 +28,8 @@ namespace UserService.Repo
         {
             User user = _context.User
                 .Include(i => i.PersonalDetails)
+                .Include(i => i.SupportActivity)
+                .Include(i => i.ChampionPostcode)
                 .Where(x => x.Id == userId).FirstOrDefault();
 
             return MapEFUserToModelUser(user);
@@ -36,6 +39,8 @@ namespace UserService.Repo
         {
             User user = _context.User
                 .Include(i => i.PersonalDetails)
+                .Include(i => i.SupportActivity)
+                .Include(i => i.ChampionPostcode)
                 .Where(x => x.FirebaseUid == firebaseUID).FirstOrDefault();
 
             return MapEFUserToModelUser(user);
@@ -124,6 +129,27 @@ namespace UserService.Repo
             return user.Id;
         }
 
+        private List<SupportActivities> GetSupportActivities(ICollection<SupportActivity> activities)
+        {
+            var response = new List<SupportActivities>();
+            foreach(SupportActivity supportActivity in activities)
+            {
+                response.Add((SupportActivities) supportActivity.ActivityId);
+            }
+
+            return response;
+        }
+
+        private List<string> GetChampionPostCodes(ICollection<ChampionPostcode> postcodes)
+        {
+            var response = new List<string>();
+            foreach (ChampionPostcode championPostcode in postcodes)
+            {
+                response.Add(championPostcode.PostalCode);
+            }
+            return response;
+        }
+
         private model.User MapEFUserToModelUser(User user)
         {
             return new model.User()
@@ -138,6 +164,12 @@ namespace UserService.Repo
                 MobileSharingConsent = user.MobileSharingConsent,
                 OtherPhoneSharingConsent = user.OtherPhoneSharingConsent,
                 PostalCode = user.PostalCode,
+                SupportRadiusMiles = (float?) user.SupportRadiusMiles,
+                StreetChampionRoleUnderstood = user.StreetChampionRoleUnderstood,
+                SupportVolunteersByPhone = user.SupportVolunteersByPhone,
+                SupportActivities = GetSupportActivities(user.SupportActivity),
+                ChampionPostcodes = GetChampionPostCodes(user.ChampionPostcode),
+                
                 UserPersonalDetails = MapEFPersonalDetailsToModelPersonalDetails(user.PersonalDetails)
             };
         }
