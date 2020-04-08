@@ -7,6 +7,6 @@ namespace UserService.Core.Domains.Entities
 {
     public class GetUserIsVerifiedRequest : IRequest<GetUserIsVerifiedResponse>
     {
-        public string ID { get; set; }
+        public int UserID { get; set; }
     }
 }
