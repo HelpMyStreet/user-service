@@ -13,7 +13,6 @@ namespace UserService.Repo
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-            Database.EnsureCreated();
         }
 
         public virtual DbSet<ChampionPostcode> ChampionPostcode { get; set; }
