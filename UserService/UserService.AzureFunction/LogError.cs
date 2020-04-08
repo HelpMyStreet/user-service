@@ -11,8 +11,6 @@ namespace UserService.AzureFunction
     {
         public static void Log(ILogger log, Exception exc, Object request)
         {
-            string jsonRequest = JsonConvert.SerializeObject(request);
-            log.LogInformation(jsonRequest);
             log.LogInformation(exc.ToString());
         }
     }

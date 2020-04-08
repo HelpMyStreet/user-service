@@ -383,6 +383,7 @@ namespace UserService.Repo
         {
             User EFUser = _context.User
                 .Include(i => i.PersonalDetails)
+                .Include(i => i.SupportActivity)
                 .Where(a => a.Id == registrationStepThree.UserID).FirstOrDefault();
 
             if (EFUser != null)
@@ -390,6 +391,8 @@ namespace UserService.Repo
                 EFUser.SupportRadiusMiles = registrationStepThree.SupportRadiusMiles;
                 EFUser.SupportVolunteersByPhone = registrationStepThree.SupportVolunteersByPhone;
                 EFUser.PersonalDetails.UnderlyingMedicalCondition = registrationStepThree.UnderlyingMedicalCondition;
+
+                _context.SupportActivity.RemoveRange(EFUser.SupportActivity);
 
                 foreach (HelpMyStreet.Utils.Enums.SupportActivities sa in registrationStepThree.Activities)
                 {
@@ -407,12 +410,16 @@ namespace UserService.Repo
         public int ModifyUserRegistrationPageFour(model.RegistrationStepFour registrationStepFour)
         {
             User EFUser = _context.User
-               .Where(a => a.Id == registrationStepFour.UserID).FirstOrDefault();
+                .Include(i => i.ChampionPostcode)
+                .Where(a => a.Id == registrationStepFour.UserID).FirstOrDefault();
 
             if (EFUser != null)
             {
                 EFUser.StreetChampionRoleUnderstood = registrationStepFour.StreetChampionRoleUnderstood;
-                foreach(string cp in registrationStepFour.ChampionPostcodes)
+
+                _context.ChampionPostcode.RemoveRange(EFUser.ChampionPostcode);
+
+                foreach (string cp in registrationStepFour.ChampionPostcodes)
                 {
                     _context.ChampionPostcode.Add(new ChampionPostcode()
                     {
