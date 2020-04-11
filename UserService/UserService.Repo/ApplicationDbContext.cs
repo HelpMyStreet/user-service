@@ -19,6 +19,7 @@ namespace UserService.Repo
         public virtual DbSet<PersonalDetails> PersonalDetails { get; set; }
         public virtual DbSet<SupportActivity> SupportActivity { get; set; }
         public virtual DbSet<SupportPostcode> SupportPostcode { get; set; }
+        public virtual DbSet<RegistrationHistory> RegistrationHistory { get; set; }
         public virtual DbSet<User> User { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -152,6 +153,23 @@ namespace UserService.Repo
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_SupportPostcode_User");
+            });
+
+            modelBuilder.Entity<RegistrationHistory>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.RegistrationStep });
+
+                entity.ToTable("RegistrationHistory", "User");
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
+
+                entity.Property(e => e.DateCompleted).HasColumnType("datetime");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.RegistrationHistory)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_RegistrationHistory_User");
             });
 
             modelBuilder.Entity<User>(entity =>
