@@ -341,6 +341,13 @@ namespace UserService.Repo
                 .Count();
         }
 
+        public int GetDistinctVolunteerUserCount()
+        {
+            return _context.User.Where(x => x.IsVerified == true && x.IsVolunteer == true)
+                .Distinct()
+                .Count();
+        }
+
         public int ModifyUserRegistrationPageTwo(model.RegistrationStepTwo registrationStepTwo)
         {
             User EFUser = _context.User
