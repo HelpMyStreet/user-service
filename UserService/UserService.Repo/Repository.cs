@@ -343,7 +343,7 @@ namespace UserService.Repo
 
         public int GetDistinctVolunteerUserCount()
         {
-            return _context.User.Where(x => x.IsVerified == true && x.IsVolunteer == true)
+            return _context.User.Where(x => x.IsVerified == true/* && x.IsVolunteer == true*/)
                 .Distinct()
                 .Count();
         }
