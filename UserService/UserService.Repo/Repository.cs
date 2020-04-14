@@ -414,17 +414,20 @@ namespace UserService.Repo
 
             if (EFUser != null)
             {
-                EFUser.StreetChampionRoleUnderstood = registrationStepFour.StreetChampionRoleUnderstood;
-
                 _context.ChampionPostcode.RemoveRange(EFUser.ChampionPostcode);
 
-                foreach (string cp in registrationStepFour.ChampionPostcodes)
+                EFUser.StreetChampionRoleUnderstood = registrationStepFour.StreetChampionRoleUnderstood;
+
+                if (EFUser.StreetChampionRoleUnderstood.HasValue && EFUser.StreetChampionRoleUnderstood.Value == true)
                 {
-                    _context.ChampionPostcode.Add(new ChampionPostcode()
+                    foreach (string cp in registrationStepFour.ChampionPostcodes)
                     {
-                        User = EFUser,
-                        PostalCode = cp
-                    });
+                        _context.ChampionPostcode.Add(new ChampionPostcode()
+                        {
+                            User = EFUser,
+                            PostalCode = cp
+                        });
+                    }
                 }
                 AddRegistrationHistoryForUser(EFUser, RegistrationSteps.StepFour);
                 _context.SaveChanges();
