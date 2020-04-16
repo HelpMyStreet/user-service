@@ -217,7 +217,8 @@ namespace UserService.Repo
                     AddressLine3 = personalDetails.AddressLine3,
                     Locality = personalDetails.Locality,
                     Postcode = personalDetails.Postcode
-                }
+                },
+                UnderlyingMedicalCondition = personalDetails.UnderlyingMedicalCondition
             };
         }
 
