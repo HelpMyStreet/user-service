@@ -26,7 +26,9 @@ namespace UserService.Core.Interfaces.Repositories
 
         int GetDistinctChampionUserCount();
 
-        bool GetUserIsVerified(int userId);
+        int GetDistinctVolunteerUserCount();
+
+        bool GetUserIsVerified(string userId);
 
         int PostCreateUser(string firebaseUserId, string emailAddress, DateTime? dateCreated);
 
