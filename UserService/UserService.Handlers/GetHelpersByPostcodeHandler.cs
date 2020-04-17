@@ -9,20 +9,20 @@ using System.Threading.Tasks;
 
 namespace UserService.Handlers
 {
-    public class GetVolunteersByPostcodeHandler : IRequestHandler<GetVolunteersByPostcodeRequest, GetVolunteersByPostcodeResponse>
+    public class GetHelpersByPostcodeHandler : IRequestHandler<GetHelpersByPostcodeRequest, GetHelpersByPostcodeResponse>
     {
         private readonly IRepository _repository;
 
-        public GetVolunteersByPostcodeHandler(IRepository repository)
+        public GetHelpersByPostcodeHandler(IRepository repository)
         {
             _repository = repository;
         }
 
-        public Task<GetVolunteersByPostcodeResponse> Handle(GetVolunteersByPostcodeRequest request, CancellationToken cancellationToken)
+        public Task<GetHelpersByPostcodeResponse> Handle(GetHelpersByPostcodeRequest request, CancellationToken cancellationToken)
         {
             List<HelpMyStreet.Utils.Models.User> result = _repository.GetVolunteersByPostCode(request.PostCode);
 
-            var response = new GetVolunteersByPostcodeResponse()
+            var response = new GetHelpersByPostcodeResponse()
             {
                 Users = new List<HelpMyStreet.Utils.Models.User>()
             };

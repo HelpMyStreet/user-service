@@ -40,7 +40,7 @@ namespace UserService.AzureFunction
                 {
                     Users = new List<User>()
                     {
-                        new User()
+                              new User()
                         {
                             DateCreated = DateTime.Now.AddDays(-7),
                             HMSContactConsent = true,
@@ -53,6 +53,7 @@ namespace UserService.AzureFunction
                             SupportVolunteersByPhone = true,
                             StreetChampionRoleUnderstood = true,
                             OtherPhoneSharingConsent = true,
+                            SupportPostcodes = new List<string>(),
                             ChampionPostcodes = new List<string>()
                             {
                                 req.PostCode
