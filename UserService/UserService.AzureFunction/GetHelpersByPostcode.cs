@@ -55,11 +55,6 @@ namespace UserService.AzureFunction
                             StreetChampionRoleUnderstood = null,
                             OtherPhoneSharingConsent = true,
 
-                            SupportPostcodes = new List<string>()
-                            {
-                                req.PostCode, "NG1 5FS"
-                            },
-
                             SupportActivities = new List<SupportActivities>()
                             {
                                 SupportActivities.CheckingIn,
@@ -103,10 +98,6 @@ namespace UserService.AzureFunction
                             StreetChampionRoleUnderstood = null,
                             OtherPhoneSharingConsent = true,
 
-                            SupportPostcodes = new List<string>()
-                            {
-                                req.PostCode, "NG1 5BA",  "NG1 6DQ"
-                            },
                             SupportActivities = new List<SupportActivities>()
                             {
                                 SupportActivities.Errands,
@@ -147,7 +138,6 @@ namespace UserService.AzureFunction
                             SupportVolunteersByPhone = true,
                             StreetChampionRoleUnderstood = true,
                             OtherPhoneSharingConsent = true,
-                            SupportPostcodes = new List<string>(),
                             ChampionPostcodes = new List<string>()
                             {
                                 req.PostCode

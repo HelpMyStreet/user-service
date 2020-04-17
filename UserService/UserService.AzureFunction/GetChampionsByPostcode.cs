@@ -53,7 +53,6 @@ namespace UserService.AzureFunction
                             SupportVolunteersByPhone = true,
                             StreetChampionRoleUnderstood = true,
                             OtherPhoneSharingConsent = true,
-                            SupportPostcodes = new List<string>(),
                             ChampionPostcodes = new List<string>()
                             {
                                 req.PostCode
