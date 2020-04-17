@@ -57,9 +57,9 @@ namespace UserService.Repo
             return MapEFUserToModelUser(user);
         }
 
-        public bool GetUserIsVerified(string userId)
+        public bool GetUserIsVerified(int userId)
         {
-            var user = _context.User.Where(x => x.Id.ToString() == userId).FirstOrDefault();
+            var user = _context.User.Where(x => x.Id == userId).FirstOrDefault();
 
             if(user!=null)
             {
@@ -254,9 +254,9 @@ namespace UserService.Repo
             UpdateEFPersonalDetailsFromModelPersonalDetails(user.UserPersonalDetails,EFUser.PersonalDetails);
         }
 
-        public void CreateChampionForPostCode(string userId, string postCode)
+        public void CreateChampionForPostCode(int userId, string postCode)
         {
-            var user = _context.User.Where(a => a.Id.ToString() == userId).FirstOrDefault();
+            var user = _context.User.Where(a => a.Id == userId).FirstOrDefault();
 
             if(user!=null)
             {
@@ -274,9 +274,9 @@ namespace UserService.Repo
             }
         }
 
-        public void CreateSupportForPostCode(string userId, string postCode)
+        public void CreateSupportForPostCode(int userId, string postCode)
         {
-            var user = _context.User.Where(a => a.Id.ToString() == userId).FirstOrDefault();
+            var user = _context.User.Where(a => a.Id == userId).FirstOrDefault();
 
             if (user != null)
             {
@@ -294,9 +294,9 @@ namespace UserService.Repo
             }
         }
 
-        public bool SetUserVerfication(string userId, bool isVerified)
+        public bool SetUserVerfication(int userId, bool isVerified)
         {
-            var user = _context.User.Where(a => a.Id.ToString() == userId).FirstOrDefault();
+            var user = _context.User.Where(a => a.Id == userId).FirstOrDefault();
 
             if (user != null)
             {

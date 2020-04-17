@@ -20,7 +20,7 @@ namespace UserService.Handlers
 
         public Task<GetUserIsVerifiedResponse> Handle(GetUserIsVerifiedRequest request, CancellationToken cancellationToken)
         {
-            bool result = _repository.GetUserIsVerified(request.ID);
+            bool result = _repository.GetUserIsVerified(request.UserID);
             return Task.FromResult(new GetUserIsVerifiedResponse()
             {
                 IsVerified = result

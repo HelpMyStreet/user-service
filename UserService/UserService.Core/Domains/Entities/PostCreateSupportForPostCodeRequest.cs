@@ -8,7 +8,7 @@ namespace UserService.Core.Domains.Entities
 {
     public class PostCreateSupportForPostCodeRequest : IRequest
     {
-        public string UserID { get; set; }
+        public int UserID { get; set; }
         public string PostCode { get; set; }
     }
 }
