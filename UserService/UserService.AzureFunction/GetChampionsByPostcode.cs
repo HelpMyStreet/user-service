@@ -34,61 +34,8 @@ namespace UserService.AzureFunction
             {
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
-                //  GetChampionsByPostcodeResponse response = await _mediator.Send(req);
+                GetChampionsByPostcodeResponse response = await _mediator.Send(req);
 
-                GetChampionsByPostcodeResponse response = new GetChampionsByPostcodeResponse()
-                {
-                    Users = new List<User>()
-                    {
-                              new User()
-                        {
-                            DateCreated = DateTime.Now.AddDays(-7),
-                            HMSContactConsent = true,
-                            ID = 3,
-                            MobileSharingConsent = true,
-                            SupportRadiusMiles= 3,
-                            IsVolunteer = true,
-                            IsVerified = true,
-                            EmailSharingConsent = true,
-                            SupportVolunteersByPhone = true,
-                            StreetChampionRoleUnderstood = true,
-                            OtherPhoneSharingConsent = true,
-                            ChampionPostcodes = new List<string>()
-                            {
-                                req.PostCode
-                            },
-                            SupportActivities = new List<SupportActivities>()
-                            {
-                                SupportActivities.CheckingIn,
-                                SupportActivities.CollectingPrescriptions,
-                                SupportActivities.MealPreparation,
-                                SupportActivities.Errands,
-                                SupportActivities.MealPreparation,
-                                SupportActivities.Shopping
-                            },
-                            UserPersonalDetails = new UserPersonalDetails()
-                            {
-                                Address = new Address()
-                                {
-                                    AddressLine1 = "11 Derby Road",
-                                    AddressLine2 = "Mapperley",
-                                    AddressLine3 = null,
-                                    Locality = "Nottingham",
-                                    Postcode = req.PostCode
-                                },
-                                DisplayName = "Pete",
-                                FirstName = "Peter",
-                                LastName = "Snow",
-                                EmailAddress = "p.snow@gmail.com",
-                                MobilePhone = "07954 452739",
-                                UnderlyingMedicalCondition = false,
-                                OtherPhone = null,
-                                DateOfBirth = new DateTime(1970,08,12),
-                            },
-                            PostalCode = req.PostCode
-                        }
-                    }
-                };
                 return new OkObjectResult(response);
             }
             catch (Exception exc)

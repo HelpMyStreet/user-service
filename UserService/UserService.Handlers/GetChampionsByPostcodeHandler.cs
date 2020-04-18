@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using HelpMyStreet.Utils.Utils;
 
 namespace UserService.Handlers
 {
@@ -18,21 +19,18 @@ namespace UserService.Handlers
             _repository = repository;
         }
 
-        public Task<GetChampionsByPostcodeResponse> Handle(GetChampionsByPostcodeRequest request, CancellationToken cancellationToken)
+        public async Task<GetChampionsByPostcodeResponse> Handle(GetChampionsByPostcodeRequest request, CancellationToken cancellationToken)
         {
-            List<HelpMyStreet.Utils.Models.User> result = _repository.GetChampionsByPostCode(request.PostCode);
+            request.PostCode = PostcodeFormatter.FormatPostcode(request.PostCode);
 
-            var response = new GetChampionsByPostcodeResponse()
+            IReadOnlyList<HelpMyStreet.Utils.Models.User> result = await _repository.GetChampionsByPostCodeAsync(request.PostCode);
+
+            GetChampionsByPostcodeResponse response = new GetChampionsByPostcodeResponse()
             {
-                Users = new List<HelpMyStreet.Utils.Models.User>()
+                Users = result
             };
-
-            foreach (HelpMyStreet.Utils.Models.User user in result)
-            {
-                response.Users.Add(user);
-            }
             
-            return Task.FromResult(response);
+            return response;
         }
     }
 }

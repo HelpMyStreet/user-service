@@ -1,10 +1,8 @@
-﻿using UserService.Core.Dto;
+﻿using HelpMyStreet.Utils.Models;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using UserService.Core.Domains.Entities;
-using HelpMyStreet.Utils.Models;
+using UserService.Core.Dto;
 
 namespace UserService.Core.Interfaces.Repositories
 {
@@ -16,10 +14,10 @@ namespace UserService.Core.Interfaces.Repositories
 
         List<User> GetVolunteersByPostCode(string postCode);
 
-        List<User> GetChampionsByPostCode(string postCode);
+        Task<IReadOnlyList<HelpMyStreet.Utils.Models.User>> GetChampionsByPostCodeAsync(string postCode);
 
         int GetVolunteerCountByPostCode(string postCode);
-
+        
         int GetChampionCountByPostCode(string postCode);
 
         int GetChampionPostcodesCoveredCount();
@@ -45,5 +43,16 @@ namespace UserService.Core.Interfaces.Repositories
         void CreateChampionForPostCode(int userId, string postCode);
 
         void CreateSupportForPostCode(int userId, string postCode);
+
+
+        Task<int> GetMinUserIdAsync();
+
+        Task<int> GetMaxUserIdAsync();
+
+        Task<IEnumerable<HelperPostcodeRadiusDto>> GetAllVolunteersPostcodeRadiiAsync();
+
+        Task<IEnumerable<HelperPostcodeRadiusDto>> GetVolunteersPostcodeRadiiAsync(int fromUserId, int toUserId);
+
+        Task<IEnumerable<User>> GetVolunteersBIds(IEnumerable<int> userIds);
     }
 }
