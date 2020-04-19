@@ -17,6 +17,7 @@ using model = HelpMyStreet.Utils.Models;
 
 namespace UserService.Repo
 {
+
     public class Repository : IRepository
     {
         private readonly ApplicationDbContext _context;
@@ -30,12 +31,23 @@ namespace UserService.Repo
             _connectionStrings = connectionStrings;
         }
 
+        private enum RegistrationSteps : byte
+        {
+            StepOne = 1,
+            StepTwo,
+            StepThree,
+            StepFour,
+            StepFive
+        }
+
+
         public model.User GetUserByID(int userId)
         {
             User user = _context.User
                 .Include(i => i.PersonalDetails)
                 .Include(i => i.SupportActivity)
                 .Include(i => i.ChampionPostcode)
+                .Include(i => i.RegistrationHistory)
                 .Where(x => x.Id == userId).FirstOrDefault();
 
             return MapEFUserToModelUser(user);
@@ -47,6 +59,7 @@ namespace UserService.Repo
                 .Include(i => i.PersonalDetails)
                 .Include(i => i.SupportActivity)
                 .Include(i => i.ChampionPostcode)
+                .Include(i => i.RegistrationHistory)
                 .Where(x => x.FirebaseUid == firebaseUID).FirstOrDefault();
 
             return MapEFUserToModelUser(user);
@@ -94,8 +107,11 @@ namespace UserService.Repo
         {
             IEnumerable<ChampionPostcode> users = await _context.ChampionPostcode
                 .Include(i => i.User.PersonalDetails)
+                .Include(i => i.User.ChampionPostcode)
+                .Include(i => i.User.RegistrationHistory)
+                .Include(i => i.User.SupportActivity)
                 .Where(x => x.PostalCode == postCode
-                        && x.User.IsVerified.Value == true)
+                            && x.User.IsVerified.Value == true)
                 .ToListAsync();
 
             List<model.User> response = new List<model.User>();
@@ -106,7 +122,6 @@ namespace UserService.Repo
 
             return response;
         }
-
 
         public int GetVolunteerCountByPostCode(string postCode)
         {
@@ -132,6 +147,7 @@ namespace UserService.Repo
                 }
             };
             _context.User.Add(user);
+            AddRegistrationHistoryForUser(user, RegistrationSteps.StepOne);
             _context.SaveChanges();
             return user.Id;
         }
@@ -157,6 +173,19 @@ namespace UserService.Repo
             return response;
         }
 
+        private Dictionary<int, DateTime> GetRegistrationHistories(ICollection<RegistrationHistory> registrationHistories)
+        {
+            var response = new Dictionary<int, DateTime>();
+
+            foreach (RegistrationHistory registrationHistory in registrationHistories)
+            {
+                response.Add((int)registrationHistory.RegistrationStep, registrationHistory.DateCompleted);
+            }
+
+            return response;
+        }
+
+
         private model.User MapEFUserToModelUser(User user)
         {
             return new model.User()
@@ -176,7 +205,7 @@ namespace UserService.Repo
                 SupportVolunteersByPhone = user.SupportVolunteersByPhone,
                 SupportActivities = GetSupportActivities(user.SupportActivity),
                 ChampionPostcodes = GetChampionPostCodes(user.ChampionPostcode),
-
+                RegistrationHistory = GetRegistrationHistories(user.RegistrationHistory),
                 UserPersonalDetails = MapEFPersonalDetailsToModelPersonalDetails(user.PersonalDetails)
             };
         }
@@ -192,7 +221,6 @@ namespace UserService.Repo
                 EmailAddress = personalDetails.EmailAddress,
                 MobilePhone = personalDetails.MobilePhone,
                 OtherPhone = personalDetails.OtherPhone,
-                UnderlyingMedicalCondition = personalDetails.UnderlyingMedicalCondition,
                 Address = new model.Address()
                 {
                     AddressLine1 = personalDetails.AddressLine1,
@@ -200,26 +228,8 @@ namespace UserService.Repo
                     AddressLine3 = personalDetails.AddressLine3,
                     Locality = personalDetails.Locality,
                     Postcode = personalDetails.Postcode
-                }
-            };
-        }
-
-        private PersonalDetails MapModelPersonalDetailsToEFPersonalDetails(model.UserPersonalDetails userPersonalDetails)
-        {
-            return new PersonalDetails()
-            {
-                FirstName = userPersonalDetails.FirstName,
-                LastName = userPersonalDetails.LastName,
-                DisplayName = userPersonalDetails.DisplayName,
-                DateOfBirth = userPersonalDetails.DateOfBirth,
-                EmailAddress = userPersonalDetails.EmailAddress,
-                MobilePhone = userPersonalDetails.MobilePhone,
-                OtherPhone = userPersonalDetails.OtherPhone,
-                Postcode = userPersonalDetails.Address.Postcode,
-                AddressLine1 = userPersonalDetails.Address.AddressLine1,
-                AddressLine2 = userPersonalDetails.Address.AddressLine2,
-                AddressLine3 = userPersonalDetails.Address.AddressLine3,
-                Locality = userPersonalDetails.Address.Locality
+                },
+                UnderlyingMedicalCondition = personalDetails.UnderlyingMedicalCondition
             };
         }
 
@@ -239,25 +249,6 @@ namespace UserService.Repo
             EFPersonalDetails.Locality = userPersonalDetails.Address.Locality;
             EFPersonalDetails.UnderlyingMedicalCondition = userPersonalDetails.UnderlyingMedicalCondition;
         }
-
-        private User MapModelUserToEFUser(model.User user)
-        {
-            return new User()
-            {
-                DateCreated = user.DateCreated,
-                FirebaseUid = user.FirebaseUID,
-                EmailSharingConsent = user.EmailSharingConsent,
-                HmscontactConsent = user.HMSContactConsent,
-                IsVerified = user.IsVerified,
-                IsVolunteer = user.IsVolunteer,
-                MobileSharingConsent = user.MobileSharingConsent,
-                OtherPhoneSharingConsent = user.OtherPhoneSharingConsent,
-                PostalCode = user.PostalCode,
-                PersonalDetails = MapModelPersonalDetailsToEFPersonalDetails(user.UserPersonalDetails)
-            };
-        }
-
-
         private void UpdateEFUserFromUserModel(model.User user, User EFUser)
         {
             EFUser.FirebaseUid = user.FirebaseUID;
@@ -362,10 +353,18 @@ namespace UserService.Repo
                 .Count();
         }
 
+        public int GetDistinctVolunteerUserCount()
+        {
+            return _context.User.Where(x => x.IsVerified == true/* && x.IsVolunteer == true*/)
+                .Distinct()
+                .Count();
+        }
+
         public int ModifyUserRegistrationPageTwo(model.RegistrationStepTwo registrationStepTwo)
         {
             User EFUser = _context.User
                 .Include(i => i.PersonalDetails)
+                .Include(i => i.RegistrationHistory)
                 .Where(a => a.Id == registrationStepTwo.UserID).FirstOrDefault();
 
             if (EFUser != null)
@@ -382,6 +381,7 @@ namespace UserService.Repo
                 EFUser.PersonalDetails.AddressLine3 = registrationStepTwo.Address.AddressLine3;
                 EFUser.PersonalDetails.Locality = registrationStepTwo.Address.Locality;
                 EFUser.PersonalDetails.Postcode = registrationStepTwo.Address.Postcode;
+                AddRegistrationHistoryForUser(EFUser, RegistrationSteps.StepTwo);
                 _context.SaveChanges();
             }
             return registrationStepTwo.UserID;
@@ -392,6 +392,7 @@ namespace UserService.Repo
             User EFUser = _context.User
                 .Include(i => i.PersonalDetails)
                 .Include(i => i.SupportActivity)
+                .Include(i => i.RegistrationHistory)
                 .Where(a => a.Id == registrationStepThree.UserID).FirstOrDefault();
 
             if (EFUser != null)
@@ -410,6 +411,7 @@ namespace UserService.Repo
                         ActivityId = (byte)sa
                     });
                 }
+                AddRegistrationHistoryForUser(EFUser, RegistrationSteps.StepThree);
                 _context.SaveChanges();
             }
             return registrationStepThree.UserID;
@@ -419,23 +421,27 @@ namespace UserService.Repo
         {
             User EFUser = _context.User
                 .Include(i => i.ChampionPostcode)
+                .Include(i => i.RegistrationHistory)
                 .Where(a => a.Id == registrationStepFour.UserID).FirstOrDefault();
 
             if (EFUser != null)
             {
-                EFUser.StreetChampionRoleUnderstood = registrationStepFour.StreetChampionRoleUnderstood;
-
                 _context.ChampionPostcode.RemoveRange(EFUser.ChampionPostcode);
 
-                foreach (string cp in registrationStepFour.ChampionPostcodes)
-                {
-                    _context.ChampionPostcode.Add(new ChampionPostcode()
-                    {
-                        User = EFUser,
-                        PostalCode = cp
-                    });
-                }
+                EFUser.StreetChampionRoleUnderstood = registrationStepFour.StreetChampionRoleUnderstood;
 
+                if (EFUser.StreetChampionRoleUnderstood.HasValue && EFUser.StreetChampionRoleUnderstood.Value == true)
+                {
+                    foreach (string cp in registrationStepFour.ChampionPostcodes)
+                    {
+                        _context.ChampionPostcode.Add(new ChampionPostcode()
+                        {
+                            User = EFUser,
+                            PostalCode = cp
+                        });
+                    }
+                }
+                AddRegistrationHistoryForUser(EFUser, RegistrationSteps.StepFour);
                 _context.SaveChanges();
             }
             return registrationStepFour.UserID;
@@ -444,16 +450,33 @@ namespace UserService.Repo
         public int ModifyUserRegistrationPageFive(model.RegistrationStepFive registrationStepFive)
         {
             User EFUser = _context.User
-               .Where(a => a.Id == registrationStepFive.UserID).FirstOrDefault();
+                .Include(i => i.RegistrationHistory)
+                .Where(a => a.Id == registrationStepFive.UserID).FirstOrDefault();
 
             if (EFUser != null)
             {
                 EFUser.IsVerified = registrationStepFive.IsVerified;
+                AddRegistrationHistoryForUser(EFUser, RegistrationSteps.StepFive);
                 _context.SaveChanges();
             }
             return registrationStepFive.UserID;
         }
 
+        private void AddRegistrationHistoryForUser(User user, RegistrationSteps registrationStep)
+        {
+            var regHistory = user.RegistrationHistory.FirstOrDefault(w => w.RegistrationStep == (byte)registrationStep);
+
+            if (regHistory != null)
+            {
+                user.RegistrationHistory.Remove(regHistory);
+            }
+            user.RegistrationHistory.Add(new RegistrationHistory()
+            {
+                DateCompleted = DateTime.Now.ToUniversalTime(),
+                RegistrationStep = (byte)registrationStep,
+                UserId = user.Id
+            });
+        }
 
         public async Task<int> GetMinUserIdAsync()
         {
@@ -522,9 +545,10 @@ WHERE
             var users = await _context.User
                 .Where(x => x.IsVolunteer == true
                             && userIds.Contains(x.Id))
-                .Include(x=>x.ChampionPostcode)
-                .Include(x=>x.SupportActivity)
-                .Include(x=>x.PersonalDetails)
+                .Include(x => x.ChampionPostcode)
+                .Include(x => x.SupportActivity)
+                .Include(x => x.PersonalDetails)
+                .Include(x => x.RegistrationHistory)
                 .ToListAsync();
 
 
