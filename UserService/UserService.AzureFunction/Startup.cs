@@ -60,7 +60,7 @@ namespace UserService.AzureFunction
 
                 }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
                 {
-                    MaxConnectionsPerServer = httpClientConfig.Value.MaxConnectionsPerServer ?? 15,
+                    MaxConnectionsPerServer = httpClientConfig.Value.MaxConnectionsPerServer ?? int.MaxValue,
                     AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
                 });
 

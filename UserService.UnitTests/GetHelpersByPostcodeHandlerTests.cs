@@ -1,15 +1,14 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using HelpMyStreet.Contracts.AddressService.Request;
 using HelpMyStreet.Contracts.AddressService.Response;
 using HelpMyStreet.Utils.Models;
 using HelpMyStreet.Utils.Utils;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Primitives;
 using Moq;
 using NUnit.Framework;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using UserService.Core.Config;
 using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
@@ -21,7 +20,6 @@ namespace UserService.UnitTests
 {
     public class GetHelpersByPostcodeHandlerTests
     {
-
         private Mock<IRepository> _repository;
         private Mock<IAddressService> _addressService;
         private Mock<IOptionsSnapshot<ApplicationConfig>> _applicationConfig;
@@ -47,7 +45,7 @@ namespace UserService.UnitTests
                 new HelperPostcodeRadiusDto()
                 {
                     UserId =2,
-                    Postcode = "NG1 6Dq",
+                    Postcode = "NG1 6DQ",
                     SupportRadiusMiles = DistanceConverter.MilesToMetres(2)
                 }
 
@@ -66,7 +64,6 @@ namespace UserService.UnitTests
             {
                 ID = 1
             }
-
             };
 
             _repository.Setup(x => x.GetVolunteersByIdsAsync(It.IsAny<IEnumerable<int>>())).ReturnsAsync(users);
