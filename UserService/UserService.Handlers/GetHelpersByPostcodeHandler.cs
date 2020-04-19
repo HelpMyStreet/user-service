@@ -1,4 +1,5 @@
 ﻿using HelpMyStreet.Contracts.AddressService.Request;
+using HelpMyStreet.Contracts.AddressService.Response;
 using HelpMyStreet.Utils.Models;
 using HelpMyStreet.Utils.Utils;
 using MediatR;
@@ -12,7 +13,6 @@ using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
-using UserService.Core.Utils;
 
 namespace UserService.Handlers
 {
@@ -91,7 +91,7 @@ namespace UserService.Handlers
                 userIdsWithinRadiusOfPostcode.AddRange(isPostcodeWithinRadiiBatch.IdsWithinRadius);
             }
 
-            IEnumerable<User> users = await _repository.GetVolunteersBIds(userIdsWithinRadiusOfPostcode);
+            IEnumerable<User> users = await _repository.GetVolunteersByIdsAsync(userIdsWithinRadiusOfPostcode);
 
             GetHelpersByPostcodeResponse response = new GetHelpersByPostcodeResponse()
             {

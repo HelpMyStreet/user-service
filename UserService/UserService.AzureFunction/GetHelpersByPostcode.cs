@@ -1,16 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using AzureFunctions.Extensions.Swashbuckle.Attribute;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
-using MediatR;
 using System;
-using System.Collections.Generic;
-using UserService.Core.Domains.Entities;
 using System.Net;
-using AzureFunctions.Extensions.Swashbuckle.Attribute;
-using HelpMyStreet.Utils.Enums;
-using HelpMyStreet.Utils.Models;
+using System.Threading.Tasks;
+using UserService.Core.Domains.Entities;
 
 namespace UserService.AzureFunction
 {
@@ -34,7 +31,7 @@ namespace UserService.AzureFunction
             {
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
-                 GetHelpersByPostcodeResponse response = await _mediator.Send(req);
+                GetHelpersByPostcodeResponse response = await _mediator.Send(req);
 
                 return new OkObjectResult(response);
             }

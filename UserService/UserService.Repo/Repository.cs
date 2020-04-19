@@ -517,7 +517,7 @@ WHERE
             }
         }
 
-        public async Task<IEnumerable<model.User>> GetVolunteersBIds(IEnumerable<int> userIds)
+        public async Task<IEnumerable<model.User>> GetVolunteersByIdsAsync(IEnumerable<int> userIds)
         {
             var users = await _context.User
                 .Where(x => x.IsVolunteer == true

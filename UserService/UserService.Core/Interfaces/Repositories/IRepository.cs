@@ -53,6 +53,6 @@ namespace UserService.Core.Interfaces.Repositories
 
         Task<IEnumerable<HelperPostcodeRadiusDto>> GetVolunteersPostcodeRadiiAsync(int fromUserId, int toUserId);
 
-        Task<IEnumerable<User>> GetVolunteersBIds(IEnumerable<int> userIds);
+        Task<IEnumerable<User>> GetVolunteersByIdsAsync(IEnumerable<int> userIds);
     }
 }

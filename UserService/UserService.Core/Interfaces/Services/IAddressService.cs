@@ -1,6 +1,7 @@
-﻿using System.Threading;
+﻿using HelpMyStreet.Contracts.AddressService.Request;
+using HelpMyStreet.Contracts.AddressService.Response;
+using System.Threading;
 using System.Threading.Tasks;
-using HelpMyStreet.Contracts.AddressService.Request;
 
 namespace UserService.Core.Interfaces.Services
 {

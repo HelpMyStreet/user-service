@@ -56,7 +56,7 @@ namespace UserService.Core.Services
 
             if (!isPostcodeWithinRadiiResponseWithWrapper.IsSuccessful)
             {
-                throw new Exception($"Calling Address Service IsPostcodeWithinRadii endpoint unsucessful: {isPostcodeWithinRadiiResponseWithWrapper.Errors.FirstOrDefault()?.ErrorMessage}");
+                throw new Exception($"Calling Address Service IsPostcodeWithinRadii endpoint unsuccessful: {isPostcodeWithinRadiiResponseWithWrapper.Errors.FirstOrDefault()?.ErrorMessage}");
             }
 
 

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
+﻿using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using UserService.Core.Config;
-using UserService.Core.Interfaces;
 using UserService.Core.Interfaces.Utils;
 
 namespace UserService.Core.Utils
