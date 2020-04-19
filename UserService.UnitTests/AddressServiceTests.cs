@@ -27,7 +27,7 @@ namespace UserService.UnitTests
         {
             _httpClientWrapper = new Mock<IHttpClientWrapper>();
             _httpClientWrapper.SetupAllProperties();
-            
+
             _isPostcodeWithinRadiiResponse = new IsPostcodeWithinRadiiResponse()
             {
                 IdsWithinRadius = new List<int>() { 1 }
@@ -89,7 +89,9 @@ namespace UserService.UnitTests
 
             AddressService addressService = new AddressService(_httpClientWrapper.Object);
 
-            Assert.ThrowsAsync<Exception>(async () => await addressService.IsPostcodeWithinRadiiAsync(isPostcodeWithinRadiiRequest, CancellationToken.None));
+            Exception ex = Assert.ThrowsAsync<Exception>(async () => await addressService.IsPostcodeWithinRadiiAsync(isPostcodeWithinRadiiRequest, CancellationToken.None));
+
+            Assert.AreEqual("Calling Address Service IsPostcodeWithinRadii endpoint unsuccessful: Error", ex.Message);
         }
 
     }

@@ -12,6 +12,7 @@ using UserService.Core.Config;
 using UserService.Core.Interfaces.Services;
 using UserService.Core.Interfaces.Utils;
 using UserService.Core.Utils;
+using Utf8Json.Resolvers;
 
 namespace UserService.Core.Services
 {
@@ -35,7 +36,7 @@ namespace UserService.Core.Services
             {
                 response.EnsureSuccessStatusCode();
                 Stream stream = await response.Content.ReadAsStreamAsync();
-                isPostcodeWithinRadiiResponseWithWrapper = await Utf8Json.JsonSerializer.DeserializeAsync<ResponseWrapper<IsPostcodeWithinRadiiResponse, AddressServiceErrorCode>>(stream);
+                isPostcodeWithinRadiiResponseWithWrapper = await Utf8Json.JsonSerializer.DeserializeAsync<ResponseWrapper<IsPostcodeWithinRadiiResponse, AddressServiceErrorCode>>(stream, StandardResolver.AllowPrivate);
             }
 
             if (!isPostcodeWithinRadiiResponseWithWrapper.IsSuccessful)
