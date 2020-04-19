@@ -31,14 +31,10 @@ namespace UserService.Core.Services
             var streamContent = HttpContentUtils.SerialiseToJsonAndCompress(isPostcodeWithinRadiiRequest);
 
             ResponseWrapper<IsPostcodeWithinRadiiResponse, AddressServiceErrorCode> isPostcodeWithinRadiiResponseWithWrapper;
-            var sw = new Stopwatch();
-            sw.Start();
             using (HttpResponseMessage response = await _httpClientWrapper.PostAsync(HttpClientConfigName.AddressService, path, streamContent, cancellationToken).ConfigureAwait(false))
             {
                 response.EnsureSuccessStatusCode();
                 Stream stream = await response.Content.ReadAsStreamAsync();
-                sw.Stop();
-                Debug.WriteLine($"# Calling Address Service took { sw.ElapsedMilliseconds}");
                 isPostcodeWithinRadiiResponseWithWrapper = await Utf8Json.JsonSerializer.DeserializeAsync<ResponseWrapper<IsPostcodeWithinRadiiResponse, AddressServiceErrorCode>>(stream);
             }
 
