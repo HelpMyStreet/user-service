@@ -5,7 +5,7 @@ using System.Text;
 
 namespace UserService.Core.Domains.Entities
 {
-    public class GetVolunteersByPostcodeRequest : IRequest<GetVolunteersByPostcodeResponse>
+    public class GetHelpersByPostcodeRequest : IRequest<GetHelpersByPostcodeResponse>
     {
         public string PostCode { get; set; }
     }

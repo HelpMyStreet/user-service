@@ -16,7 +16,7 @@ namespace UserService.Core.Interfaces.Repositories
 
         List<User> GetVolunteersByPostCode(string postCode);
 
-        List<User> GetChampionsByPostCode(string postCode);
+        Task<IReadOnlyList<User>> GetChampionsByPostCodeAsync(string postCode);
 
         int GetVolunteerCountByPostCode(string postCode);
 
@@ -28,7 +28,7 @@ namespace UserService.Core.Interfaces.Repositories
 
         int GetDistinctVolunteerUserCount();
 
-        bool GetUserIsVerified(string userId);
+        bool GetUserIsVerified(int userId);
 
         int PostCreateUser(string firebaseUserId, string emailAddress, DateTime? dateCreated);
 
@@ -42,10 +42,20 @@ namespace UserService.Core.Interfaces.Repositories
 
         int ModifyUserRegistrationPageFive(RegistrationStepFive registrationStepFive);
 
-        bool SetUserVerfication(string userId, bool isVerified);
+        bool SetUserVerfication(int userId, bool isVerified);
 
-        void CreateChampionForPostCode(string userId, string postCode);
+        void CreateChampionForPostCode(int userId, string postCode);
 
-        void CreateSupportForPostCode(string userId, string postCode);
+        void CreateSupportForPostCode(int userId, string postCode);
+
+        Task<int> GetMinUserIdAsync();
+
+        Task<int> GetMaxUserIdAsync();
+
+        Task<IEnumerable<HelperPostcodeRadiusDto>> GetAllVolunteersPostcodeRadiiAsync();
+
+        Task<IEnumerable<HelperPostcodeRadiusDto>> GetVolunteersPostcodeRadiiAsync(int fromUserId, int toUserId);
+
+        Task<IEnumerable<User>> GetVolunteersByIdsAsync(IEnumerable<int> userIds);
     }
 }

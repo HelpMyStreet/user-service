@@ -8,7 +8,7 @@ namespace UserService.Core.Domains.Entities
 {
     public class PutSetVerificationRequest : IRequest<PutSetVerificationResponse>
     {
-        public string UserID { get; set; }
+        public int UserID { get; set; }
         public bool IsVerified { get; set; }
         public string ServiceName { get; set; }
     }

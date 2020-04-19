@@ -10,6 +10,17 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using Microsoft.Azure.WebJobs.Host.Bindings;
+using Microsoft.Extensions.Options;
+using UserService.Core.Config;
+using UserService.Core.Interfaces.Services;
+using UserService.Core.Interfaces.Utils;
+using UserService.Core.Services;
+using UserService.Core.Utils;
 
 [assembly: FunctionsStartup(typeof(UserService.AzureFunction.Startup))]
 namespace UserService.AzureFunction
@@ -18,21 +29,59 @@ namespace UserService.AzureFunction
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
+            // We need to get the app directory this way.  Using Environment.CurrentDirectory doesn't work in Azure.
+            ExecutionContextOptions executioncontextoptions = builder.Services.BuildServiceProvider()
+                .GetService<IOptions<ExecutionContextOptions>>().Value;
+            string currentDirectory = executioncontextoptions.AppDirectory;
+
+            var config = new ConfigurationBuilder()
+                .SetBasePath(currentDirectory)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile("local.settings.json", true)
+                .AddEnvironmentVariables().Build();
+
+
+            Dictionary<HttpClientConfigName, ApiConfig> httpClientConfigs = config.GetSection("Apis").Get<Dictionary<HttpClientConfigName, ApiConfig>>();
+
+            foreach (KeyValuePair<HttpClientConfigName, ApiConfig> httpClientConfig in httpClientConfigs)
+            {
+                builder.Services.AddHttpClient(httpClientConfig.Key.ToString(), c =>
+                {
+                    c.BaseAddress = new Uri(httpClientConfig.Value.BaseAddress);
+
+                    c.Timeout = httpClientConfig.Value.Timeout ?? new TimeSpan(0, 0, 0, 15);
+
+                    foreach (KeyValuePair<string, string> header in httpClientConfig.Value.Headers)
+                    {
+                        c.DefaultRequestHeaders.Add(header.Key, header.Value);
+                    }
+                    c.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
+                    c.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
+
+                }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+                {
+                    MaxConnectionsPerServer = httpClientConfig.Value.MaxConnectionsPerServer ?? int.MaxValue,
+                    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+                });
+
+            }
+
             builder.Services.AddMediatR(typeof(GetUserByIDHandler).Assembly);
-            //builder.Services.AddAutoMapper(typeof(AddressDetailsProfile).Assembly);
 
-            var tmpConfig = new ConfigurationBuilder()
-            .SetBasePath(Environment.CurrentDirectory)
-            .AddJsonFile("local.settings.json", true)
-            .AddEnvironmentVariables()
-            .Build();
+            IConfigurationSection connectionStringSettings = config.GetSection("ConnectionStrings");
+            builder.Services.Configure<ConnectionStrings>(connectionStringSettings);
 
-            var sqlConnectionString = tmpConfig.GetConnectionString("SqlConnectionString");
+            IConfigurationSection ApplicationConfigSettings = config.GetSection("ApplicationConfig");
+            builder.Services.Configure<ApplicationConfig>(ApplicationConfigSettings);
+
+            var sqlConnectionString = config.GetConnectionString("SqlConnectionString");
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(sqlConnectionString));
 
             builder.Services.AddTransient<IRepository, Repository>();
+            builder.Services.AddTransient<IAddressService, AddressService>();
+            builder.Services.AddTransient<IHttpClientWrapper, HttpClientWrapper>();
         }
     }
 }
