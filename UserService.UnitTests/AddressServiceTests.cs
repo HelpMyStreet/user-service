@@ -73,6 +73,8 @@ namespace UserService.UnitTests
             IsPostcodeWithinRadiiResponse result = await addressService.IsPostcodeWithinRadiiAsync(isPostcodeWithinRadiiRequest, CancellationToken.None);
 
             Assert.IsTrue(result.IdsWithinRadius.Contains(1));
+
+            _httpClientWrapper.Setup(x => x.PostAsync(It.Is<HttpClientConfigName>(y => y == HttpClientConfigName.AddressService), It.Is<string>(y => y == "api/IsPostcodeWithinRadii"), It.IsAny<HttpContent>(), It.IsAny<CancellationToken>()));
         }
 
         [Test]
