@@ -6,7 +6,7 @@ using System.Text;
 
 namespace UserService.Core.Domains.Entities
 {
-    public class GetVolunteersByPostcodeResponse
+    public class GetHelpersByPostcodeResponse
     {
         public List<User> Users { get; set; }
     }
