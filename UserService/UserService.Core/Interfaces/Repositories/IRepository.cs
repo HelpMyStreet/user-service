@@ -18,7 +18,7 @@ namespace UserService.Core.Interfaces.Repositories
 
         List<User> GetVolunteersByPostCode(string postCode);
 
-        List<User> GetChampionsByPostCode(string postCode);
+        Task<IReadOnlyList<User>> GetChampionsByPostCodeAsync(string postCode);
 
         int GetVolunteerCountByPostCode(string postCode);
 
@@ -49,5 +49,15 @@ namespace UserService.Core.Interfaces.Repositories
         void CreateChampionForPostCode(int userId, string postCode);
 
         void CreateSupportForPostCode(int userId, string postCode);
+
+        Task<int> GetMinUserIdAsync();
+
+        Task<int> GetMaxUserIdAsync();
+
+        Task<IEnumerable<HelperPostcodeRadiusDto>> GetAllVolunteersPostcodeRadiiAsync();
+
+        Task<IEnumerable<HelperPostcodeRadiusDto>> GetVolunteersPostcodeRadiiAsync(int fromUserId, int toUserId);
+
+        Task<IEnumerable<User>> GetVolunteersByIdsAsync(IEnumerable<int> userIds);
     }
 }

@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HelpMyStreet.Contracts" Version="1.1.40" />
+    <PackageReference Include="HelpMyStreet.Utils" Version="1.1.40" />
+    <PackageReference Include="Moq" Version="4.13.1" />
+    <PackageReference Include="nunit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UserService\UserService.AzureFunction\UserService.AzureFunction.csproj" />
+    <ProjectReference Include="..\UserService\UserService.Core\UserService.Core.csproj" />
+    <ProjectReference Include="..\UserService\UserService.Handlers\UserService.Handlers.csproj" />
+    <ProjectReference Include="..\UserService\UserService.Mappers\UserService.Mappers.csproj" />
+    <ProjectReference Include="..\UserService\UserService.Repo\UserService.Repo.csproj" />
+  </ItemGroup>
+
+</Project>

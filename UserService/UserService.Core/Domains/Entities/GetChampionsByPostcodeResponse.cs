@@ -8,6 +8,6 @@ namespace UserService.Core.Domains.Entities
 {
     public class GetChampionsByPostcodeResponse
     {
-        public List<User> Users { get; set; }
+        public IReadOnlyList<User> Users { get; set; }
     }
 }

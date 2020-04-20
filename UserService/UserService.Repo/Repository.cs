@@ -1,24 +1,37 @@
 ﻿using AutoMapper;
+using Dapper;
+using HelpMyStreet.Utils.Enums;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Threading.Tasks;
+using UserService.Core.Config;
 using UserService.Core.Dto;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Repo.EntityFramework.Entities;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using UserService.Core.Domains.Entities;
 using model = HelpMyStreet.Utils.Models;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using HelpMyStreet.Utils.Enums;
 
 namespace UserService.Repo
 {
+
     public class Repository : IRepository
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IOptionsSnapshot<ConnectionStrings> _connectionStrings;
 
-        private enum RegistrationSteps :byte
+        public Repository(ApplicationDbContext context, IMapper mapper, IOptionsSnapshot<ConnectionStrings> connectionStrings)
+        {
+            _context = context;
+            _mapper = mapper;
+            _connectionStrings = connectionStrings;
+        }
+
+        private enum RegistrationSteps : byte
         {
             StepOne = 1,
             StepTwo,
@@ -27,11 +40,6 @@ namespace UserService.Repo
             StepFive
         }
 
-        public Repository(ApplicationDbContext context, IMapper mapper)
-        {
-            _context = context;
-            _mapper = mapper;
-        }
 
         public model.User GetUserByID(int userId)
         {
@@ -80,7 +88,7 @@ namespace UserService.Repo
         {
             var user = _context.User.Where(x => x.Id == userId).FirstOrDefault();
 
-            if(user!=null)
+            if (user != null)
             {
                 if (user.IsVerified.HasValue)
                 {
@@ -106,7 +114,7 @@ namespace UserService.Repo
                 .ToList();
 
             List<model.User> response = new List<model.User>();
-            foreach(SupportPostcode sp in users)
+            foreach (SupportPostcode sp in users)
             {
                 response.Add(MapEFUserToModelUser(sp.User));
             }
@@ -114,13 +122,16 @@ namespace UserService.Repo
             return response;
         }
 
-        public List<model.User> GetChampionsByPostCode(string postCode)
+        public async Task<IReadOnlyList<model.User>> GetChampionsByPostCodeAsync(string postCode)
         {
-            List<ChampionPostcode> users = _context.ChampionPostcode
-                .Include(i=> i.User.PersonalDetails)
-                .Where(x => x.PostalCode == postCode.ToLower() 
-                        && x.User.IsVerified.Value==true)
-                .ToList();
+            IEnumerable<ChampionPostcode> users = await _context.ChampionPostcode
+                .Include(i => i.User.PersonalDetails)
+                .Include(i => i.User.ChampionPostcode)
+                .Include(i => i.User.RegistrationHistory)
+                .Include(i => i.User.SupportActivity)
+                .Where(x => x.PostalCode == postCode
+                            && x.User.IsVerified.Value == true)
+                .ToListAsync();
 
             List<model.User> response = new List<model.User>();
             foreach (ChampionPostcode cp in users)
@@ -163,9 +174,9 @@ namespace UserService.Repo
         private List<SupportActivities> GetSupportActivities(ICollection<SupportActivity> activities)
         {
             var response = new List<SupportActivities>();
-            foreach(SupportActivity supportActivity in activities)
+            foreach (SupportActivity supportActivity in activities)
             {
-                response.Add((SupportActivities) supportActivity.ActivityId);
+                response.Add((SupportActivities)supportActivity.ActivityId);
             }
 
             return response;
@@ -208,7 +219,7 @@ namespace UserService.Repo
                 MobileSharingConsent = user.MobileSharingConsent,
                 OtherPhoneSharingConsent = user.OtherPhoneSharingConsent,
                 PostalCode = user.PostalCode,
-                SupportRadiusMiles = (float?) user.SupportRadiusMiles,
+                SupportRadiusMiles = (float?)user.SupportRadiusMiles,
                 StreetChampionRoleUnderstood = user.StreetChampionRoleUnderstood,
                 SupportVolunteersByPhone = user.SupportVolunteersByPhone,
                 SupportActivities = GetSupportActivities(user.SupportActivity),
@@ -256,7 +267,7 @@ namespace UserService.Repo
             EFPersonalDetails.AddressLine3 = userPersonalDetails.Address.AddressLine3;
             EFPersonalDetails.Locality = userPersonalDetails.Address.Locality;
             EFPersonalDetails.UnderlyingMedicalCondition = userPersonalDetails.UnderlyingMedicalCondition;
-        }        
+        }
         private void UpdateEFUserFromUserModel(model.User user, User EFUser)
         {
             EFUser.FirebaseUid = user.FirebaseUID;
@@ -270,18 +281,18 @@ namespace UserService.Repo
             EFUser.StreetChampionRoleUnderstood = user.StreetChampionRoleUnderstood;
             EFUser.SupportRadiusMiles = user.SupportRadiusMiles;
             EFUser.SupportVolunteersByPhone = user.SupportVolunteersByPhone;
-            UpdateEFPersonalDetailsFromModelPersonalDetails(user.UserPersonalDetails,EFUser.PersonalDetails);
+            UpdateEFPersonalDetailsFromModelPersonalDetails(user.UserPersonalDetails, EFUser.PersonalDetails);
         }
 
         public void CreateChampionForPostCode(int userId, string postCode)
         {
             var user = _context.User.Where(a => a.Id == userId).FirstOrDefault();
 
-            if(user!=null)
+            if (user != null)
             {
                 var result = _context.ChampionPostcode.Where(a => a.User == user && a.PostalCode == postCode).FirstOrDefault();
 
-                if(result==null)
+                if (result == null)
                 {
                     _context.ChampionPostcode.Add(new ChampionPostcode()
                     {
@@ -332,7 +343,7 @@ namespace UserService.Repo
         public int ModifyUser(model.User user)
         {
             User EFUser = _context.User
-                .Include(i=>i.PersonalDetails)
+                .Include(i => i.PersonalDetails)
                 .Where(a => a.Id == user.ID).FirstOrDefault();
 
             if (EFUser != null)
@@ -350,7 +361,7 @@ namespace UserService.Repo
 
         public int GetChampionPostcodesCoveredCount()
         {
-            return _context.ChampionPostcode.Count(x=> x.User.IsVerified==true);
+            return _context.ChampionPostcode.Count(x => x.User.IsVerified == true);
         }
 
         public int GetDistinctChampionUserCount()
@@ -375,7 +386,7 @@ namespace UserService.Repo
                 .Include(i => i.RegistrationHistory)
                 .Where(a => a.Id == registrationStepTwo.UserID).FirstOrDefault();
 
-            if(EFUser!=null)
+            if (EFUser != null)
             {
                 EFUser.PostalCode = registrationStepTwo.PostalCode;
                 EFUser.PersonalDetails.FirstName = registrationStepTwo.FirstName;
@@ -416,7 +427,7 @@ namespace UserService.Repo
                     _context.SupportActivity.Add(new SupportActivity
                     {
                         User = EFUser,
-                        ActivityId = (byte) sa
+                        ActivityId = (byte)sa
                     });
                 }
                 AddRegistrationHistoryForUser(EFUser, RegistrationSteps.StepThree);
@@ -472,7 +483,7 @@ namespace UserService.Repo
 
         private void AddRegistrationHistoryForUser(User user, RegistrationSteps registrationStep)
         {
-            var regHistory = user.RegistrationHistory.FirstOrDefault(w => w.RegistrationStep == (byte) registrationStep);
+            var regHistory = user.RegistrationHistory.FirstOrDefault(w => w.RegistrationStep == (byte)registrationStep);
 
             if (regHistory != null)
             {
@@ -481,9 +492,92 @@ namespace UserService.Repo
             user.RegistrationHistory.Add(new RegistrationHistory()
             {
                 DateCompleted = DateTime.Now.ToUniversalTime(),
-                RegistrationStep = (byte) registrationStep,
+                RegistrationStep = (byte)registrationStep,
                 UserId = user.Id
             });
+        }
+
+        public async Task<int> GetMinUserIdAsync()
+        {
+            int userId = await _context.User.MinAsync(x => x.Id);
+
+            return userId;
+        }
+        public async Task<int> GetMaxUserIdAsync()
+        {
+            int userId = await _context.User.MaxAsync(x => x.Id);
+
+            return userId;
+        }
+
+
+        public async Task<IEnumerable<HelperPostcodeRadiusDto>> GetAllVolunteersPostcodeRadiiAsync()
+        {
+            var query = @"
+SELECT [ID] AS [UserId], 
+[PostalCode] AS [Postcode], 
+[SupportRadiusMiles]
+FROM [User].[User]
+WHERE 
+[SupportRadiusMiles] IS NOT NULL AND 
+[IsVolunteer] = 1 
+";
+
+            using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.SqlConnectionString))
+            {
+                IEnumerable<HelperPostcodeRadiusDto> result = await connection.QueryAsync<HelperPostcodeRadiusDto>(query,
+                    commandType: CommandType.Text,
+                    commandTimeout: 15);
+
+                return result;
+            }
+
+        }
+
+        public async Task<IEnumerable<HelperPostcodeRadiusDto>> GetVolunteersPostcodeRadiiAsync(int fromUserId, int toUserId)
+        {
+            var query = @"
+SELECT [ID] AS [UserId], 
+[PostalCode] AS [Postcode], 
+[SupportRadiusMiles]
+FROM [User].[User]
+WHERE 
+[SupportRadiusMiles] IS NOT NULL AND 
+[IsVolunteer] = 1 AND
+[ID] >= @FromUserId AND 
+[ID] <= @ToUser1Id
+";
+
+            using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.SqlConnectionString))
+            {
+                IEnumerable<HelperPostcodeRadiusDto> result = await connection.QueryAsync<HelperPostcodeRadiusDto>(query,
+                    commandType: CommandType.Text,
+                    param: new { FromUserId = fromUserId, ToUser1Id = toUserId },
+                    commandTimeout: 15);
+
+                return result;
+            }
+        }
+
+        public async Task<IEnumerable<model.User>> GetVolunteersByIdsAsync(IEnumerable<int> userIds)
+        {
+            var users = await _context.User
+                .Where(x => x.IsVolunteer == true
+                            && userIds.Contains(x.Id))
+                .Include(x => x.ChampionPostcode)
+                .Include(x => x.SupportActivity)
+                .Include(x => x.PersonalDetails)
+                .Include(x => x.RegistrationHistory)
+                .ToListAsync();
+
+
+            List<model.User> response = new List<model.User>();
+            foreach (var user in users)
+            {
+                response.Add(MapEFUserToModelUser(user));
+            }
+
+            return response;
         }
     }
 }
