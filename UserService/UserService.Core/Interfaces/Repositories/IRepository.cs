@@ -12,6 +12,8 @@ namespace UserService.Core.Interfaces.Repositories
     {
         User GetUserByID(int userId);
 
+        List<User> GetUsersForIDs(List<int> userId);
+
         User GetUserByFirebaseUserID(string firebaseUID);
 
         List<User> GetVolunteersByPostCode(string postCode);
