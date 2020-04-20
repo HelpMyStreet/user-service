@@ -21,7 +21,7 @@ using UserService.Core.Interfaces.Services;
 using UserService.Core.Interfaces.Utils;
 using UserService.Core.Services;
 using UserService.Core.Utils;
-
+ 
 [assembly: FunctionsStartup(typeof(UserService.AzureFunction.Startup))]
 namespace UserService.AzureFunction
 {
