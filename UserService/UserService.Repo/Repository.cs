@@ -65,6 +65,25 @@ namespace UserService.Repo
             return MapEFUserToModelUser(user);
         }
 
+        public List<model.User> GetUsersForIDs(List<int> userId)
+        {
+            List<User> users = _context.User
+                .Include(i => i.PersonalDetails)
+                .Include(i => i.SupportActivity)
+                .Include(i => i.ChampionPostcode)
+                .Include(i => i.RegistrationHistory)
+                .Where(p => userId.Contains(p.Id))
+                .ToList();
+
+            List<model.User> response = new List<model.User>();
+            foreach (User user in users)
+            {
+                response.Add(MapEFUserToModelUser(user));
+            }
+
+            return response;
+        }
+
         public bool GetUserIsVerified(int userId)
         {
             var user = _context.User.Where(x => x.Id == userId).FirstOrDefault();
