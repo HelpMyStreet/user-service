@@ -38,6 +38,8 @@ namespace UserService.Handlers
 
             int totalVolunteers = maxUserId - minUserId;
 
+            if (totalVolunteers == 0) return new GetHelpersByPostcodeResponse();
+
             int numberOfBatches = totalVolunteers / batchSize;
             if (totalVolunteers % batchSize > 0)
             {
