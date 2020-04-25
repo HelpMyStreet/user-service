@@ -1,10 +1,10 @@
 ﻿using System;
+using Microsoft.Extensions.Internal;
 
 namespace UserService.Core.Utils
 {
-    public class MockableDateTime : IDateTime
+    public class MockableDateTime : ISystemClock
     {
-        public DateTime UtcNow => DateTime.UtcNow;
-        public DateTime Now =>DateTime.Now;
+        public DateTimeOffset UtcNow => DateTime.UtcNow;
     }
 }

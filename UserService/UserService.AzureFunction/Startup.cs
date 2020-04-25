@@ -15,6 +15,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using Microsoft.Azure.WebJobs.Host.Bindings;
+using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.Options;
 using UserService.Core;
 using UserService.Core.Config;
@@ -83,9 +84,11 @@ namespace UserService.AzureFunction
             builder.Services.AddTransient<IRepository, Repository>();
             builder.Services.AddTransient<IAddressService, Core.Services.AddressService>();
             builder.Services.AddTransient<IHttpClientWrapper, HttpClientWrapper>();
-            builder.Services.AddTransient<IDateTime, MockableDateTime>();
             builder.Services.AddTransient<IDistanceCalculator, DistanceCalculator>();
             builder.Services.AddTransient<IVolunteerCache, VolunteerCache>();
+            builder.Services.AddTransient<IVolunteersForCacheGetter, VolunteersForCacheGetter>();
+            builder.Services.AddSingleton<IPollyMemoryCacheProvider, PollyMemoryCacheProvider>();
+            builder.Services.AddTransient<ISystemClock, MockableDateTime>();
         }
     }
 }

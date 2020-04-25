@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Enums.NET" Version="3.0.3" />
     <PackageReference Include="HelpMyStreet.Contracts" Version="1.1.40" />
     <PackageReference Include="HelpMyStreet.Utils" Version="1.1.40" />
     <PackageReference Include="MediatR" Version="8.0.1" />
