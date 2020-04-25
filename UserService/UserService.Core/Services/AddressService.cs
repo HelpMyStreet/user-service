@@ -26,32 +26,6 @@ namespace UserService.Core.Services
             _httpClientWrapper = httpClientWrapper;
         }
 
-        public async Task<IsPostcodeWithinRadiiResponse> IsPostcodeWithinRadiiAsync(IsPostcodeWithinRadiiRequest isPostcodeWithinRadiiRequest, CancellationToken cancellationToken)
-        {
-            string path = $"api/IsPostcodeWithinRadii";
-
-            var streamContent = HttpContentUtils.SerialiseToJsonAndCompress(isPostcodeWithinRadiiRequest);
-
-            ResponseWrapper<IsPostcodeWithinRadiiResponse, AddressServiceErrorCode> isPostcodeWithinRadiiResponseWithWrapper;
-            var sw = new Stopwatch();
-            sw.Start();
-            using (HttpResponseMessage response = await _httpClientWrapper.PostAsync(HttpClientConfigName.AddressService, path, streamContent, cancellationToken).ConfigureAwait(false))
-            {
-                response.EnsureSuccessStatusCode();
-                Stream stream = await response.Content.ReadAsStreamAsync();
-                sw.Stop();
-                Debug.WriteLine($"Calling Address Service IsPostcodeWithinRadiiAsync took: {sw.ElapsedMilliseconds}");
-                isPostcodeWithinRadiiResponseWithWrapper = await Utf8Json.JsonSerializer.DeserializeAsync<ResponseWrapper<IsPostcodeWithinRadiiResponse, AddressServiceErrorCode>>(stream, StandardResolver.AllowPrivate);
-            }
-
-            if (!isPostcodeWithinRadiiResponseWithWrapper.IsSuccessful)
-            {
-                throw new Exception($"Calling Address Service IsPostcodeWithinRadii endpoint unsuccessful: {isPostcodeWithinRadiiResponseWithWrapper.Errors.FirstOrDefault()?.ErrorMessage}");
-            }
-
-            return isPostcodeWithinRadiiResponseWithWrapper.Content;
-        }
-
         public async Task<GetPostcodeCoordinatesResponse> GetPostcodeCoordinatesAsync(GetPostcodeCoordinatesRequest getPostcodeCoordinatesRequest, CancellationToken cancellationToken)
         {
             string path = $"api/GetPostcodeCoordinates";
