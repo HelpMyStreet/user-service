@@ -1,4 +1,6 @@
-﻿using HelpMyStreet.Utils.Models;
+﻿using HelpMyStreet.Contracts.AddressService.Request;
+using HelpMyStreet.Contracts.AddressService.Response;
+using HelpMyStreet.Utils.Models;
 using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;

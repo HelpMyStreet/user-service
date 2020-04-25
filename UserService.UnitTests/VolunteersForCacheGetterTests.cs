@@ -1,3 +1,5 @@
+using HelpMyStreet.Contracts.AddressService.Request;
+using HelpMyStreet.Contracts.AddressService.Response;
 using HelpMyStreet.Utils.Models;
 using Microsoft.Extensions.Options;
 using Moq;

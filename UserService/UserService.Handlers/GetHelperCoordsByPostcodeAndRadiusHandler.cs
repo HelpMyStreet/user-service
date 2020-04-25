@@ -1,4 +1,6 @@
-﻿using HelpMyStreet.Utils.Utils;
+﻿using HelpMyStreet.Contracts.AddressService.Request;
+using HelpMyStreet.Contracts.AddressService.Response;
+using HelpMyStreet.Utils.Utils;
 using MediatR;
 using System.Collections.Generic;
 using System.Linq;
