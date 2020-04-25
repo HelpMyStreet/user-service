@@ -1,39 +1,78 @@
-﻿using HelpMyStreet.Contracts.AddressService.Request;
-using HelpMyStreet.Contracts.AddressService.Response;
-using HelpMyStreet.Utils.Models;
-using HelpMyStreet.Utils.Utils;
-using MediatR;
-using Microsoft.Extensions.Options;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
-using UserService.Core.Config;
+using AddressService.Core.Contracts;
+using HelpMyStreet.Utils.Utils;
+using UserService.Core;
 using UserService.Core.Contracts;
-using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
-using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
+using UserService.Core.Utils;
 
 namespace UserService.Handlers
 {
     public class GetHelperCoordsByPostcodeAndRadiusHandler : IRequestHandler<GetHelperCoordsByPostcodeAndRadiusRequest, GetHelperCoordsByPostcodeAndRadiusResponse>
     {
-        private readonly IRepository _repository;
+        private readonly IVolunteerCache _volunteerCache;
+        private readonly IDistanceCalculator _distanceCalculator;
         private readonly IAddressService _addressService;
-        private readonly IOptionsSnapshot<ApplicationConfig> _applicationConfig;
 
-        public GetHelperCoordsByPostcodeAndRadiusHandler(IRepository repository, IAddressService addressService, IOptionsSnapshot<ApplicationConfig> applicationConfig)
+        public GetHelperCoordsByPostcodeAndRadiusHandler(IVolunteerCache volunteerCache, IDistanceCalculator distanceCalculator, IAddressService addressService)
         {
-            _repository = repository;
+            _volunteerCache = volunteerCache;
+            _distanceCalculator = distanceCalculator;
             _addressService = addressService;
-            _applicationConfig = applicationConfig;
         }
+
 
         public async Task<GetHelperCoordsByPostcodeAndRadiusResponse> Handle(GetHelperCoordsByPostcodeAndRadiusRequest request, CancellationToken cancellationToken)
         {
-            
-            return new GetHelperCoordsByPostcodeAndRadiusResponse();
+            request.Postcode = PostcodeFormatter.FormatPostcode(request.Postcode);
+
+            GetPostcodeCoordinatesRequest getPostcodeCoordsRequest = new GetPostcodeCoordinatesRequest()
+            {
+                Postcodes = new List<string>() { request.Postcode }
+            };
+
+            Task<GetPostcodeCoordinatesResponse> postcodeCoordsTask = _addressService.GetPostcodeCoordinatesAsync(getPostcodeCoordsRequest, cancellationToken);
+            Task<IEnumerable<CachedVolunteerDto>> cachedVolunteerDtosTask = _volunteerCache.GetCachedVolunteersAsync(request.VolunteerTypeEnum, request.IsVerifiedTypeEnum, cancellationToken);
+
+            await Task.WhenAll(postcodeCoordsTask, cachedVolunteerDtosTask);
+
+            GetPostcodeCoordinatesResponse postcodeCoords = await postcodeCoordsTask;
+            IEnumerable<CachedVolunteerDto> cachedVolunteerDtos = await cachedVolunteerDtosTask;
+
+            PostcodeCoordinate postcodeCoordsToCompareTo = postcodeCoords.PostcodeCoordinates.FirstOrDefault();
+
+            List<VolunteerCoordinate> volunteerCoordinates = new List<VolunteerCoordinate>();
+
+            foreach (CachedVolunteerDto cachedVolunteerDto in cachedVolunteerDtos)
+            {
+                double distance = _distanceCalculator.GetDistanceInMetres(postcodeCoordsToCompareTo.Latitude, postcodeCoordsToCompareTo.Longitude, cachedVolunteerDto.Latitude, cachedVolunteerDto.Longitude);
+
+                bool isWithinSupportRadius = distance <= request.RadiusInMetres;
+
+                if (isWithinSupportRadius)
+                {
+                    VolunteerCoordinate volunteerCoordinate = new VolunteerCoordinate()
+                    {
+                        Latitude = cachedVolunteerDto.Latitude,
+                        Longitude = cachedVolunteerDto.Longitude,
+                        IsVerified = cachedVolunteerDto.IsVerifiedType == IsVerifiedType.IsVerified,
+                        VolunteerType = cachedVolunteerDto.VolunteerType
+                    };
+
+                    volunteerCoordinates.Add(volunteerCoordinate);
+                }
+            }
+            GetHelperCoordsByPostcodeAndRadiusResponse getHelperCoordsByPostcodeAndRadiusResponse = new GetHelperCoordsByPostcodeAndRadiusResponse()
+            {
+                Coordinates = volunteerCoordinates
+            };
+
+            return getHelperCoordsByPostcodeAndRadiusResponse;
         }
     }
 }

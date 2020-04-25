@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace UserService.Core.Contracts
@@ -13,9 +12,14 @@ namespace UserService.Core.Contracts
         public int RadiusInMetres { get; set; }
 
         [Required]
-        public IEnumerable<VolunteerType> UserTypes { get; set; }
+        public byte VolunteerType { get; set; }
+
+        // a workaround ... https://github.com/Azure/azure-webjobs-sdk-extensions/issues/486 (the suggested workaround there didn't work)
+        public VolunteerType VolunteerTypeEnum => (VolunteerType)VolunteerType;
 
         [Required]
-        public bool GetVerifiedUsersOnly { get; set; }
+        public byte IsVerifiedType { get; set; }
+
+        public IsVerifiedType IsVerifiedTypeEnum => (IsVerifiedType)IsVerifiedType;
     }
 }

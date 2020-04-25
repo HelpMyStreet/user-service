@@ -6,7 +6,7 @@ namespace UserService.Core.Contracts
     [DataContract(Name = "getHelperCoordsByPostcodeAndRadiusResponse")]
     public class GetHelperCoordsByPostcodeAndRadiusResponse
     {
-        [DataMember(Name = "coordinates")]
+        [DataMember(Name = "volunteerCoordinates")]
         public IReadOnlyList<VolunteerCoordinate> Coordinates { get; set; }
     }
 }

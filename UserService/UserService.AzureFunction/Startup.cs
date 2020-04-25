@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters.Json.Internal;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.Options;
@@ -23,7 +25,9 @@ using UserService.Core.Interfaces.Services;
 using UserService.Core.Interfaces.Utils;
 using UserService.Core.Services;
 using UserService.Core.Utils;
- 
+using Microsoft.AspNetCore.Mvc.Formatters.Json;
+
+
 [assembly: FunctionsStartup(typeof(UserService.AzureFunction.Startup))]
 namespace UserService.AzureFunction
 {
@@ -80,7 +84,7 @@ namespace UserService.AzureFunction
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(sqlConnectionString));
-
+            
             builder.Services.AddTransient<IRepository, Repository>();
             builder.Services.AddTransient<IAddressService, Core.Services.AddressService>();
             builder.Services.AddTransient<IHttpClientWrapper, HttpClientWrapper>();

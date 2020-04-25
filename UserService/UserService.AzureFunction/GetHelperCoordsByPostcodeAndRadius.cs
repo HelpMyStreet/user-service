@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using UserService.Core.Contracts;
 using UserService.Core.Domains.Entities;
 
 namespace UserService.AzureFunction
@@ -21,17 +22,17 @@ namespace UserService.AzureFunction
         }
 
         [FunctionName("GetHelperCoordsByPostcodeAndRadius")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetHelpersByPostcodeResponse))]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetHelperCoordsByPostcodeAndRadiusResponse))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
-            [RequestBodyType(typeof(GetHelpersByPostcodeRequest), "product request")] GetHelpersByPostcodeRequest req,
+            [RequestBodyType(typeof(GetHelperCoordsByPostcodeAndRadiusRequest), "product request")] GetHelperCoordsByPostcodeAndRadiusRequest req,
             ILogger log)
         {
             try
             {
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
-                GetHelpersByPostcodeResponse response = await _mediator.Send(req);
+                GetHelperCoordsByPostcodeAndRadiusResponse response = await _mediator.Send(req);
 
                 return new OkObjectResult(response);
             }

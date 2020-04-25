@@ -33,36 +33,36 @@ namespace UserService.Handlers
 
         public async Task<GetHelpersByPostcodeResponse> Handle(GetHelpersByPostcodeRequest request, CancellationToken cancellationToken)
         {
-            request.PostCode = PostcodeFormatter.FormatPostcode(request.PostCode);
+            request.Postcode = PostcodeFormatter.FormatPostcode(request.Postcode);
 
             GetPostcodeCoordinatesRequest getPostcodeCoordsRequest = new GetPostcodeCoordinatesRequest()
             {
-                Postcodes = new List<string>() { request.PostCode }
+                Postcodes = new List<string>() { request.Postcode }
             };
 
             Task<GetPostcodeCoordinatesResponse> postcodeCoordsTask = _addressService.GetPostcodeCoordinatesAsync(getPostcodeCoordsRequest, cancellationToken);
 
             VolunteerType volunteerType = VolunteerType.Helper;
             IsVerifiedType isVerifiedType = IsVerifiedType.IsVerified;
-            Task<IEnumerable<CachedVolunteerDto>> volunteersFromCacheTask = _volunteerCache.GetCachedVolunteersAsync(volunteerType, isVerifiedType, cancellationToken);
+            Task<IEnumerable<CachedVolunteerDto>> cachedVolunteerDtosTask = _volunteerCache.GetCachedVolunteersAsync(volunteerType, isVerifiedType, cancellationToken);
 
-            await Task.WhenAll(postcodeCoordsTask, volunteersFromCacheTask);
+            await Task.WhenAll(postcodeCoordsTask, cachedVolunteerDtosTask);
 
             GetPostcodeCoordinatesResponse postcodeCoords = await postcodeCoordsTask;
             PostcodeCoordinate postcodeCoordsToCompareTo = postcodeCoords.PostcodeCoordinates.FirstOrDefault();
-            IEnumerable<CachedVolunteerDto> volunteersFromCache = await volunteersFromCacheTask;
+            IEnumerable<CachedVolunteerDto> cachedVolunteerDtos = await cachedVolunteerDtosTask;
 
             List<int> idsOfHelpersWithinRadius = new List<int>();
 
-            foreach (CachedVolunteerDto volunteerFromCache in volunteersFromCache)
+            foreach (CachedVolunteerDto cachedVolunteerDto in cachedVolunteerDtos)
             {
-                double distance = _distanceCalculator.GetDistanceInMiles(postcodeCoordsToCompareTo.Latitude, postcodeCoordsToCompareTo.Longitude, volunteerFromCache.Latitude, volunteerFromCache.Longitude);
+                double distance = _distanceCalculator.GetDistanceInMiles(postcodeCoordsToCompareTo.Latitude, postcodeCoordsToCompareTo.Longitude, cachedVolunteerDto.Latitude, cachedVolunteerDto.Longitude);
 
-                bool isWithinSupportRadius = volunteerFromCache.SupportRadiusMiles <= distance;
+                bool isWithinSupportRadius = cachedVolunteerDto.SupportRadiusMiles <= distance;
 
                 if (isWithinSupportRadius)
                 {
-                    idsOfHelpersWithinRadius.Add(volunteerFromCache.UserId);
+                    idsOfHelpersWithinRadius.Add(cachedVolunteerDto.UserId);
                 }
             }
 

@@ -46,7 +46,7 @@ namespace UserService.Core
         {
             DateTimeOffset timeNow = _mockableDateTime.UtcNow;
             DateTimeOffset nowPlusOneMinute = timeNow.AddHours(1);
-            DateTimeOffset theNextMinuteWithoutSeconds = new DateTime(nowPlusOneMinute.Year, nowPlusOneMinute.Month, nowPlusOneMinute.Day, nowPlusOneMinute.Hour, 0, 0);
+            DateTimeOffset theNextMinuteWithoutSeconds = new DateTime(nowPlusOneMinute.Year, nowPlusOneMinute.Month, nowPlusOneMinute.Day, nowPlusOneMinute.Hour, 0, 0, DateTimeKind.Utc);
             TimeSpan timeSpanUntilNextMinute = theNextMinuteWithoutSeconds - timeNow;
             return timeSpanUntilNextMinute;
         }

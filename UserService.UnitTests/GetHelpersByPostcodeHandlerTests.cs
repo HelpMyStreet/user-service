@@ -101,7 +101,7 @@ namespace UserService.UnitTests
 
             GetHelpersByPostcodeRequest request = new GetHelpersByPostcodeRequest()
             {
-                PostCode = "NG1 1AE"
+                Postcode = "NG1 1AE"
             };
 
             GetHelpersByPostcodeHandler getHelpersByPostcodeHandler = new GetHelpersByPostcodeHandler(_volunteerCache.Object, _distanceCalculator.Object, _addressService.Object, _repository.Object);
