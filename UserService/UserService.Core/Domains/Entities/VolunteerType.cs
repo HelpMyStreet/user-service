@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace UserService.Core.Contracts
+namespace UserService.Core.Domains.Entities
 {
     [Flags]
     public enum VolunteerType : byte

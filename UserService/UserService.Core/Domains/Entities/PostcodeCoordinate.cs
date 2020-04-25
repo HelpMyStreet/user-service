@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace AddressService.Core.Contracts
+namespace UserService.Core.Domains.Entities
 {
     [DataContract(Name = "postcodeCoordinate")]
     public class PostcodeCoordinate

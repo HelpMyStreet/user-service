@@ -2,7 +2,7 @@
 using HelpMyStreet.Contracts.AddressService.Response;
 using System.Threading;
 using System.Threading.Tasks;
-using AddressService.Core.Contracts;
+using UserService.Core.Domains.Entities;
 
 namespace UserService.Core.Interfaces.Services
 {

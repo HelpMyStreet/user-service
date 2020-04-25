@@ -9,7 +9,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UserService.Core;
-using UserService.Core.Contracts;
+using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 
 namespace UserService.UnitTests

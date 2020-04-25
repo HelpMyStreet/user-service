@@ -1,4 +1,4 @@
-﻿using UserService.Core.Contracts;
+﻿using UserService.Core.Domains.Entities;
 
 namespace UserService.Core.Dto
 {

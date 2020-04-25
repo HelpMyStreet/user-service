@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
 using System.Threading.Tasks;
-using UserService.Core.Contracts;
 using UserService.Core.Domains.Entities;
 
 namespace UserService.AzureFunction

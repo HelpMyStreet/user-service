@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace UserService.Core.Contracts
+namespace UserService.Core.Domains.Entities
 {
     [DataContract(Name = "getHelperCoordsByPostcodeAndRadiusResponse")]
     public class GetHelperCoordsByPostcodeAndRadiusResponse

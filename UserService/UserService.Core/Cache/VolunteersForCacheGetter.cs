@@ -1,10 +1,10 @@
-﻿using AddressService.Core.Contracts;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UserService.Core.Config;
+using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;

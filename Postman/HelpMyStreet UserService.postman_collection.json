@@ -2,6 +2,7 @@
 	"info": {
 		"name": "HelpMyStreet UserService",
 		"_postman_id": "29c6a9bb-499d-8cbc-b2e6-b0c99bfc7f25",
+		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -249,6 +250,60 @@
 								{
 									"key": "Postcode",
 									"value": "ng15fs",
+									"equals": true
+								}
+							]
+						},
+						"description": "GetSupportCountByPostcode"
+					},
+					"response": []
+				},
+				{
+					"name": "GetHelperCoordsByPostcodeAndRadius",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "x-functions-key",
+								"value": "{{code}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\tpostcode: \"DE238GD\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/GetHelperCoordsByPostcodeAndRadius?Postcode=ng15fs&RadiusInMetres=1000&VolunteerType=3&IsVerifiedType=3",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"GetHelperCoordsByPostcodeAndRadius"
+							],
+							"query": [
+								{
+									"key": "Postcode",
+									"value": "ng15fs",
+									"equals": true
+								},
+								{
+									"key": "RadiusInMetres",
+									"value": "1000",
+									"equals": true
+								},
+								{
+									"key": "VolunteerType",
+									"value": "3",
+									"equals": true
+								},
+								{
+									"key": "IsVerifiedType",
+									"value": "3",
 									"equals": true
 								}
 							]

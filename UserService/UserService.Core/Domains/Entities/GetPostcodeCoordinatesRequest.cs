@@ -1,8 +1,8 @@
-﻿using MediatR;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using MediatR;
 
-namespace AddressService.Core.Contracts
+namespace UserService.Core.Domains.Entities
 {
     public class GetPostcodeCoordinatesRequest : IRequest<GetPostcodeCoordinatesResponse>
     {

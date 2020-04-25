@@ -2,13 +2,13 @@
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
-namespace AddressService.Core.Contracts
+namespace UserService.Core.Domains.Entities
 {
     [DataContract(Name = "getPostcodeCoordinatesResponse")]
     public class GetPostcodeCoordinatesResponse
     {
         [Required]
         [DataMember(Name = "postcodeCoordinates")]
-        public IEnumerable<PostcodeCoordinate> PostcodeCoordinates { get; set; }
+        public IReadOnlyList<PostcodeCoordinate> PostcodeCoordinates { get; set; }
     }
 }

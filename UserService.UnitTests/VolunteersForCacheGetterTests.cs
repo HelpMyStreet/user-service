@@ -1,4 +1,3 @@
-using AddressService.Core.Contracts;
 using HelpMyStreet.Utils.Models;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -9,7 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UserService.Core;
 using UserService.Core.Config;
-using UserService.Core.Contracts;
+using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;

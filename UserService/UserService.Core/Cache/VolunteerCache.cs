@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using UserService.Core.Contracts;
+using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 
 namespace UserService.Core

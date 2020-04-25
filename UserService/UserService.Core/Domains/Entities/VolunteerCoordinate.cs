@@ -1,8 +1,8 @@
 ﻿using System.Runtime.Serialization;
 
-namespace UserService.Core.Contracts
+namespace UserService.Core.Domains.Entities
 {
-    [DataContract]
+    [DataContract(Name = "volunteerCoordinate")]
     public class VolunteerCoordinate
     {
         [DataMember(Name = "lat")]

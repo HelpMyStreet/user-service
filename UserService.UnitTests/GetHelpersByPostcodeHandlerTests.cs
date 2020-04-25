@@ -1,5 +1,4 @@
-﻿using AddressService.Core.Contracts;
-using HelpMyStreet.Utils.Models;
+﻿using HelpMyStreet.Utils.Models;
 using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -7,7 +6,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UserService.Core;
-using UserService.Core.Contracts;
 using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 using UserService.Core.Interfaces.Repositories;

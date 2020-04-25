@@ -1,7 +1,7 @@
-﻿using MediatR;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using MediatR;
 
-namespace UserService.Core.Contracts
+namespace UserService.Core.Domains.Entities
 {
     public class GetHelperCoordsByPostcodeAndRadiusRequest : IRequest<GetHelperCoordsByPostcodeAndRadiusResponse>
     {
