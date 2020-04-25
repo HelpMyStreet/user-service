@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using AddressService.Core.Contracts;
 using UserService.Core.Config;
 using UserService.Core.Interfaces.Services;
 using UserService.Core.Interfaces.Utils;
@@ -32,10 +33,14 @@ namespace UserService.Core.Services
             var streamContent = HttpContentUtils.SerialiseToJsonAndCompress(isPostcodeWithinRadiiRequest);
 
             ResponseWrapper<IsPostcodeWithinRadiiResponse, AddressServiceErrorCode> isPostcodeWithinRadiiResponseWithWrapper;
+            var sw = new Stopwatch();
+            sw.Start();
             using (HttpResponseMessage response = await _httpClientWrapper.PostAsync(HttpClientConfigName.AddressService, path, streamContent, cancellationToken).ConfigureAwait(false))
             {
                 response.EnsureSuccessStatusCode();
                 Stream stream = await response.Content.ReadAsStreamAsync();
+                sw.Stop();
+                Debug.WriteLine($"Calling Address Service IsPostcodeWithinRadiiAsync took: {sw.ElapsedMilliseconds}");
                 isPostcodeWithinRadiiResponseWithWrapper = await Utf8Json.JsonSerializer.DeserializeAsync<ResponseWrapper<IsPostcodeWithinRadiiResponse, AddressServiceErrorCode>>(stream, StandardResolver.AllowPrivate);
             }
 
@@ -45,6 +50,32 @@ namespace UserService.Core.Services
             }
 
             return isPostcodeWithinRadiiResponseWithWrapper.Content;
+        }
+
+        public async Task<GetPostcodeCoordinatesResponse> GetPostcodeCoordinatesAsync(GetPostcodeCoordinatesRequest getPostcodeCoordinatesRequest, CancellationToken cancellationToken)
+        {
+            string path = $"api/GetPostcodeCoordinates";
+
+            var streamContent = HttpContentUtils.SerialiseToJsonAndCompress(getPostcodeCoordinatesRequest);
+
+            ResponseWrapper<GetPostcodeCoordinatesResponse, AddressServiceErrorCode> getPostcodeCoordinatesResponseWithWrapper;
+            var sw = new Stopwatch();
+            sw.Start();
+            using (HttpResponseMessage response = await _httpClientWrapper.PostAsync(HttpClientConfigName.AddressService, path, streamContent, cancellationToken).ConfigureAwait(false))
+            {
+                response.EnsureSuccessStatusCode();
+                Stream stream = await response.Content.ReadAsStreamAsync();
+                sw.Stop();
+                Debug.WriteLine($"Calling Address Service GetPostcodeCoordinatesAsync took: {sw.ElapsedMilliseconds}");
+                getPostcodeCoordinatesResponseWithWrapper = await Utf8Json.JsonSerializer.DeserializeAsync<ResponseWrapper<GetPostcodeCoordinatesResponse, AddressServiceErrorCode>>(stream, StandardResolver.AllowPrivate);
+            }
+
+            if (!getPostcodeCoordinatesResponseWithWrapper.IsSuccessful)
+            {
+                throw new Exception($"Calling Address Service GetPostcodeCoordinatesAsync endpoint unsuccessful: {getPostcodeCoordinatesResponseWithWrapper.Errors.FirstOrDefault()?.ErrorMessage}");
+            }
+
+            return getPostcodeCoordinatesResponseWithWrapper.Content;
         }
     }
 }

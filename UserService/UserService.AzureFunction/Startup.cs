@@ -16,6 +16,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Extensions.Options;
+using UserService.Core;
 using UserService.Core.Config;
 using UserService.Core.Interfaces.Services;
 using UserService.Core.Interfaces.Utils;
@@ -71,8 +72,8 @@ namespace UserService.AzureFunction
             IConfigurationSection connectionStringSettings = config.GetSection("ConnectionStrings");
             builder.Services.Configure<ConnectionStrings>(connectionStringSettings);
 
-            IConfigurationSection ApplicationConfigSettings = config.GetSection("ApplicationConfig");
-            builder.Services.Configure<ApplicationConfig>(ApplicationConfigSettings);
+            IConfigurationSection applicationConfigSettings = config.GetSection("ApplicationConfig");
+            builder.Services.Configure<ApplicationConfig>(applicationConfigSettings);
 
             var sqlConnectionString = config.GetConnectionString("SqlConnectionString");
 
@@ -80,8 +81,11 @@ namespace UserService.AzureFunction
                 options.UseSqlServer(sqlConnectionString));
 
             builder.Services.AddTransient<IRepository, Repository>();
-            builder.Services.AddTransient<IAddressService, AddressService>();
+            builder.Services.AddTransient<IAddressService, Core.Services.AddressService>();
             builder.Services.AddTransient<IHttpClientWrapper, HttpClientWrapper>();
+            builder.Services.AddTransient<IDateTime, MockableDateTime>();
+            builder.Services.AddTransient<IDistanceCalculator, DistanceCalculator>();
+            builder.Services.AddTransient<IVolunteerCache, VolunteerCache>();
         }
     }
 }
