@@ -51,21 +51,20 @@ namespace UserService.Handlers
             GetPostcodeCoordinatesResponse postcodeCoords = await postcodeCoordsTask;
             PostcodeCoordinate postcodeCoordsToCompareTo = postcodeCoords.PostcodeCoordinates.FirstOrDefault();
             IEnumerable<CachedVolunteerDto> volunteersFromCache = await volunteersFromCacheTask;
-            
+
             List<int> idsOfHelpersWithinRadius = new List<int>();
 
             foreach (CachedVolunteerDto volunteerFromCache in volunteersFromCache)
             {
                 double distance = _distanceCalculator.GetDistanceInMiles(postcodeCoordsToCompareTo.Latitude, postcodeCoordsToCompareTo.Longitude, volunteerFromCache.Latitude, volunteerFromCache.Longitude);
 
-                bool isWithinSupportRadius = distance <= volunteerFromCache.SupportRadiusMiles;
+                bool isWithinSupportRadius = volunteerFromCache.SupportRadiusMiles <= distance;
 
                 if (isWithinSupportRadius)
                 {
                     idsOfHelpersWithinRadius.Add(volunteerFromCache.UserId);
                 }
             }
-
 
             IEnumerable<User> users = await _repository.GetVolunteersByIdsAsync(idsOfHelpersWithinRadius);
 
