@@ -58,7 +58,7 @@ namespace UserService.Handlers
             {
                 double distance = _distanceCalculator.GetDistanceInMiles(postcodeCoordsToCompareTo.Latitude, postcodeCoordsToCompareTo.Longitude, cachedVolunteerDto.Latitude, cachedVolunteerDto.Longitude);
 
-                bool isWithinSupportRadius = cachedVolunteerDto.SupportRadiusMiles <= distance;
+                bool isWithinSupportRadius = distance <= cachedVolunteerDto.SupportRadiusMiles;
 
                 if (isWithinSupportRadius)
                 {

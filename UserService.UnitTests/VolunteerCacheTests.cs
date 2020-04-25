@@ -177,7 +177,7 @@ namespace UserService.UnitTests
         [Test]
         public async Task CacheExpiresOnTheHour()
         {
-            _mockableDateTime.Setup(x => x.UtcNow).Returns(new DateTime(2020, 04, 24, 15, 45, 00, 00));
+            _mockableDateTime.Setup(x => x.UtcNow).Returns(new DateTime(2020, 04, 24, 15, 45, 00, 00, DateTimeKind.Utc));
 
             Mock<IPollyMemoryCacheProvider> pollyMemoryCacheProvider = new Mock<IPollyMemoryCacheProvider>();
 
@@ -195,7 +195,7 @@ namespace UserService.UnitTests
             IEnumerable<CachedVolunteerDto> result1 = await volunteerCache.GetCachedVolunteersAsync(volunteerType, isVerifiedType, CancellationToken.None);
             IEnumerable<CachedVolunteerDto> result2 = await volunteerCache.GetCachedVolunteersAsync(volunteerType, isVerifiedType, CancellationToken.None);
 
-            _mockableDateTime.Setup(x => x.UtcNow).Returns(new DateTime(2020, 04, 24, 16, 00, 00, 00));
+            _mockableDateTime.Setup(x => x.UtcNow).Returns(new DateTime(2020, 04, 24, 16, 00, 00, 00, DateTimeKind.Utc));
 
             IEnumerable<CachedVolunteerDto> result3 = await volunteerCache.GetCachedVolunteersAsync(volunteerType, isVerifiedType, CancellationToken.None);
             IEnumerable<CachedVolunteerDto> result4 = await volunteerCache.GetCachedVolunteersAsync(volunteerType, isVerifiedType, CancellationToken.None);

@@ -53,7 +53,7 @@ namespace UserService.UnitTests
                     IsVerifiedType = IsVerifiedType.IsVerified,
                     Latitude = 3,
                     Longitude = 4,
-                    SupportRadiusMiles = 2.1
+                    SupportRadiusMiles = 1.9
                 },
             };
 
