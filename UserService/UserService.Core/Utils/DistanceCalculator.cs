@@ -1,12 +1,11 @@
 ﻿using System;
-using HelpMyStreet.Utils.Utils;
 
 namespace UserService.Core.Utils
 {
     public class DistanceCalculator : IDistanceCalculator
     {
 
-        public double GetDistanceInMetres(double longitude, double latitude, double otherLongitude, double otherLatitude)
+        public double GetDistanceInMetres(double latitude, double longitude, double otherLatitude, double otherLongitude)
         {
             // Stolen from Microsoft's GeoCoordinate class (not yet available for .Net Core)
             double d1 = latitude * (Math.PI / 180.0);
@@ -17,9 +16,9 @@ namespace UserService.Core.Utils
             return 6376500.0 * (2.0 * Math.Atan2(Math.Sqrt(d3), Math.Sqrt(1.0 - d3)));
         }
 
-        public double GetDistanceInMiles(double longitude, double latitude, double otherLongitude, double otherLatitude)
+        public double GetDistanceInMiles(double latitude, double longitude, double otherLatitude, double otherLongitude)
         {
-            var distanceInMetres = GetDistanceInMetres(longitude, latitude, otherLongitude, otherLatitude);
+            var distanceInMetres = GetDistanceInMetres(latitude, longitude, otherLatitude, otherLongitude);
             var distanceInMiles = DistanceConverter2.MetresToMiles(distanceInMetres);
             return distanceInMiles;
         }
