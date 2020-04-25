@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using AddressService.Core.Contracts;
+using HelpMyStreet.Utils.Utils;
 using MediatR;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AddressService.Core.Contracts;
-using HelpMyStreet.Utils.Utils;
 using UserService.Core;
 using UserService.Core.Contracts;
 using UserService.Core.Dto;
