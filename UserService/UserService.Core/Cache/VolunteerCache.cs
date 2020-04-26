@@ -1,8 +1,4 @@
 ﻿using EnumsNET;
-using Microsoft.Extensions.Internal;
-using Polly;
-using Polly.Caching;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -10,45 +6,30 @@ using System.Threading.Tasks;
 using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 
-namespace UserService.Core
+namespace UserService.Core.Cache
 {
     public class VolunteerCache : IVolunteerCache
     {
-
-        private readonly IPollyMemoryCacheProvider _pollyMemoryCacheProvider;
+        private readonly ICoordinatedResetCache _coordinatedResetCache;
         private readonly IVolunteersForCacheGetter _volunteersForCacheGetter;
-        private readonly ISystemClock _mockableDateTime;
 
-        public VolunteerCache(IPollyMemoryCacheProvider pollyMemoryCacheProvider, IVolunteersForCacheGetter volunteersForCacheGetter, ISystemClock mockableDateTime)
+        public VolunteerCache(ICoordinatedResetCache coordinatedResetCache, IVolunteersForCacheGetter volunteersForCacheGetter)
         {
-            _pollyMemoryCacheProvider = pollyMemoryCacheProvider;
+            _coordinatedResetCache = coordinatedResetCache;
             _volunteersForCacheGetter = volunteersForCacheGetter;
-            _mockableDateTime = mockableDateTime;
         }
 
         /// <summary>
-        /// Get volunteers from cache. Cache expires on the hour so all servers are kept in sync.
+        /// Get volunteers using cache. 
         /// </summary>
         public async Task<IEnumerable<CachedVolunteerDto>> GetCachedVolunteersAsync(VolunteerType volunteerType, IsVerifiedType isVerifiedType, CancellationToken cancellationToken)
         {
-            CachePolicy cachePolicy = Policy.Cache(_pollyMemoryCacheProvider.MemoryCacheProvider, GetLengthOfTimeUntilNextHour());
+          IEnumerable<CachedVolunteerDto> cachedVolunteerDtos = await _coordinatedResetCache.GetCachedDataAsync(async () => await _volunteersForCacheGetter.GetAllVolunteersAsync(cancellationToken), "AllCachedVolunteerDtos", CoordinatedResetCacheTime.OnHour);
 
-            Context context = new Context($"{nameof(VolunteerCache)}_{nameof(VolunteerCache.GetCachedVolunteersAsync)}");
-
-            IEnumerable<CachedVolunteerDto> result = await cachePolicy.Execute(async _ => await _volunteersForCacheGetter.GetAllVolunteersAsync(cancellationToken), context);
-
-            List<CachedVolunteerDto> matchingVolunteers = result.Where(x => x.VolunteerType.HasAnyFlags(volunteerType) && x.IsVerifiedType.HasAnyFlags(isVerifiedType)).ToList();
+            List<CachedVolunteerDto> matchingVolunteers = cachedVolunteerDtos.Where(x => x.VolunteerType.HasAnyFlags(volunteerType) && x.IsVerifiedType.HasAnyFlags(isVerifiedType)).ToList();
 
             return matchingVolunteers;
         }
 
-        private TimeSpan GetLengthOfTimeUntilNextHour()
-        {
-            DateTimeOffset timeNow = _mockableDateTime.UtcNow;
-            DateTimeOffset nowPlusOneMinute = timeNow.AddHours(1);
-            DateTimeOffset theNextMinuteWithoutSeconds = new DateTime(nowPlusOneMinute.Year, nowPlusOneMinute.Month, nowPlusOneMinute.Day, nowPlusOneMinute.Hour, 0, 0, DateTimeKind.Utc);
-            TimeSpan timeSpanUntilNextMinute = theNextMinuteWithoutSeconds - timeNow;
-            return timeSpanUntilNextMinute;
-        }
     }
 }

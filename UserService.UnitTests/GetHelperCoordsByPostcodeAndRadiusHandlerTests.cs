@@ -1,114 +1,94 @@
-﻿using HelpMyStreet.Contracts.AddressService.Request;
-using HelpMyStreet.Contracts.AddressService.Response;
-using Moq;
+﻿using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UserService.Core;
+using UserService.Core.Cache;
 using UserService.Core.Domains.Entities;
-using UserService.Core.Dto;
-using UserService.Core.Interfaces.Services;
-using UserService.Core.Utils;
 using UserService.Handlers;
 
 namespace UserService.UnitTests
 {
     public class GetHelperCoordsByPostcodeAndRadiusHandlerTests
     {
-        private Mock<IVolunteerCache> _volunteerCache;
-        private Mock<IDistanceCalculator> _distanceCalculator;
-        private Mock<IAddressService> _addressService;
 
-        private IEnumerable<CachedVolunteerDto> _cachedVolunteerDtos;
+        private Mock<IGetHelperCoordsByPostcodeAndRadiusGetter> _getHelperCoordsByPostcodeAndRadiusGetter;
+        private Mock<ICoordinatedResetCache> _coordinatedResetCache;
 
-        private GetPostcodeCoordinatesResponse _getPostcodeCoordinatesResponse;
+        private GetVolunteerCoordinatesResponse _getVolunteerCoordinatesResponse;
 
         [SetUp]
         public void SetUp()
         {
-            _cachedVolunteerDtos = new List<CachedVolunteerDto>()
+            _getVolunteerCoordinatesResponse = new GetVolunteerCoordinatesResponse()
             {
-                new CachedVolunteerDto()
+                Coordinates = new List<VolunteerCoordinate>()
                 {
-                    UserId = 1,
-                    Postcode = "NG1 1AA",
-                    VolunteerType = VolunteerType.Helper,
-                    IsVerifiedType = IsVerifiedType.IsVerified,
-                    Latitude = 1,
-                    Longitude = 2,
-                    SupportRadiusMiles = 0
-                },
-                new CachedVolunteerDto()
-                {
-                    UserId = 2,
-                    Postcode = "NG1 1AB",
-                    VolunteerType = VolunteerType.Helper,
-                    IsVerifiedType = IsVerifiedType.IsVerified,
-                    Latitude = 3,
-                    Longitude = 4,
-                    SupportRadiusMiles = 0
-                },
-            };
-
-
-            _volunteerCache = new Mock<IVolunteerCache>();
-            _volunteerCache.Setup(x => x.GetCachedVolunteersAsync(It.IsAny<VolunteerType>(), It.IsAny<IsVerifiedType>(), It.IsAny<CancellationToken>())).ReturnsAsync(_cachedVolunteerDtos);
-
-            _distanceCalculator = new Mock<IDistanceCalculator>();
-
-            _distanceCalculator.Setup(x => x.GetDistanceInMetres(It.IsAny<double>(), It.IsAny<double>(), It.Is<double>(y => y == 1), It.Is<double>(y => y == 2))).Returns(2);
-
-            _distanceCalculator.Setup(x => x.GetDistanceInMetres(It.IsAny<double>(), It.IsAny<double>(), It.Is<double>(y => y == 3), It.Is<double>(y => y == 4))).Returns(2.1);
-
-
-            _getPostcodeCoordinatesResponse = new GetPostcodeCoordinatesResponse()
-            {
-                PostcodeCoordinates = new List<PostcodeCoordinate>()
-                {
-                    new PostcodeCoordinate()
+                    new VolunteerCoordinate()
                     {
-                        Postcode = "NG1 1AE",
-                        Latitude = 9,
-                        Longitude = 10
+                        Longitude = 1,
+                        Latitude = 2,
+                        IsVerified = true,
+                        VolunteerType = VolunteerType.StreetChampion
                     }
                 }
             };
 
-            _addressService = new Mock<IAddressService>();
+            _getHelperCoordsByPostcodeAndRadiusGetter = new Mock<IGetHelperCoordsByPostcodeAndRadiusGetter>();
 
-            _addressService.Setup(x => x.GetPostcodeCoordinatesAsync(It.IsAny<GetPostcodeCoordinatesRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(_getPostcodeCoordinatesResponse);
+            _getHelperCoordsByPostcodeAndRadiusGetter.Setup(x => x.GetHelperCoordsByPostcodeAndRadius(It.IsAny<GetVolunteerCoordinatesRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(_getVolunteerCoordinatesResponse);
+
+            _coordinatedResetCache = new Mock<ICoordinatedResetCache>();
+
+
+            _coordinatedResetCache.Setup(x => x.GetCachedDataAsync(It.IsAny<Func<Task<GetVolunteerCoordinatesResponse>>>(), It.IsAny<string>(), It.IsAny<CoordinatedResetCacheTime>())).ReturnsAsync(_getVolunteerCoordinatesResponse);
 
         }
 
         [Test]
-        public async Task GetVolunteerCoordinates()
+        public async Task MinDistanceBetweenNotNullSoUseCache()
         {
-
-            GetHelperCoordsByPostcodeAndRadiusRequest request = new GetHelperCoordsByPostcodeAndRadiusRequest()
+            GetVolunteerCoordinatesRequest request = new GetVolunteerCoordinatesRequest()
             {
-                Postcode = "NG1 1AE",
-                IsVerifiedType = 3,
+                Longitude = 1,
+                Latitude = 2,
+                MinDistanceBetweenInMetres = 25000,
                 VolunteerType = 3,
-                RadiusInMetres = 2
+                IsVerifiedType = 3
             };
 
-            GetHelperCoordsByPostcodeAndRadiusHandler getHelperCoordsByPostcodeAndRadiusHandler = new GetHelperCoordsByPostcodeAndRadiusHandler(_volunteerCache.Object, _distanceCalculator.Object, _addressService.Object);
+            GetVolunteerCoordinatesHandler getVolunteerCoordinatesHandler = new GetVolunteerCoordinatesHandler(_getHelperCoordsByPostcodeAndRadiusGetter.Object, _coordinatedResetCache.Object);
 
-            GetHelperCoordsByPostcodeAndRadiusResponse result = await getHelperCoordsByPostcodeAndRadiusHandler.Handle(request, CancellationToken.None);
+            var result = await getVolunteerCoordinatesHandler.Handle(request, CancellationToken.None);
 
             Assert.AreEqual(1, result.Coordinates.Count);
-            Assert.AreEqual(1, result.Coordinates.FirstOrDefault().Latitude);
-            Assert.AreEqual(2, result.Coordinates.FirstOrDefault().Longitude);
-            Assert.AreEqual(VolunteerType.Helper, result.Coordinates.FirstOrDefault().VolunteerType);
-            Assert.AreEqual(true, result.Coordinates.FirstOrDefault().IsVerified);
 
-            _volunteerCache.Verify(x => x.GetCachedVolunteersAsync(It.Is<VolunteerType>(y => y == (VolunteerType.Helper | VolunteerType.StreetChampion)), It.Is<IsVerifiedType>(y => y == (IsVerifiedType.IsVerified | IsVerifiedType.IsNotVerified)), It.IsAny<CancellationToken>()));
-
-
-            _addressService.Verify(x => x.GetPostcodeCoordinatesAsync(It.Is<GetPostcodeCoordinatesRequest>(y => y.Postcodes.Count() == 1 && y.Postcodes.Contains("NG1 1AE")), It.IsAny<CancellationToken>()));
+            string key = $"{nameof(GetVolunteerCoordinatesResponse)}_{request}";
+            _coordinatedResetCache.Verify(x => x.GetCachedDataAsync(It.IsAny<Func<Task<GetVolunteerCoordinatesResponse>>>(), It.Is<string>( y=> y== key), It.Is<CoordinatedResetCacheTime>(y => y== CoordinatedResetCacheTime.OnHour)), Times.Once);
         }
+
+        [Test]
+        public async Task MinDistanceBetweenNullSoDontUseCache()
+        {
+            GetVolunteerCoordinatesRequest request = new GetVolunteerCoordinatesRequest()
+            {
+                Longitude = 1,
+                Latitude = 2,
+                MinDistanceBetweenInMetres = null,
+                VolunteerType = 3,
+                IsVerifiedType = 3
+            };
+
+            GetVolunteerCoordinatesHandler getVolunteerCoordinatesHandler = new GetVolunteerCoordinatesHandler(_getHelperCoordsByPostcodeAndRadiusGetter.Object, _coordinatedResetCache.Object);
+
+            var result = await getVolunteerCoordinatesHandler.Handle(request, CancellationToken.None);
+
+            Assert.AreEqual(1, result.Coordinates.Count);
+
+            _coordinatedResetCache.Verify(x => x.GetCachedDataAsync(It.IsAny<Func<Task<GetVolunteerCoordinatesResponse>>>(), It.IsAny<string>(), It.IsAny<CoordinatedResetCacheTime>()), Times.Never);
+        }
+
     }
 }

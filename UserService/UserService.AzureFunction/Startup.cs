@@ -26,6 +26,7 @@ using UserService.Core.Interfaces.Utils;
 using UserService.Core.Services;
 using UserService.Core.Utils;
 using Microsoft.AspNetCore.Mvc.Formatters.Json;
+using UserService.Core.Cache;
 
 
 [assembly: FunctionsStartup(typeof(UserService.AzureFunction.Startup))]
@@ -93,6 +94,8 @@ namespace UserService.AzureFunction
             builder.Services.AddTransient<IVolunteersForCacheGetter, VolunteersForCacheGetter>();
             builder.Services.AddSingleton<IPollyMemoryCacheProvider, PollyMemoryCacheProvider>();
             builder.Services.AddTransient<ISystemClock, MockableDateTime>();
+            builder.Services.AddTransient<ICoordinatedResetCache, CoordinatedResetCache>();
+            //builder.Services.AddTransient<IGetHelperCoordsByPostcodeAndRadiusGetter, GetHelperCoordsByPostcodeAndRadiusGetter>();
         }
     }
 }
