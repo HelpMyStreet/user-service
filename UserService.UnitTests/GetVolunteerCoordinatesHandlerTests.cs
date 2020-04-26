@@ -11,10 +11,10 @@ using UserService.Handlers;
 
 namespace UserService.UnitTests
 {
-    public class GetHelperCoordsByPostcodeAndRadiusHandlerTests
+    public class GetVolunteerCoordinatesHandlerTests
     {
 
-        private Mock<IGetHelperCoordsByPostcodeAndRadiusGetter> _getHelperCoordsByPostcodeAndRadiusGetter;
+        private Mock<IGetVolunteerCoordinatesResponseGetter> _getHelperCoordsByPostcodeAndRadiusGetter;
         private Mock<ICoordinatedResetCache> _coordinatedResetCache;
 
         private GetVolunteerCoordinatesResponse _getVolunteerCoordinatesResponse;
@@ -36,9 +36,9 @@ namespace UserService.UnitTests
                 }
             };
 
-            _getHelperCoordsByPostcodeAndRadiusGetter = new Mock<IGetHelperCoordsByPostcodeAndRadiusGetter>();
+            _getHelperCoordsByPostcodeAndRadiusGetter = new Mock<IGetVolunteerCoordinatesResponseGetter>();
 
-            _getHelperCoordsByPostcodeAndRadiusGetter.Setup(x => x.GetHelperCoordsByPostcodeAndRadius(It.IsAny<GetVolunteerCoordinatesRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(_getVolunteerCoordinatesResponse);
+            _getHelperCoordsByPostcodeAndRadiusGetter.Setup(x => x.GetVolunteerCoordinates(It.IsAny<GetVolunteerCoordinatesRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(_getVolunteerCoordinatesResponse);
 
             _coordinatedResetCache = new Mock<ICoordinatedResetCache>();
 
@@ -61,7 +61,7 @@ namespace UserService.UnitTests
 
             GetVolunteerCoordinatesHandler getVolunteerCoordinatesHandler = new GetVolunteerCoordinatesHandler(_getHelperCoordsByPostcodeAndRadiusGetter.Object, _coordinatedResetCache.Object);
 
-            var result = await getVolunteerCoordinatesHandler.Handle(request, CancellationToken.None);
+            GetVolunteerCoordinatesResponse result = await getVolunteerCoordinatesHandler.Handle(request, CancellationToken.None);
 
             Assert.AreEqual(1, result.Coordinates.Count);
 
@@ -83,7 +83,7 @@ namespace UserService.UnitTests
 
             GetVolunteerCoordinatesHandler getVolunteerCoordinatesHandler = new GetVolunteerCoordinatesHandler(_getHelperCoordsByPostcodeAndRadiusGetter.Object, _coordinatedResetCache.Object);
 
-            var result = await getVolunteerCoordinatesHandler.Handle(request, CancellationToken.None);
+            GetVolunteerCoordinatesResponse result = await getVolunteerCoordinatesHandler.Handle(request, CancellationToken.None);
 
             Assert.AreEqual(1, result.Coordinates.Count);
 

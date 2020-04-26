@@ -1,7 +1,4 @@
-﻿using HelpMyStreet.Contracts.AddressService.Request;
-using HelpMyStreet.Contracts.AddressService.Response;
-using HelpMyStreet.Utils.Utils;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -9,29 +6,26 @@ using System.Threading.Tasks;
 using UserService.Core;
 using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
-using UserService.Core.Interfaces.Services;
 using UserService.Core.Utils;
 
 namespace UserService.Handlers
 {
-    public class GetHelperCoordsByPostcodeAndRadiusGetter : IGetHelperCoordsByPostcodeAndRadiusGetter
+    public class GetVolunteerCoordinatesResponseGetter : IGetVolunteerCoordinatesResponseGetter
     {
         private readonly IVolunteerCache _volunteerCache;
         private readonly IDistanceCalculator _distanceCalculator;
-        private readonly IAddressService _addressService;
 
-        public GetHelperCoordsByPostcodeAndRadiusGetter(IVolunteerCache volunteerCache, IDistanceCalculator distanceCalculator, IAddressService addressService)
+        public GetVolunteerCoordinatesResponseGetter(IVolunteerCache volunteerCache, IDistanceCalculator distanceCalculator)
         {
             _volunteerCache = volunteerCache;
             _distanceCalculator = distanceCalculator;
-            _addressService = addressService;
         }
 
-        public async Task<GetVolunteerCoordinatesResponse> GetHelperCoordsByPostcodeAndRadius(GetVolunteerCoordinatesRequest request, CancellationToken cancellationToken)
+        public async Task<GetVolunteerCoordinatesResponse> GetVolunteerCoordinates(GetVolunteerCoordinatesRequest request, CancellationToken cancellationToken)
         {
             IEnumerable<CachedVolunteerDto> cachedVolunteerDtos = await _volunteerCache.GetCachedVolunteersAsync(request.VolunteerTypeEnum, request.IsVerifiedTypeEnum, cancellationToken);
-            
-            HashSet<VolunteerCoordinate> volunteerCoordinates = new HashSet<VolunteerCoordinate>();
+
+            List<VolunteerCoordinate> volunteerCoordinates = new List<VolunteerCoordinate>();
 
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -67,6 +61,7 @@ namespace UserService.Handlers
                     }
                     else
                     {
+                        // checks to see if there aren't any coordinates already within the min distance of the request coordinates
                         bool isTooNearToCoords = false;
                         foreach (VolunteerCoordinate existingVolunteerCoordinate in volunteerCoordinates)
                         {
@@ -87,9 +82,6 @@ namespace UserService.Handlers
 
             }
 
-            sw.Stop();
-            Debug.WriteLine($"Calculating distances took: {sw.ElapsedMilliseconds}");
-            Debug.WriteLine($"Count: {volunteerCoordinates.Count}");
             GetVolunteerCoordinatesResponse getVolunteerCoordinatesResponse = new GetVolunteerCoordinatesResponse()
             {
                 Coordinates = volunteerCoordinates.ToList()
@@ -97,6 +89,6 @@ namespace UserService.Handlers
 
             return getVolunteerCoordinatesResponse;
         }
-       
+
     }
 }
