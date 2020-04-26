@@ -29,7 +29,7 @@ namespace UserService.Core.Domains.Entities
 
         public override string ToString()
         {
-            return $"{nameof(Latitude)}: {Latitude}, {nameof(Longitude)}: {Longitude}, {nameof(RadiusInMetres)}: {RadiusInMetres}, {nameof(VolunteerType)}: {VolunteerType}, {nameof(VolunteerTypeEnum)}: {VolunteerTypeEnum}, {nameof(IsVerifiedType)}: {IsVerifiedType}, {nameof(IsVerifiedTypeEnum)}: {IsVerifiedTypeEnum}, {nameof(MinDistanceBetweenInMetres)}: {MinDistanceBetweenInMetres}";
+            return $"{nameof(Latitude)}: {Latitude}, {nameof(Longitude)}: {Longitude}, {nameof(RadiusInMetres)}: {RadiusInMetres}, {nameof(VolunteerType)}: {VolunteerType},  {nameof(IsVerifiedType)}: {IsVerifiedType}, {nameof(MinDistanceBetweenInMetres)}: {MinDistanceBetweenInMetres}";
         }
     }
 }

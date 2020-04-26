@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UserService.Core;
+using UserService.Core.BusinessLogic;
 using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 using UserService.Core.Utils;
@@ -18,7 +19,6 @@ namespace UserService.UnitTests
         private Mock<IDistanceCalculator> _distanceCalculator;
 
         private IEnumerable<CachedVolunteerDto> _cachedVolunteerDtos;
-
 
         [SetUp]
         public void SetUp()

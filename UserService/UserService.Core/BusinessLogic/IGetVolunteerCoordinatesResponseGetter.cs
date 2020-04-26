@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using UserService.Core.Domains.Entities;
 
-namespace UserService.Handlers
+namespace UserService.Core.BusinessLogic
 {
     public interface IGetVolunteerCoordinatesResponseGetter
     {

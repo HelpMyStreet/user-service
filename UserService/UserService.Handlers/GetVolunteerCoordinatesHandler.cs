@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using UserService.Core;
+using UserService.Core.BusinessLogic;
 using UserService.Core.Cache;
 using UserService.Core.Domains.Entities;
 

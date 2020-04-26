@@ -3,12 +3,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using UserService.Core;
 using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 using UserService.Core.Utils;
 
-namespace UserService.Handlers
+namespace UserService.Core.BusinessLogic
 {
     public class GetVolunteerCoordinatesResponseGetter : IGetVolunteerCoordinatesResponseGetter
     {
