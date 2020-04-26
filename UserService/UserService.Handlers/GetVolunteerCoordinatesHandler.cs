@@ -22,27 +22,20 @@ namespace UserService.Handlers
 
         public async Task<GetVolunteerCoordinatesResponse> Handle(GetVolunteerCoordinatesRequest request, CancellationToken cancellationToken)
         {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-
             GetVolunteerCoordinatesResponse getVolunteerCoordinatesResponse;
 
             // calculating coordinates that have a minimum distance between them is expensive so cache the result
             if (request.MinDistanceBetweenInMetres != null)
             {
-                Debug.WriteLine($"MinDistanceBetween not null");
                 string key = $"{nameof(GetVolunteerCoordinatesResponse)}_{request}";
 
                 getVolunteerCoordinatesResponse = await _coordinatedResetCache.GetCachedDataAsync(async () => await _getVolunteerCoordinatesResponseGetter.GetVolunteerCoordinates(request, cancellationToken), key, CoordinatedResetCacheTime.OnHour);
             }
             else
             {
-                Debug.WriteLine($"MinDistanceBetween is null");
                 getVolunteerCoordinatesResponse = await _getVolunteerCoordinatesResponseGetter.GetVolunteerCoordinates(request, cancellationToken);
             }
 
-            sw.Stop();
-            Debug.WriteLine($"GetHelperCoordsByPostcodeAndRadiusHandler took: {sw.ElapsedMilliseconds}");
             return getVolunteerCoordinatesResponse;
         }
     }

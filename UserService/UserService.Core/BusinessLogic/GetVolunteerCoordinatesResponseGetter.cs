@@ -26,8 +26,6 @@ namespace UserService.Core.BusinessLogic
 
             List<VolunteerCoordinate> volunteerCoordinates = new List<VolunteerCoordinate>();
 
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
             bool hasCoordBeenAdded = false;
             foreach (CachedVolunteerDto cachedVolunteerDto in cachedVolunteerDtos)
             {
@@ -60,7 +58,7 @@ namespace UserService.Core.BusinessLogic
                     }
                     else
                     {
-                        // checks to see if there aren't any coordinates already within the min distance of the request coordinates
+                        // checks to see if there aren't any coordinates already within the min distance of the coordinates in the request 
                         bool isTooNearToCoords = false;
                         foreach (VolunteerCoordinate existingVolunteerCoordinate in volunteerCoordinates)
                         {
@@ -85,7 +83,7 @@ namespace UserService.Core.BusinessLogic
             {
                 Coordinates = volunteerCoordinates.ToList()
             };
-
+            
             return getVolunteerCoordinatesResponse;
         }
 

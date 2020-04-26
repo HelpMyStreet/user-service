@@ -1,8 +1,7 @@
 {
 	"info": {
-		"name": "HelpMyStreet UserService",
 		"_postman_id": "29c6a9bb-499d-8cbc-b2e6-b0c99bfc7f25",
-		"description": "",
+		"name": "HelpMyStreet UserService",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -28,7 +27,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\tpostcode: \"DE238GD\"\n}"
+							"raw": ""
 						},
 						"url": {
 							"raw": "{{url}}/api/GetChampionCountByPostcode",
@@ -63,7 +62,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\tpostcode: \"DE236NY\"\n}"
+							"raw": ""
 						},
 						"url": {
 							"raw": "{{url}}/api/GetChampionsByPostcode",
@@ -98,7 +97,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\tID: \"4\"\n}"
+							"raw": ""
 						},
 						"url": {
 							"raw": "{{url}}/api/GetUserByID",
@@ -133,7 +132,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\tFirebaseUID: \"1\"\n}"
+							"raw": ""
 						},
 						"url": {
 							"raw": "{{url}}/api/GetUserByFirebaseUserID",
@@ -168,7 +167,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\tID:5\n}"
+							"raw": ""
 						},
 						"url": {
 							"raw": "{{url}}/api/GetUserIsVerified",
@@ -203,7 +202,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\tpostcode: \"DE238GD\"\n}"
+							"raw": ""
 						},
 						"url": {
 							"raw": "{{url}}/api/GetVolunteerCountByPostcode",
@@ -235,7 +234,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\tpostcode: \"DE238GD\"\n}"
+							"raw": ""
 						},
 						"url": {
 							"raw": "{{url}}/api/GetHelpersByPostcode?Postcode=ng15fs",
@@ -249,8 +248,7 @@
 							"query": [
 								{
 									"key": "Postcode",
-									"value": "ng15fs",
-									"equals": true
+									"value": "ng15fs"
 								}
 							]
 						},
@@ -274,7 +272,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\tpostcode: \"DE238GD\"\n}"
+							"raw": ""
 						},
 						"url": {
 							"raw": "{{url}}/api/GetHelperCoordsByPostcodeAndRadius?Postcode=ng15fs&RadiusInMetres=1000&VolunteerType=3&IsVerifiedType=3",
@@ -288,23 +286,19 @@
 							"query": [
 								{
 									"key": "Postcode",
-									"value": "ng15fs",
-									"equals": true
+									"value": "ng15fs"
 								},
 								{
 									"key": "RadiusInMetres",
-									"value": "1000",
-									"equals": true
+									"value": "1000"
 								},
 								{
 									"key": "VolunteerType",
-									"value": "3",
-									"equals": true
+									"value": "3"
 								},
 								{
 									"key": "IsVerifiedType",
-									"value": "3",
-									"equals": true
+									"value": "3"
 								}
 							]
 						},

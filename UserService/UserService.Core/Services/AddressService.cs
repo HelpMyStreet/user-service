@@ -33,14 +33,10 @@ namespace UserService.Core.Services
             var streamContent = HttpContentUtils.SerialiseToJsonAndCompress(getPostcodeCoordinatesRequest);
 
             ResponseWrapper<GetPostcodeCoordinatesResponse, AddressServiceErrorCode> getPostcodeCoordinatesResponseWithWrapper;
-            var sw = new Stopwatch();
-            sw.Start();
             using (HttpResponseMessage response = await _httpClientWrapper.PostAsync(HttpClientConfigName.AddressService, path, streamContent, cancellationToken).ConfigureAwait(false))
             {
                 response.EnsureSuccessStatusCode();
                 Stream stream = await response.Content.ReadAsStreamAsync();
-                sw.Stop();
-                Debug.WriteLine($"Calling Address Service GetPostcodeCoordinatesAsync took: {sw.ElapsedMilliseconds}");
                 getPostcodeCoordinatesResponseWithWrapper = await Utf8Json.JsonSerializer.DeserializeAsync<ResponseWrapper<GetPostcodeCoordinatesResponse, AddressServiceErrorCode>>(stream, StandardResolver.AllowPrivate);
             }
 
