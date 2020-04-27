@@ -10,6 +10,7 @@ using HelpMyStreet.Utils.Models;
 using Newtonsoft.Json;
 using System.Net;
 using AzureFunctions.Extensions.Swashbuckle.Attribute;
+using NewRelic.Api.Agent;
 
 namespace UserService.AzureFunction
 {
@@ -22,6 +23,7 @@ namespace UserService.AzureFunction
             _mediator = mediator;
         }
 
+        [Transaction(Web = true)]
         [FunctionName("GetUserByFirebaseUserID")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetUserByFirebaseUIDResponse))]
         public async Task<IActionResult> Run(

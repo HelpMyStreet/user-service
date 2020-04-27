@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
+using NewRelic.Api.Agent;
 using System;
 using System.Net;
 using System.Threading.Tasks;
@@ -20,6 +21,7 @@ namespace UserService.AzureFunction
             _mediator = mediator;
         }
 
+        [Transaction(Web = true)]
         [FunctionName("GetHelpersByPostcode")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetHelpersByPostcodeResponse))]
         public async Task<IActionResult> Run(
