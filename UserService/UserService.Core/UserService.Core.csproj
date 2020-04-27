@@ -6,8 +6,8 @@
 
   <ItemGroup>
     <PackageReference Include="Enums.NET" Version="3.0.3" />
-    <PackageReference Include="HelpMyStreet.Contracts" Version="1.1.47" />
-    <PackageReference Include="HelpMyStreet.Utils" Version="1.1.47" />
+    <PackageReference Include="HelpMyStreet.Contracts" Version="1.1.49" />
+    <PackageReference Include="HelpMyStreet.Utils" Version="1.1.49" />
     <PackageReference Include="MediatR" Version="8.0.1" />
     <PackageReference Include="Polly.Caching.Memory" Version="3.0.2" />
     <PackageReference Include="Polly.Contrib.DuplicateRequestCollapser" Version="0.2.0" />

@@ -257,7 +257,7 @@
 					"response": []
 				},
 				{
-					"name": "GetHelperCoordsByPostcodeAndRadius",
+					"name": "GetVolunteerCoordinates",
 					"request": {
 						"method": "GET",
 						"header": [

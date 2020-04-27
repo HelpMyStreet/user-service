@@ -51,7 +51,7 @@ namespace UserService.Core.BusinessLogic
                         VolunteerType = cachedVolunteerDto.VolunteerType
                     };
 
-                    if (request.MinDistanceBetweenInMetres == null || !hasCoordBeenAdded)
+                    if (request.MinDistanceBetweenInMetres == 0 || !hasCoordBeenAdded)
                     {
                         hasCoordBeenAdded = true;
                         volunteerCoordinates.Add(volunteerCoordinate);

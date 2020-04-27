@@ -72,7 +72,7 @@ namespace UserService.UnitTests
         }
 
         [Test]
-        public async Task GetVolunteerCoordinatesWithRadiusAndNoMinDistance()
+        public async Task GetVolunteerCoordinatesWithRadiusAndMinDistanceIs0()
         {
             GetVolunteerCoordinatesRequest request = new GetVolunteerCoordinatesRequest()
             {
@@ -81,7 +81,7 @@ namespace UserService.UnitTests
                 IsVerifiedType = 3,
                 VolunteerType = 3,
                 RadiusInMetres = 2,
-                MinDistanceBetweenInMetres = null
+                MinDistanceBetweenInMetres = 0
             };
 
             GetVolunteerCoordinatesResponseGetter getVolunteerCoordinatesResponseGetter = new GetVolunteerCoordinatesResponseGetter(_volunteerCache.Object, _distanceCalculator.Object);
@@ -124,7 +124,7 @@ namespace UserService.UnitTests
 
 
         [Test]
-        public async Task GetVolunteerCoordinatesWith0AsRadiusAndNoMinDistance()
+        public async Task GetVolunteerCoordinatesWith0AsRadiusAndMinDistanceIs0()
         {
             GetVolunteerCoordinatesRequest request = new GetVolunteerCoordinatesRequest()
             {
@@ -133,7 +133,7 @@ namespace UserService.UnitTests
                 IsVerifiedType = 3,
                 VolunteerType = 3,
                 RadiusInMetres = 0,
-                MinDistanceBetweenInMetres = null
+                MinDistanceBetweenInMetres = 0
             };
 
             GetVolunteerCoordinatesResponseGetter getVolunteerCoordinatesResponseGetter = new GetVolunteerCoordinatesResponseGetter(_volunteerCache.Object, _distanceCalculator.Object);

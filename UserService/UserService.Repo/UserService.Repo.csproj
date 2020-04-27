@@ -7,7 +7,7 @@
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="9.0.0" />
 		<PackageReference Include="Dapper" Version="2.0.35" />
-		<PackageReference Include="HelpMyStreet.Utils" Version="1.1.47" />
+		<PackageReference Include="HelpMyStreet.Utils" Version="1.1.49" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.0" />
 	</ItemGroup>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using HelpMyStreet.Utils.CoordinatedResetCache;
 using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 

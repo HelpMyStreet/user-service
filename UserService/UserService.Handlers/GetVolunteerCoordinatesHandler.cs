@@ -1,10 +1,8 @@
-﻿using MediatR;
-using System.Diagnostics;
+﻿using HelpMyStreet.Utils.CoordinatedResetCache;
+using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
-using UserService.Core;
 using UserService.Core.BusinessLogic;
-using UserService.Core.Cache;
 using UserService.Core.Domains.Entities;
 
 namespace UserService.Handlers
@@ -25,7 +23,7 @@ namespace UserService.Handlers
             GetVolunteerCoordinatesResponse getVolunteerCoordinatesResponse;
 
             // calculating coordinates that have a minimum distance between them is expensive so cache the result
-            if (request.MinDistanceBetweenInMetres != null)
+            if (request.MinDistanceBetweenInMetres != 0)
             {
                 string key = $"{nameof(GetVolunteerCoordinatesResponse)}_{request}";
 

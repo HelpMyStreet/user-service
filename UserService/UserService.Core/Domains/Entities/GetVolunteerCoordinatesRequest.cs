@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using MediatR;
 
 namespace UserService.Core.Domains.Entities
@@ -10,10 +11,7 @@ namespace UserService.Core.Domains.Entities
 
         [Required]
         public double Longitude { get; set; }
-
-        [Required]
-        public int RadiusInMetres { get; set; }
-
+        
         [Required]
         public byte VolunteerType { get; set; }
 
@@ -24,8 +22,12 @@ namespace UserService.Core.Domains.Entities
         public byte IsVerifiedType { get; set; }
 
         public IsVerifiedType IsVerifiedTypeEnum => (IsVerifiedType)IsVerifiedType;
-        
-        public int? MinDistanceBetweenInMetres { get; set; }
+
+        [Range(0, int.MaxValue)]
+        public int RadiusInMetres { get; set; }
+
+        [Range(0, int.MaxValue)]
+        public int MinDistanceBetweenInMetres { get; set; }
 
         public override string ToString()
         {

@@ -1,12 +1,11 @@
-﻿using Moq;
+﻿using HelpMyStreet.Utils.CoordinatedResetCache;
+using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using UserService.Core;
 using UserService.Core.BusinessLogic;
-using UserService.Core.Cache;
 using UserService.Core.Domains.Entities;
 using UserService.Handlers;
 
@@ -71,13 +70,13 @@ namespace UserService.UnitTests
         }
 
         [Test]
-        public async Task MinDistanceBetweenNullSoDontUseCache()
+        public async Task MinDistanceIs0SoDontUseCache()
         {
             GetVolunteerCoordinatesRequest request = new GetVolunteerCoordinatesRequest()
             {
                 Longitude = 1,
                 Latitude = 2,
-                MinDistanceBetweenInMetres = null,
+                MinDistanceBetweenInMetres = 0,
                 VolunteerType = 3,
                 IsVerifiedType = 3
             };
