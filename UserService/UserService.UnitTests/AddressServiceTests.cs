@@ -11,6 +11,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using UserService.Core.Config;
+using UserService.Core.Domains.Entities;
 using UserService.Core.Interfaces.Utils;
 using UserService.Core.Services;
 
@@ -20,7 +21,7 @@ namespace UserService.UnitTests
     {
         private Mock<IHttpClientWrapper> _httpClientWrapper;
 
-        private IsPostcodeWithinRadiiResponse _isPostcodeWithinRadiiResponse;
+        private GetPostcodeCoordinatesResponse _getPostcodeCoordinatesResponse;
 
         [SetUp]
         public void SetUp()
@@ -28,12 +29,20 @@ namespace UserService.UnitTests
             _httpClientWrapper = new Mock<IHttpClientWrapper>();
             _httpClientWrapper.SetupAllProperties();
 
-            _isPostcodeWithinRadiiResponse = new IsPostcodeWithinRadiiResponse()
+            _getPostcodeCoordinatesResponse = new GetPostcodeCoordinatesResponse()
             {
-                IdsWithinRadius = new List<int>() { 1 }
+               PostcodeCoordinates = new List<PostcodeCoordinate>()
+               {
+                   new PostcodeCoordinate()
+                   {
+                       Postcode = "NG1 1AA",
+                       Latitude = 45,
+                       Longitude = 50
+                   }
+               }
             };
 
-            HttpResponseMessage httpResponseMessage = CreateSuccessfulResponseWrappersHttpResponseMessage(_isPostcodeWithinRadiiResponse);
+            HttpResponseMessage httpResponseMessage = CreateSuccessfulResponseWrappersHttpResponseMessage(_getPostcodeCoordinatesResponse);
             _httpClientWrapper.Setup(x => x.PostAsync(It.IsAny<HttpClientConfigName>(), It.IsAny<string>(), It.IsAny<HttpContent>(), It.IsAny<CancellationToken>())).ReturnsAsync(httpResponseMessage);
 
         }
@@ -62,38 +71,43 @@ namespace UserService.UnitTests
         [Test]
         public async Task Success()
         {
-            IsPostcodeWithinRadiiRequest isPostcodeWithinRadiiRequest = new IsPostcodeWithinRadiiRequest()
+            GetPostcodeCoordinatesRequest getPostcodeCoordinatesRequest = new GetPostcodeCoordinatesRequest()
             {
-                Postcode = "NG1 5FS",
-                PostcodeWithRadiuses = new List<PostcodeWithRadius>()
+                Postcodes = new List<string>()
+                {
+                    "NG1 1AA"
+                },
+                
             };
 
-            AddressService addressService = new AddressService(_httpClientWrapper.Object);
+            Core.Services.AddressService addressService = new Core.Services.AddressService(_httpClientWrapper.Object);
 
-            IsPostcodeWithinRadiiResponse result = await addressService.IsPostcodeWithinRadiiAsync(isPostcodeWithinRadiiRequest, CancellationToken.None);
+            GetPostcodeCoordinatesResponse result = await addressService.GetPostcodeCoordinatesAsync(getPostcodeCoordinatesRequest, CancellationToken.None);
 
-            Assert.IsTrue(result.IdsWithinRadius.Contains(1));
+            Assert.IsTrue(result.PostcodeCoordinates.Any(x=>x.Postcode == "NG1 1AA" && x.Latitude == 45 && x.Longitude == 50));
 
-            _httpClientWrapper.Setup(x => x.PostAsync(It.Is<HttpClientConfigName>(y => y == HttpClientConfigName.AddressService), It.Is<string>(y => y == "api/IsPostcodeWithinRadii"), It.IsAny<HttpContent>(), It.IsAny<CancellationToken>()));
+            _httpClientWrapper.Setup(x => x.PostAsync(It.Is<HttpClientConfigName>(y => y == HttpClientConfigName.AddressService), It.Is<string>(y => y == "api/GetPostcodeCoordinates"), It.IsAny<HttpContent>(), It.IsAny<CancellationToken>()));
         }
 
         [Test]
         public async Task Unsuccessful()
         {
-            HttpResponseMessage httpResponseMessage = CreateUnsuccesssfuResponseWrapperHttpResponseMessage<IsPostcodeWithinRadiiResponse>();
+            HttpResponseMessage httpResponseMessage = CreateUnsuccesssfuResponseWrapperHttpResponseMessage<GetPostcodeCoordinatesResponse>();
             _httpClientWrapper.Setup(x => x.PostAsync(It.IsAny<HttpClientConfigName>(), It.IsAny<string>(), It.IsAny<HttpContent>(), It.IsAny<CancellationToken>())).ReturnsAsync(httpResponseMessage);
 
-            IsPostcodeWithinRadiiRequest isPostcodeWithinRadiiRequest = new IsPostcodeWithinRadiiRequest()
+            GetPostcodeCoordinatesRequest getPostcodeCoordinatesRequest = new GetPostcodeCoordinatesRequest()
             {
-                Postcode = "NG1 5FS",
-                PostcodeWithRadiuses = new List<PostcodeWithRadius>()
+                Postcodes = new List<string>()
+                {
+                    "NG1 1AA"
+                },
             };
 
-            AddressService addressService = new AddressService(_httpClientWrapper.Object);
+            Core.Services.AddressService addressService = new Core.Services.AddressService(_httpClientWrapper.Object);
 
-            Exception ex = Assert.ThrowsAsync<Exception>(async () => await addressService.IsPostcodeWithinRadiiAsync(isPostcodeWithinRadiiRequest, CancellationToken.None));
+            Exception ex = Assert.ThrowsAsync<Exception>(async () => await addressService.GetPostcodeCoordinatesAsync(getPostcodeCoordinatesRequest, CancellationToken.None));
 
-            Assert.AreEqual("Calling Address Service IsPostcodeWithinRadii endpoint unsuccessful: Error", ex.Message);
+            Assert.AreEqual("Calling Address Service GetPostcodeCoordinatesAsync endpoint unsuccessful: Error", ex.Message);
         }
 
     }

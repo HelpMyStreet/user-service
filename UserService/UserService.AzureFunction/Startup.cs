@@ -14,14 +14,24 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using HelpMyStreet.Utils.CoordinatedResetCache;
+using HelpMyStreet.Utils.Utils;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters.Json.Internal;
 using Microsoft.Azure.WebJobs.Host.Bindings;
+using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.Options;
+using UserService.Core;
 using UserService.Core.Config;
 using UserService.Core.Interfaces.Services;
 using UserService.Core.Interfaces.Utils;
 using UserService.Core.Services;
 using UserService.Core.Utils;
- 
+using Microsoft.AspNetCore.Mvc.Formatters.Json;
+using UserService.Core.BusinessLogic;
+using UserService.Core.Cache;
+
+
 [assembly: FunctionsStartup(typeof(UserService.AzureFunction.Startup))]
 namespace UserService.AzureFunction
 {
@@ -71,17 +81,24 @@ namespace UserService.AzureFunction
             IConfigurationSection connectionStringSettings = config.GetSection("ConnectionStrings");
             builder.Services.Configure<ConnectionStrings>(connectionStringSettings);
 
-            IConfigurationSection ApplicationConfigSettings = config.GetSection("ApplicationConfig");
-            builder.Services.Configure<ApplicationConfig>(ApplicationConfigSettings);
+            IConfigurationSection applicationConfigSettings = config.GetSection("ApplicationConfig");
+            builder.Services.Configure<ApplicationConfig>(applicationConfigSettings);
 
             var sqlConnectionString = config.GetConnectionString("SqlConnectionString");
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(sqlConnectionString));
-
+            
             builder.Services.AddTransient<IRepository, Repository>();
-            builder.Services.AddTransient<IAddressService, AddressService>();
+            builder.Services.AddTransient<IAddressService, Core.Services.AddressService>();
             builder.Services.AddTransient<IHttpClientWrapper, HttpClientWrapper>();
+            builder.Services.AddTransient<IDistanceCalculator, DistanceCalculator>();
+            builder.Services.AddTransient<IVolunteerCache, VolunteerCache>();
+            builder.Services.AddTransient<IVolunteersForCacheGetter, VolunteersForCacheGetter>();
+            builder.Services.AddSingleton<IPollyMemoryCacheProvider, PollyMemoryCacheProvider>();
+            builder.Services.AddTransient<ISystemClock, MockableDateTime>();
+            builder.Services.AddTransient<ICoordinatedResetCache, CoordinatedResetCache>();
+            builder.Services.AddTransient<IGetVolunteerCoordinatesResponseGetter, GetVolunteerCoordinatesResponseGetter>();
         }
     }
 }
