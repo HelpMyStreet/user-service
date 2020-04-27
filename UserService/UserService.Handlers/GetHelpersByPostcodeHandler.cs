@@ -42,7 +42,7 @@ namespace UserService.Handlers
 
             Task<GetPostcodeCoordinatesResponse> postcodeCoordsTask = _addressService.GetPostcodeCoordinatesAsync(getPostcodeCoordsRequest, cancellationToken);
 
-            VolunteerType volunteerType = VolunteerType.Helper;
+            VolunteerType volunteerType = VolunteerType.Helper | VolunteerType.StreetChampion;
             IsVerifiedType isVerifiedType = IsVerifiedType.IsVerified;
             Task<IEnumerable<CachedVolunteerDto>> cachedVolunteerDtosTask = _volunteerCache.GetCachedVolunteersAsync(volunteerType, isVerifiedType, cancellationToken);
 

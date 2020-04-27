@@ -111,7 +111,7 @@ namespace UserService.UnitTests
             Assert.AreEqual(1, result.Users.Count);
             Assert.AreEqual(1, result.Users.FirstOrDefault().ID);
 
-            _volunteerCache.Verify(x => x.GetCachedVolunteersAsync(It.Is<VolunteerType>(y => y == VolunteerType.Helper), It.Is<IsVerifiedType>(y => y == IsVerifiedType.IsVerified), It.IsAny<CancellationToken>()));
+            _volunteerCache.Verify(x => x.GetCachedVolunteersAsync(It.Is<VolunteerType>(y => y == (VolunteerType.Helper | VolunteerType.StreetChampion)), It.Is<IsVerifiedType>(y => y == IsVerifiedType.IsVerified), It.IsAny<CancellationToken>()));
 
             _repository.Verify(x => x.GetVolunteersByIdsAsync(It.Is<IEnumerable<int>>(y => y.Count() == 1 && y.Any(z => z == 1))));
 
