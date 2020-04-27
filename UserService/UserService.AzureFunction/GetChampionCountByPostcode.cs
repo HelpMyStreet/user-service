@@ -8,6 +8,7 @@ using System;
 using UserService.Core.Domains.Entities;
 using System.Net;
 using AzureFunctions.Extensions.Swashbuckle.Attribute;
+using NewRelic.Api.Agent;
 
 namespace UserService.AzureFunction
 {
@@ -20,6 +21,7 @@ namespace UserService.AzureFunction
             _mediator = mediator;
         }
 
+        [Transaction (Web = true)]
         [FunctionName("GetChampionCountByPostcode")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetChampionCountByPostcodeResponse))]
         public async Task<IActionResult> Run(

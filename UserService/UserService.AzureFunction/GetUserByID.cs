@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net;
 using AzureFunctions.Extensions.Swashbuckle.Attribute;
+using NewRelic.Api.Agent;
 
 namespace UserService.AzureFunction
 {
@@ -23,6 +24,7 @@ namespace UserService.AzureFunction
             _mediator = mediator;
         }
 
+        [Transaction(Web = true)]
         [FunctionName("GetUserByID")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetUserByIDResponse))]
         public async Task<IActionResult> Run(
