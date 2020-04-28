@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using NewRelic.Api.Agent;
 
 namespace UserService.Handlers
 {
@@ -18,6 +19,7 @@ namespace UserService.Handlers
             _repository = repository;
         }
 
+        [Transaction(Web = true)]
         public Task<GetChampionCountByPostcodeResponse> Handle(GetChampionCountByPostcodeRequest request, CancellationToken cancellationToken)
         {
             var count = _repository.GetChampionCountByPostCode(request.PostCode);

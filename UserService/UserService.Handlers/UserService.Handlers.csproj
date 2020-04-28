@@ -7,10 +7,11 @@
 	<ItemGroup>
 		<PackageReference Include="MediatR" Version="8.0.1" />
 		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.0" />
+		<PackageReference Include="NewRelic.Agent.Api" Version="8.26.630" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference ReplaceParameters="true" Include="..\UserService.Core\UserService.Core.csproj">
-			<Name >UserService.Core</Name>
+			<Name>UserService.Core</Name>
 		</ProjectReference>
 	</ItemGroup>
 </Project>
