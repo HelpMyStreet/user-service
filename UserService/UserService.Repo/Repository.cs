@@ -430,6 +430,7 @@ namespace UserService.Repo
                         ActivityId = (byte)sa
                     });
                 }
+                EFUser.IsVolunteer = true;
                 AddRegistrationHistoryForUser(EFUser, RegistrationSteps.StepThree);
                 _context.SaveChanges();
             }
@@ -553,6 +554,7 @@ u.[ID] <= @ToUser1Id
         {
             var users = await _context.User
                 .Where(x => x.IsVolunteer == true
+                            && x.IsVerified == true
                             && userIds.Contains(x.Id))
                 .Include(x => x.ChampionPostcode)
                 .Include(x => x.SupportActivity)
