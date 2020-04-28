@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using HelpMyStreet.Utils.Utils;
+using NewRelic.Api.Agent;
 
 namespace UserService.Handlers
 {
@@ -19,6 +20,7 @@ namespace UserService.Handlers
             _repository = repository;
         }
 
+        [Transaction(Web = true)]
         public async Task<GetChampionsByPostcodeResponse> Handle(GetChampionsByPostcodeRequest request, CancellationToken cancellationToken)
         {
             request.PostCode = PostcodeFormatter.FormatPostcode(request.PostCode);
