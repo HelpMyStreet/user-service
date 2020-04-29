@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Dapper;
+using HelpMyStreet.Contracts.ReportService.Response;
 using HelpMyStreet.Utils.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -567,6 +568,28 @@ u.[ID] <= @ToUser1Id
             foreach (var user in users)
             {
                 response.Add(MapEFUserToModelUser(user));
+            }
+
+            return response;
+        }
+
+        public List<ReportItem> GetDailyReport()
+        {
+            List<ReportItem> response = new List<ReportItem>();
+            List<DailyReport> result = _context.DailyReport.ToList();
+
+            if (result != null)
+            {
+                foreach (DailyReport dailyReport in result)
+                {
+                    response.Add(new ReportItem()
+                    {
+                        Section = dailyReport.Section,
+                        Last2Hours = dailyReport.Last2Hours,
+                        Today = dailyReport.Today,
+                        SinceLaunch = dailyReport.SinceLaunch
+                    }) ;
+                }
             }
 
             return response;

@@ -11,6 +11,7 @@ using System.Net;
 using AzureFunctions.Extensions.Swashbuckle.Attribute;
 using HelpMyStreet.Utils.Enums;
 using HelpMyStreet.Utils.Models;
+using NewRelic.Api.Agent;
 
 namespace UserService.AzureFunction
 {
@@ -23,6 +24,7 @@ namespace UserService.AzureFunction
             _mediator = mediator;
         }
 
+        [Transaction(Web = true)]
         [FunctionName("GetChampionsByPostcode")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetChampionsByPostcodeResponse))]
         public async Task<IActionResult> Run(

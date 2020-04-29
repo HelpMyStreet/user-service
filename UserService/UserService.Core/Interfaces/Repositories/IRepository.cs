@@ -2,12 +2,17 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using UserService.Core.Domains.Entities;
+using HelpMyStreet.Utils.Models;
+using HelpMyStreet.Contracts.ReportService.Response;
 using UserService.Core.Dto;
 
 namespace UserService.Core.Interfaces.Repositories
 {
     public interface IRepository
     {
+        List<ReportItem> GetDailyReport();
+
         User GetUserByID(int userId);
 
         List<User> GetUsersForIDs(List<int> userId);
