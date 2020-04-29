@@ -431,6 +431,7 @@ namespace UserService.Repo
                         ActivityId = (byte)sa
                     });
                 }
+                EFUser.IsVolunteer = true;
                 AddRegistrationHistoryForUser(EFUser, RegistrationSteps.StepThree);
                 _context.SaveChanges();
             }
@@ -512,46 +513,36 @@ namespace UserService.Repo
         }
 
 
-        public async Task<IEnumerable<HelperPostcodeRadiusDto>> GetAllVolunteersPostcodeRadiiAsync()
+        public async Task<IEnumerable<VolunteerForCacheDto>> GetVolunteersForCacheAsync(int fromUserId, int toUserId)
         {
             var query = @"
+;WITH StreetChampions as(
+SELECT [ID] AS [UserId] 
+FROM [User].[User] u
+INNER JOIN [User].[ChampionPostcode] cp
+ON u.ID = cp.UserID
+WHERE [StreetChampionRoleUnderstood] = 1
+GROUP BY [ID]
+)
+
 SELECT [ID] AS [UserId], 
 [PostalCode] AS [Postcode], 
-[SupportRadiusMiles]
-FROM [User].[User]
+[SupportRadiusMiles],
+IIF(u.[IsVerified] = 1, 1, 2) [IsVerifiedType],
+IIF(sc.UserId IS NOT NULL, 2, 1) as [VolunteerType]
+FROM [User].[User] u
+LEFT JOIN StreetChampions sc
+on u.ID = sc.UserId
 WHERE 
-[SupportRadiusMiles] IS NOT NULL AND 
-[IsVolunteer] = 1 
+u.[SupportRadiusMiles] IS NOT NULL AND 
+u.[IsVolunteer] = 1  AND
+u.[ID] >= @FromUserId AND 
+u.[ID] <= @ToUser1Id
 ";
 
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.SqlConnectionString))
             {
-                IEnumerable<HelperPostcodeRadiusDto> result = await connection.QueryAsync<HelperPostcodeRadiusDto>(query,
-                    commandType: CommandType.Text,
-                    commandTimeout: 15);
-
-                return result;
-            }
-
-        }
-
-        public async Task<IEnumerable<HelperPostcodeRadiusDto>> GetVolunteersPostcodeRadiiAsync(int fromUserId, int toUserId)
-        {
-            var query = @"
-SELECT [ID] AS [UserId], 
-[PostalCode] AS [Postcode], 
-[SupportRadiusMiles]
-FROM [User].[User]
-WHERE 
-[SupportRadiusMiles] IS NOT NULL AND 
-[IsVolunteer] = 1 AND
-[ID] >= @FromUserId AND 
-[ID] <= @ToUser1Id
-";
-
-            using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.SqlConnectionString))
-            {
-                IEnumerable<HelperPostcodeRadiusDto> result = await connection.QueryAsync<HelperPostcodeRadiusDto>(query,
+                IEnumerable<VolunteerForCacheDto> result = await connection.QueryAsync<VolunteerForCacheDto>(query,
                     commandType: CommandType.Text,
                     param: new { FromUserId = fromUserId, ToUser1Id = toUserId },
                     commandTimeout: 15);
@@ -564,6 +555,7 @@ WHERE
         {
             var users = await _context.User
                 .Where(x => x.IsVolunteer == true
+                            && x.IsVerified == true
                             && userIds.Contains(x.Id))
                 .Include(x => x.ChampionPostcode)
                 .Include(x => x.SupportActivity)

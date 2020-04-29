@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "139b797d-9b22-41ff-943f-8b98487dd6b0",
+		"_postman_id": "29c6a9bb-499d-8cbc-b2e6-b0c99bfc7f25",
 		"name": "HelpMyStreet UserService",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -10,9 +10,6 @@
 			"item": [
 				{
 					"name": "GetChampionCountByPostcode",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"method": "GET",
 						"header": [
@@ -30,12 +27,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\tpostcode: \"DE238GD\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": ""
 						},
 						"url": {
 							"raw": "{{url}}/api/GetChampionCountByPostcode",
@@ -53,9 +45,6 @@
 				},
 				{
 					"name": "GetChampionsByPostcode",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"method": "GET",
 						"header": [
@@ -73,12 +62,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\tpostcode: \"DE236NY\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": ""
 						},
 						"url": {
 							"raw": "{{url}}/api/GetChampionsByPostcode",
@@ -96,9 +80,6 @@
 				},
 				{
 					"name": "GetUserByID",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"method": "GET",
 						"header": [
@@ -116,12 +97,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\tID: \"4\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": ""
 						},
 						"url": {
 							"raw": "{{url}}/api/GetUserByID",
@@ -139,9 +115,6 @@
 				},
 				{
 					"name": "GetUserByFirebaseUserID",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"method": "GET",
 						"header": [
@@ -159,12 +132,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\tFirebaseUID: \"1\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": ""
 						},
 						"url": {
 							"raw": "{{url}}/api/GetUserByFirebaseUserID",
@@ -182,9 +150,6 @@
 				},
 				{
 					"name": "GetUserIsVerified",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"method": "GET",
 						"header": [
@@ -202,12 +167,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\tID:5\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": ""
 						},
 						"url": {
 							"raw": "{{url}}/api/GetUserIsVerified",
@@ -225,9 +185,6 @@
 				},
 				{
 					"name": "GetVolunteerCountByPostcode",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"method": "GET",
 						"header": [
@@ -245,12 +202,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\tpostcode: \"DE238GD\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": ""
 						},
 						"url": {
 							"raw": "{{url}}/api/GetVolunteerCountByPostcode",
@@ -267,42 +219,87 @@
 					"response": []
 				},
 				{
-					"name": "GetVolunteersByPostcode",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
+					"name": "GetHelpersByPostcode",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
 								"value": "application/json"
 							},
 							{
 								"key": "x-functions-key",
-								"type": "text",
 								"value": "{{code}}"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\tpostcode: \"DE238GD\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/GetVolunteersByPostcode",
+							"raw": "{{url}}/api/GetHelpersByPostcode?Postcode=ng15fs",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
-								"GetVolunteersByPostcode"
+								"GetHelpersByPostcode"
+							],
+							"query": [
+								{
+									"key": "Postcode",
+									"value": "ng15fs"
+								}
+							]
+						},
+						"description": "GetSupportCountByPostcode"
+					},
+					"response": []
+				},
+				{
+					"name": "GetVolunteerCoordinates",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "x-functions-key",
+								"value": "{{code}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/api/GetHelperCoordsByPostcodeAndRadius?Postcode=ng15fs&RadiusInMetres=1000&VolunteerType=3&IsVerifiedType=3",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"GetHelperCoordsByPostcodeAndRadius"
+							],
+							"query": [
+								{
+									"key": "Postcode",
+									"value": "ng15fs"
+								},
+								{
+									"key": "RadiusInMetres",
+									"value": "1000"
+								},
+								{
+									"key": "VolunteerType",
+									"value": "3"
+								},
+								{
+									"key": "IsVerifiedType",
+									"value": "3"
+								}
 							]
 						},
 						"description": "GetSupportCountByPostcode"
@@ -328,12 +325,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"UserID\":5,\n\t\"PostCode\" : \"DE236NY\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n\t\"UserID\":5,\n\t\"PostCode\" : \"DE236NY\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/api/PostCreateChampionForPostCode",
@@ -368,12 +360,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"UserID\":5,\n\t\"PostCode\" : \"DE238GD\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n\t\"UserID\":5,\n\t\"PostCode\" : \"DE238GD\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/api/PostCreateSupportForPostCode",
@@ -408,12 +395,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"RegistrationStepOne\": {\n  \"FirebaseUID\": 100,\n  \"EmailAddress\": \"matthew@smith.com\",\n  \"DateCreated\": \"2020-04-04T00:00:00\"\n\t}\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n\t\"RegistrationStepOne\": {\n  \"FirebaseUID\": 100,\n  \"EmailAddress\": \"matthew@smith.com\",\n  \"DateCreated\": \"2020-04-04T00:00:00\"\n\t}\n}"
 						},
 						"url": {
 							"raw": "{{url}}/api/PostCreateUser",
@@ -448,12 +430,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"User\" :\n{\n  \"ID\": 4,\n  \"FirebaseUID\": 1,\n  \"PostalCode\": \"X99LF\",\n  \"EmailSharingConsent\": null,\n  \"MobileSharingConsent\": null,\n  \"OtherPhoneSharingConsent\": null,\n  \"HMSContactConsent\": null,\n  \"IsVolunteer\": null,\n  \"IsVerified\": null,\n  \"DateCreated\": null,\n  \"UserPersonalDetails\": {\n    \"User\": null,\n    \"FirstName\": \"Bob\",\n    \"LastName\": \"Smith\",\n    \"DisplayName\": \"Bob Smith\",\n    \"DateOfBirth\": \"1900-01-01T00:00:00\",\n    \"Address\": {\n      \"AddressLine1\": \"1 Test Street\",\n      \"AddressLine2\": \"Test Town\",\n      \"AddressLine3\": null,\n      \"Locality\": null,\n      \"Postcode\": \"BA133BN\"\n    },\n    \"EmailAddress\": \"john@smith.com\",\n    \"MobilePhone\": \"07\",\n    \"OtherPhone\": \"01332\"\n  },\n  \"RegistrationHistory\": null\n}\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n  \"User\" :\n{\n  \"ID\": 4,\n  \"FirebaseUID\": 1,\n  \"PostalCode\": \"X99LF\",\n  \"EmailSharingConsent\": null,\n  \"MobileSharingConsent\": null,\n  \"OtherPhoneSharingConsent\": null,\n  \"HMSContactConsent\": null,\n  \"IsVolunteer\": null,\n  \"IsVerified\": null,\n  \"DateCreated\": null,\n  \"UserPersonalDetails\": {\n    \"User\": null,\n    \"FirstName\": \"Bob\",\n    \"LastName\": \"Smith\",\n    \"DisplayName\": \"Bob Smith\",\n    \"DateOfBirth\": \"1900-01-01T00:00:00\",\n    \"Address\": {\n      \"AddressLine1\": \"1 Test Street\",\n      \"AddressLine2\": \"Test Town\",\n      \"AddressLine3\": null,\n      \"Locality\": null,\n      \"Postcode\": \"BA133BN\"\n    },\n    \"EmailAddress\": \"john@smith.com\",\n    \"MobilePhone\": \"07\",\n    \"OtherPhone\": \"01332\"\n  },\n  \"RegistrationHistory\": null\n}\n}"
 						},
 						"url": {
 							"raw": "{{url}}/api/PutModifyUser",
@@ -488,12 +465,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"UserID\":4,\n\t\"IsVerified\" : false\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n\t\"UserID\":4,\n\t\"IsVerified\" : false\n}"
 						},
 						"url": {
 							"raw": "{{url}}/api/PutSetVerification",
@@ -511,9 +483,6 @@
 				},
 				{
 					"name": "GetDistinctChampionUserCount",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"method": "GET",
 						"header": [
@@ -531,12 +500,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": ""
 						},
 						"url": {
 							"raw": "{{url}}/api/GetDistinctChampionUserCount",
@@ -554,9 +518,6 @@
 				},
 				{
 					"name": "GetChampionPostcodesCoveredCount",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"method": "GET",
 						"header": [
@@ -574,12 +535,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": ""
 						},
 						"url": {
 							"raw": "{{url}}/api/GetChampionPostcodesCoveredCount",
@@ -614,12 +570,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"RegistrationStepTwo\": {\r\n    \"UserID\": 4,\r\n    \"PostalCode\": \"BA133BN\",\r\n      \"FirstName\": \"John\",\r\n      \"LastName\": \"Smith\",\r\n      \"Address\": {\r\n        \"AddressLine1\": \"1 Test Street\",\r\n        \"AddressLine2\": \"Test Town\",\r\n        \"AddressLine3\": null,\r\n        \"Locality\": null,\r\n        \"Postcode\": \"BA133BN\"\r\n      },\r\n      \"DisplayName\": \"John Smith\"\r\n  }\r\n}\r\n",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\r\n  \"RegistrationStepTwo\": {\r\n    \"UserID\": 4,\r\n    \"PostalCode\": \"BA133BN\",\r\n      \"FirstName\": \"John\",\r\n      \"LastName\": \"Smith\",\r\n      \"Address\": {\r\n        \"AddressLine1\": \"1 Test Street\",\r\n        \"AddressLine2\": \"Test Town\",\r\n        \"AddressLine3\": null,\r\n        \"Locality\": null,\r\n        \"Postcode\": \"BA133BN\"\r\n      },\r\n      \"DisplayName\": \"John Smith\"\r\n  }\r\n}\r\n"
 						},
 						"url": {
 							"raw": "{{url}}/api/PutModifyRegistrationPageTwo",
@@ -654,12 +605,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"RegistrationStepThree\": {\r\n    \"UserID\": 4,\r\n    \"SupportRadiusMiles\": 10,\r\n    \"SupportVolunteersByPhone\": false,\r\n    \"UnderlyingMedicalCondition\": false,\r\n    \"Activities\": [\r\n      3,\r\n      2\r\n    ]\r\n  }\r\n}\r\n",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\r\n  \"RegistrationStepThree\": {\r\n    \"UserID\": 4,\r\n    \"SupportRadiusMiles\": 10,\r\n    \"SupportVolunteersByPhone\": false,\r\n    \"UnderlyingMedicalCondition\": false,\r\n    \"Activities\": [\r\n      3,\r\n      2\r\n    ]\r\n  }\r\n}\r\n"
 						},
 						"url": {
 							"raw": "{{url}}/api/PutModifyRegistrationPageThree",
@@ -694,12 +640,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"RegistrationStepFour\": {\r\n    \"UserID\": 4,\r\n    \"StreetChampionRoleUnderstood\": false,\r\n    \"ChampionPostcodes\": [\r\n      \"DE236NY\",\r\n      \"DE238GD\"\r\n    ]\r\n  }\r\n}\r\n",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\r\n  \"RegistrationStepFour\": {\r\n    \"UserID\": 4,\r\n    \"StreetChampionRoleUnderstood\": false,\r\n    \"ChampionPostcodes\": [\r\n      \"DE236NY\",\r\n      \"DE238GD\"\r\n    ]\r\n  }\r\n}\r\n"
 						},
 						"url": {
 							"raw": "{{url}}/api/PutModifyRegistrationPageFour",
@@ -734,12 +675,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"RegistrationStepFive\": {\r\n    \"UserID\": 4,\r\n    \"IsVerified\": true\r\n  }\r\n}\r\n",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\r\n  \"RegistrationStepFive\": {\r\n    \"UserID\": 4,\r\n    \"IsVerified\": true\r\n  }\r\n}\r\n"
 						},
 						"url": {
 							"raw": "{{url}}/api/PutModifyRegistrationPageFive",
@@ -777,8 +713,7 @@
 						]
 					}
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		}
 	],
 	"event": [
@@ -816,6 +751,5 @@
 			"value": "i8aKjNG4E9sA2VfooUeBVn74mE/3cTkYWVhxjaXpYsf4e//1Q95yTg==",
 			"type": "string"
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }

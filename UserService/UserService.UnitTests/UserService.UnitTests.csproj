@@ -16,11 +16,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\UserService\UserService.AzureFunction\UserService.AzureFunction.csproj" />
-    <ProjectReference Include="..\UserService\UserService.Core\UserService.Core.csproj" />
-    <ProjectReference Include="..\UserService\UserService.Handlers\UserService.Handlers.csproj" />
-    <ProjectReference Include="..\UserService\UserService.Mappers\UserService.Mappers.csproj" />
-    <ProjectReference Include="..\UserService\UserService.Repo\UserService.Repo.csproj" />
+    <ProjectReference Include="..\UserService.AzureFunction\UserService.AzureFunction.csproj" />
+    <ProjectReference Include="..\UserService.Core\UserService.Core.csproj" />
+    <ProjectReference Include="..\UserService.Handlers\UserService.Handlers.csproj" />
+    <ProjectReference Include="..\UserService.Mappers\UserService.Mappers.csproj" />
+    <ProjectReference Include="..\UserService.Repo\UserService.Repo.csproj" />
   </ItemGroup>
 
 </Project>

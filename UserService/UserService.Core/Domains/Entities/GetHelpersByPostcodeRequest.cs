@@ -7,6 +7,6 @@ namespace UserService.Core.Domains.Entities
 {
     public class GetHelpersByPostcodeRequest : IRequest<GetHelpersByPostcodeResponse>
     {
-        public string PostCode { get; set; }
+        public string Postcode { get; set; }
     }
 }

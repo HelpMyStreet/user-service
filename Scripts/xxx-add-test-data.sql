@@ -22,6 +22,7 @@ DBCC CHECKIDENT (
 DECLARE @numberOfPostcodes INT = (
 		SELECT count(1)
 		FROM [AddressService].[Address].[Postcode]
+		WHERE [IsActive] = 1
 		)
 DECLARE @everyXthPostcode INT = @numberOfPostcodes / @numberOfTestCases
 
@@ -54,6 +55,7 @@ SELECT TOP (@numberOfTestCases) NewId(),
 	1
 FROM [AddressService].[Address].[Postcode]
 WHERE [Id] % @everyXthPostcode = 0
+AND [IsActive] = 1
 
 INSERT INTO [UserService].[UserPersonal].[PersonalDetails] (
 	[UserID],
