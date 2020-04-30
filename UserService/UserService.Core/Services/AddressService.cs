@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using UserService.Core.Config;
+using UserService.Core.Domains.Entities;
 using UserService.Core.Interfaces.Services;
 using UserService.Core.Interfaces.Utils;
 using UserService.Core.Utils;
@@ -25,26 +26,26 @@ namespace UserService.Core.Services
             _httpClientWrapper = httpClientWrapper;
         }
 
-        public async Task<IsPostcodeWithinRadiiResponse> IsPostcodeWithinRadiiAsync(IsPostcodeWithinRadiiRequest isPostcodeWithinRadiiRequest, CancellationToken cancellationToken)
+        public async Task<GetPostcodeCoordinatesResponse> GetPostcodeCoordinatesAsync(GetPostcodeCoordinatesRequest getPostcodeCoordinatesRequest, CancellationToken cancellationToken)
         {
-            string path = $"api/IsPostcodeWithinRadii";
+            string path = $"api/GetPostcodeCoordinates";
 
-            var streamContent = HttpContentUtils.SerialiseToJsonAndCompress(isPostcodeWithinRadiiRequest);
+            var streamContent = HttpContentUtils.SerialiseToJsonAndCompress(getPostcodeCoordinatesRequest);
 
-            ResponseWrapper<IsPostcodeWithinRadiiResponse, AddressServiceErrorCode> isPostcodeWithinRadiiResponseWithWrapper;
+            ResponseWrapper<GetPostcodeCoordinatesResponse, AddressServiceErrorCode> getPostcodeCoordinatesResponseWithWrapper;
             using (HttpResponseMessage response = await _httpClientWrapper.PostAsync(HttpClientConfigName.AddressService, path, streamContent, cancellationToken).ConfigureAwait(false))
             {
                 response.EnsureSuccessStatusCode();
                 Stream stream = await response.Content.ReadAsStreamAsync();
-                isPostcodeWithinRadiiResponseWithWrapper = await Utf8Json.JsonSerializer.DeserializeAsync<ResponseWrapper<IsPostcodeWithinRadiiResponse, AddressServiceErrorCode>>(stream, StandardResolver.AllowPrivate);
+                getPostcodeCoordinatesResponseWithWrapper = await Utf8Json.JsonSerializer.DeserializeAsync<ResponseWrapper<GetPostcodeCoordinatesResponse, AddressServiceErrorCode>>(stream, StandardResolver.AllowPrivate);
             }
 
-            if (!isPostcodeWithinRadiiResponseWithWrapper.IsSuccessful)
+            if (!getPostcodeCoordinatesResponseWithWrapper.IsSuccessful)
             {
-                throw new Exception($"Calling Address Service IsPostcodeWithinRadii endpoint unsuccessful: {isPostcodeWithinRadiiResponseWithWrapper.Errors.FirstOrDefault()?.ErrorMessage}");
+                throw new Exception($"Calling Address Service GetPostcodeCoordinatesAsync endpoint unsuccessful: {getPostcodeCoordinatesResponseWithWrapper.Errors.FirstOrDefault()?.ErrorMessage}");
             }
 
-            return isPostcodeWithinRadiiResponseWithWrapper.Content;
+            return getPostcodeCoordinatesResponseWithWrapper.Content;
         }
     }
 }

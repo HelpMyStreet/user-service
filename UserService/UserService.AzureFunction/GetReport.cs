@@ -5,37 +5,40 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using MediatR;
 using System;
+using System.Collections.Generic;
 using UserService.Core.Domains.Entities;
-using HelpMyStreet.Utils.Models;
-using Newtonsoft.Json;
 using System.Net;
 using AzureFunctions.Extensions.Swashbuckle.Attribute;
+using HelpMyStreet.Utils.Enums;
+using HelpMyStreet.Utils.Models;
 using NewRelic.Api.Agent;
+using HelpMyStreet.Contracts.ReportService.Response;
 
 namespace UserService.AzureFunction
 {
-    public class GetUserByFirebaseUID
+    public class GetReport
     {
         private readonly IMediator _mediator;
 
-        public GetUserByFirebaseUID(IMediator mediator)
+        public GetReport(IMediator mediator)
         {
             _mediator = mediator;
         }
 
         [Transaction(Web = true)]
-        [FunctionName("GetUserByFirebaseUserID")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetUserByFirebaseUIDResponse))]
+        [FunctionName("GetReport")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetReportResponse))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
-            [RequestBodyType(typeof(GetUserByFirebaseUIDRequest), "product request")] GetUserByFirebaseUIDRequest req,
+            [RequestBodyType(typeof(GetReportRequest), "report request")] GetReportRequest req,
             ILogger log)
         {
             try
             {
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
-                GetUserByFirebaseUIDResponse response = await _mediator.Send(req);
+                GetReportResponse response = await _mediator.Send(req);
+
                 return new OkObjectResult(response);
             }
             catch (Exception exc)

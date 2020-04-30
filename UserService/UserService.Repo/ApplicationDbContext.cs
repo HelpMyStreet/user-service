@@ -22,6 +22,8 @@ namespace UserService.Repo
         public virtual DbSet<RegistrationHistory> RegistrationHistory { get; set; }
         public virtual DbSet<User> User { get; set; }
 
+        public virtual DbQuery<DailyReport> DailyReport { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -31,6 +33,8 @@ namespace UserService.Repo
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Query<DailyReport>().ToQuery(() => DailyReport.FromSql("TwoHourlyReport"));
+
             modelBuilder.Entity<ChampionPostcode>(entity =>
             {
                 entity.HasKey(e => new { e.UserId, e.PostalCode });

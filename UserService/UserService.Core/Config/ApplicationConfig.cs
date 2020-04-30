@@ -7,6 +7,6 @@ namespace UserService.Core.Config
     public class ApplicationConfig
     {
 
-        public int GetHelpersByPostcodeBatchSize { get; set; }
+        public int GetVolunteersForCacheBatchSize { get; set; }
     }
 }

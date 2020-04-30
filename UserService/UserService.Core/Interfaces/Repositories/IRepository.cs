@@ -1,15 +1,18 @@
-﻿using UserService.Core.Dto;
+﻿using HelpMyStreet.Utils.Models;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using UserService.Core.Domains.Entities;
 using HelpMyStreet.Utils.Models;
+using HelpMyStreet.Contracts.ReportService.Response;
+using UserService.Core.Dto;
 
 namespace UserService.Core.Interfaces.Repositories
 {
     public interface IRepository
     {
+        List<ReportItem> GetDailyReport();
+
         User GetUserByID(int userId);
 
         List<User> GetUsersForIDs(List<int> userId);
@@ -54,9 +57,8 @@ namespace UserService.Core.Interfaces.Repositories
 
         Task<int> GetMaxUserIdAsync();
 
-        Task<IEnumerable<HelperPostcodeRadiusDto>> GetAllVolunteersPostcodeRadiiAsync();
 
-        Task<IEnumerable<HelperPostcodeRadiusDto>> GetVolunteersPostcodeRadiiAsync(int fromUserId, int toUserId);
+        Task<IEnumerable<VolunteerForCacheDto>> GetVolunteersForCacheAsync(int fromUserId, int toUserId);
 
         Task<IEnumerable<User>> GetVolunteersByIdsAsync(IEnumerable<int> userIds);
     }

@@ -14,6 +14,8 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.2.0" />
 		<PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.28" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="2.2.0" />
+    <PackageReference Include="NewRelic.Agent" Version="8.26.630" />
+    <PackageReference Include="NewRelic.Agent.Api" Version="8.26.630" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference ReplaceParameters="true" Include="..\UserService.Handlers\UserService.Handlers.csproj">
