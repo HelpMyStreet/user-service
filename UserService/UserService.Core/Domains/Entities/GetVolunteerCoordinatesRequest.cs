@@ -36,9 +36,5 @@ namespace UserService.Core.Domains.Entities
         [Range(0, int.MaxValue)]
         public int MinDistanceBetweenInMetres { get; set; }
 
-        //public override string ToString()
-        //{
-        //    return $"{nameof(Latitude)}: {Latitude}, {nameof(Longitude)}: {Longitude}, {nameof(RadiusInMetres)}: {RadiusInMetres}, {nameof(VolunteerType)}: {VolunteerType},  {nameof(IsVerifiedType)}: {IsVerifiedType}, {nameof(MinDistanceBetweenInMetres)}: {MinDistanceBetweenInMetres}";
-        //}
     }
 }
