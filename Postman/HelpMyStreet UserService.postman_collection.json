@@ -275,22 +275,30 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/GetHelperCoordsByPostcodeAndRadius?Postcode=ng15fs&RadiusInMetres=1000&VolunteerType=3&IsVerifiedType=3",
+							"raw": "{{url}}/api/GetVolunteerCoordinates?SWLatitude=52.954885&SWLongitude=-1.155263&NELatitude=53.054885&NELongitude=-1.055263&VolunteerType=3&IsVerifiedType=3&MinDistanceBetweenInMetres=0",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
-								"GetHelperCoordsByPostcodeAndRadius"
+								"GetVolunteerCoordinates"
 							],
 							"query": [
 								{
-									"key": "Postcode",
-									"value": "ng15fs"
+									"key": "SWLatitude",
+									"value": "52.954885"
 								},
 								{
-									"key": "RadiusInMetres",
-									"value": "1000"
+									"key": "SWLongitude",
+									"value": "-1.155263"
+								},
+								{
+									"key": "NELatitude",
+									"value": "53.054885"
+								},
+								{
+									"key": "NELongitude",
+									"value": "-1.055263"
 								},
 								{
 									"key": "VolunteerType",
@@ -299,6 +307,10 @@
 								{
 									"key": "IsVerifiedType",
 									"value": "3"
+								},
+								{
+									"key": "MinDistanceBetweenInMetres",
+									"value": "0"
 								}
 							]
 						},

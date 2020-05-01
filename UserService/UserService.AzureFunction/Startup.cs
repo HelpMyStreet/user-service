@@ -98,7 +98,8 @@ namespace UserService.AzureFunction
             builder.Services.AddSingleton<IPollyMemoryCacheProvider, PollyMemoryCacheProvider>();
             builder.Services.AddTransient<ISystemClock, MockableDateTime>();
             builder.Services.AddTransient<ICoordinatedResetCache, CoordinatedResetCache>();
-            builder.Services.AddTransient<IGetVolunteerCoordinatesResponseGetter, GetVolunteerCoordinatesResponseGetter>();
+            builder.Services.AddTransient<IVolunteersFilteredByMinDistanceGetter, VolunteersFilteredByMinDistanceGetter>();
+            builder.Services.AddTransient<IMinDistanceFilter, MinDistanceFilter>();
         }
     }
 }

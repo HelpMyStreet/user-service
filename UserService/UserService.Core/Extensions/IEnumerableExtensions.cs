@@ -1,17 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using UserService.Core.Dto;
 
 namespace UserService.Core.Extensions
 {
     public static class IEnumerableExtensions
     {
-
-        public static IEnumerable<IEnumerable<T>> ChunkBy<T>(this IEnumerable<T> source, int chunkSize)
+        public static IEnumerable<T> WhereWithinBoundary<T>(this IEnumerable<T> source, double sWLatitude, double sWLongitude, double nELatitude, double nELongitude) where T : ILatitudeLongitude
         {
-            return source
-                .Select((x, i) => new { Index = i, Value = x })
-                .GroupBy(x => x.Index / chunkSize)
-                .Select(x => x.Select(v => v.Value));
+            IEnumerable<T> result = source.Where(pt =>
+                pt.Latitude >= sWLatitude &&
+                pt.Latitude <= nELatitude &&
+                pt.Longitude >= sWLongitude &&
+                pt.Longitude <= nELongitude);
+
+            return result;
         }
     }
 }
