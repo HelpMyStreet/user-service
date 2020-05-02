@@ -32,6 +32,8 @@ namespace UserService.Handlers
             // calculating coordinates that have a minimum distance between them is expensive so cache the result
             if (request.MinDistanceBetweenInMetres > 0)
             {
+                // round up to nearest 2000 metres to prevent repeated calculation of indistinguishable minimum distances and cache taking too much memory
+                request.MinDistanceBetweenInMetres = request.MinDistanceBetweenInMetres.RoundUpToNearest(2000);
                 string key = $"{nameof(CachedVolunteerDto)}_MinDistance_{request.MinDistanceBetweenInMetres}_{request.VolunteerType}_{request.IsVerifiedType}";
 
                 cachedVolunteerDtos = await _coordinatedResetCache.GetCachedDataAsync(async (token) => await _volunteersFilteredByMinDistanceGetter.GetVolunteersFilteredByMinDistanceAsync(request, token), key, cancellationToken, CoordinatedResetCacheTime.OnHour);

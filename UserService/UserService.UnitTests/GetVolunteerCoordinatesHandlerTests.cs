@@ -10,6 +10,7 @@ using UserService.Core;
 using UserService.Core.BusinessLogic;
 using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
+using UserService.Core.Extensions;
 using UserService.Handlers;
 
 namespace UserService.UnitTests
@@ -54,7 +55,7 @@ namespace UserService.UnitTests
 
             _coordinatedResetCache.Setup(x => x.GetCachedDataAsync(It.IsAny<Func<CancellationToken, Task<IEnumerable<CachedVolunteerDto>>>>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<CoordinatedResetCacheTime>())).Returns((Func<CancellationToken, Task<IEnumerable<CachedVolunteerDto>>> func, string key, CancellationToken token, CoordinatedResetCacheTime resetTime) =>
             {
-                return _volunteersFilteredByMinDistanceGetter.Object.GetVolunteersFilteredByMinDistanceAsync(It.Is<GetVolunteerCoordinatesRequest>(y=>y.MinDistanceBetweenInMetres==1), It.IsAny<CancellationToken>());
+                return _volunteersFilteredByMinDistanceGetter.Object.GetVolunteersFilteredByMinDistanceAsync(It.Is<GetVolunteerCoordinatesRequest>(y=>y.MinDistanceBetweenInMetres==2000), It.IsAny<CancellationToken>());
             });
 
         }
@@ -104,7 +105,7 @@ namespace UserService.UnitTests
                 NELongitude = 4
             };
 
-            string key = $"{nameof(CachedVolunteerDto)}_MinDistance_{request.MinDistanceBetweenInMetres}_{request.VolunteerType}_{request.IsVerifiedType}";
+            string key = $"{nameof(CachedVolunteerDto)}_MinDistance_{request.MinDistanceBetweenInMetres.RoundUpToNearest(2000)}_{request.VolunteerType}_{request.IsVerifiedType}";
 
             GetVolunteerCoordinatesHandler getVolunteerCoordinatesHandler = new GetVolunteerCoordinatesHandler(_coordinatedResetCache.Object, _volunteerCache.Object, _volunteersFilteredByMinDistanceGetter.Object);
 
