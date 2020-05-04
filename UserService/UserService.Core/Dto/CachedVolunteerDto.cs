@@ -2,7 +2,7 @@
 
 namespace UserService.Core.Dto
 {
-    public class CachedVolunteerDto
+    public class CachedVolunteerDto : ILatitudeLongitude
     {
         public int UserId { get; set; }
         public string Postcode { get; set; }
