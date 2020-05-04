@@ -33,6 +33,7 @@ namespace UserService.AzureFunction
         {
             try
             {
+                NewRelic.Api.Agent.NewRelic.SetTransactionName("UserService", "GetUserByFirebaseUserID");
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
                 GetUserByFirebaseUIDResponse response = await _mediator.Send(req);

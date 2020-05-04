@@ -2,6 +2,7 @@
 using Dapper;
 using HelpMyStreet.Contracts.ReportService.Response;
 using HelpMyStreet.Utils.Enums;
+using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
@@ -542,6 +543,10 @@ u.[ID] <= @ToUser1Id
 
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.SqlConnectionString))
             {
+                if (connection.DataSource.Contains("database.windows.net"))
+                {
+                    connection.AccessToken = new AzureServiceTokenProvider().GetAccessTokenAsync("https://database.windows.net/").Result;
+                }
                 IEnumerable<VolunteerForCacheDto> result = await connection.QueryAsync<VolunteerForCacheDto>(query,
                     commandType: CommandType.Text,
                     param: new { FromUserId = fromUserId, ToUser1Id = toUserId },
