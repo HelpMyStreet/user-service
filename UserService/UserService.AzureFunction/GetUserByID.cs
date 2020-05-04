@@ -34,7 +34,7 @@ namespace UserService.AzureFunction
         {
             try
             {
-                NewRelic.Api.Agent.NewRelic.SetTransactionName("GetUserByID", "GetUserByID");
+                NewRelic.Api.Agent.NewRelic.SetTransactionName("UserService", "GetUserByID");
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
                 var eventAttributes = new Dictionary<string, object>() { { "userID", req.ID.ToString() } };

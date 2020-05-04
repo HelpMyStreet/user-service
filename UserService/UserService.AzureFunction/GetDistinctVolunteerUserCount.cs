@@ -31,6 +31,7 @@ namespace UserService.AzureFunction
         {
             try
             {
+                NewRelic.Api.Agent.NewRelic.SetTransactionName("UserService", "GetDistinctVolunteerUserCount");
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
                 GetDistinctVolunteerUserCountResponse response = await _mediator.Send(req);

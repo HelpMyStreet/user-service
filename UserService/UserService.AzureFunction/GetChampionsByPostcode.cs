@@ -34,6 +34,7 @@ namespace UserService.AzureFunction
         {
             try
             {
+                NewRelic.Api.Agent.NewRelic.SetTransactionName("UserService", "GetChampionsByPostcode");
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
                 GetChampionsByPostcodeResponse response = await _mediator.Send(req);

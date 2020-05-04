@@ -31,6 +31,7 @@ namespace UserService.AzureFunction
         {
             try
             {
+                NewRelic.Api.Agent.NewRelic.SetTransactionName("UserService", "GetVolunteerCountByPostcode");
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
                 GetVolunteerCountByPostcodeResponse response = await _mediator.Send(req);
