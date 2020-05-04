@@ -32,6 +32,7 @@ namespace UserService.AzureFunction
         {
             try
             {
+                NewRelic.Api.Agent.NewRelic.SetTransactionName("UserService", "PostUsersForListOfUserID");
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
                 PostUsersForListOfUserIDResponse response = await _mediator.Send(req);

@@ -29,6 +29,7 @@ namespace UserService.AzureFunction
         {
             try
             {
+                NewRelic.Api.Agent.NewRelic.SetTransactionName("UserService", "GetVolunteerCoordinates");
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
                 GetVolunteerCoordinatesResponse response = await _mediator.Send(req);

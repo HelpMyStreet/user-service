@@ -30,6 +30,7 @@ namespace UserService.AzureFunction
         {
             try
             {
+                NewRelic.Api.Agent.NewRelic.SetTransactionName("UserService", "PutModifyUser");
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
                 PutModifyUserResponse response = await _mediator.Send(req);
