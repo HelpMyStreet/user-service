@@ -15,6 +15,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using HelpMyStreet.Utils.CoordinatedResetCache;
+using HelpMyStreet.Utils.PollyPolicies;
 using HelpMyStreet.Utils.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters.Json.Internal;
@@ -28,6 +29,7 @@ using UserService.Core.Interfaces.Utils;
 using UserService.Core.Services;
 using UserService.Core.Utils;
 using Microsoft.AspNetCore.Mvc.Formatters.Json;
+using Polly;
 using UserService.Core.BusinessLogic;
 using UserService.Core.Cache;
 
@@ -50,11 +52,15 @@ namespace UserService.AzureFunction
                 .AddJsonFile("local.settings.json", true)
                 .AddEnvironmentVariables().Build();
 
+            // DI doesn't work in startup
+            PollyHttpPolicies pollyHttpPolicies = new PollyHttpPolicies(new PollyHttpPoliciesConfig());
 
             Dictionary<HttpClientConfigName, ApiConfig> httpClientConfigs = config.GetSection("Apis").Get<Dictionary<HttpClientConfigName, ApiConfig>>();
 
             foreach (KeyValuePair<HttpClientConfigName, ApiConfig> httpClientConfig in httpClientConfigs)
             {
+                IAsyncPolicy<HttpResponseMessage> retryPolicy = httpClientConfig.Value.IsExternal ? pollyHttpPolicies.ExternalHttpRetryPolicy : pollyHttpPolicies.InternalHttpRetryPolicy;
+
                 builder.Services.AddHttpClient(httpClientConfig.Key.ToString(), c =>
                 {
                     c.BaseAddress = new Uri(httpClientConfig.Value.BaseAddress);
@@ -72,7 +78,7 @@ namespace UserService.AzureFunction
                 {
                     MaxConnectionsPerServer = httpClientConfig.Value.MaxConnectionsPerServer ?? int.MaxValue,
                     AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-                });
+                }).AddPolicyHandler(retryPolicy);
 
             }
 
@@ -88,7 +94,7 @@ namespace UserService.AzureFunction
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(sqlConnectionString));
-            
+
             builder.Services.AddTransient<IRepository, Repository>();
             builder.Services.AddTransient<IAddressService, Core.Services.AddressService>();
             builder.Services.AddTransient<IHttpClientWrapper, HttpClientWrapper>();
@@ -98,7 +104,8 @@ namespace UserService.AzureFunction
             builder.Services.AddSingleton<IPollyMemoryCacheProvider, PollyMemoryCacheProvider>();
             builder.Services.AddTransient<ISystemClock, MockableDateTime>();
             builder.Services.AddTransient<ICoordinatedResetCache, CoordinatedResetCache>();
-            builder.Services.AddTransient<IGetVolunteerCoordinatesResponseGetter, GetVolunteerCoordinatesResponseGetter>();
+            builder.Services.AddTransient<IVolunteersFilteredByMinDistanceGetter, VolunteersFilteredByMinDistanceGetter>();
+            builder.Services.AddTransient<IMinDistanceFilter, MinDistanceFilter>();
         }
     }
 }

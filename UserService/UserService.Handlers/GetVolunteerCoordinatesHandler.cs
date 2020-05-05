@@ -1,40 +1,63 @@
-﻿using HelpMyStreet.Utils.CoordinatedResetCache;
+﻿using System.Collections.Generic;
+using System.Linq;
+using HelpMyStreet.Utils.CoordinatedResetCache;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
+using UserService.Core;
 using UserService.Core.BusinessLogic;
 using UserService.Core.Domains.Entities;
+using UserService.Core.Dto;
+using UserService.Core.Extensions;
 
 namespace UserService.Handlers
 {
     public class GetVolunteerCoordinatesHandler : IRequestHandler<GetVolunteerCoordinatesRequest, GetVolunteerCoordinatesResponse>
     {
-        private readonly IGetVolunteerCoordinatesResponseGetter _getVolunteerCoordinatesResponseGetter;
         private readonly ICoordinatedResetCache _coordinatedResetCache;
+        private readonly IVolunteerCache _volunteerCache;
+        private readonly IVolunteersFilteredByMinDistanceGetter _volunteersFilteredByMinDistanceGetter;
 
-        public GetVolunteerCoordinatesHandler(IGetVolunteerCoordinatesResponseGetter getVolunteerCoordinatesResponseGetter, ICoordinatedResetCache coordinatedResetCache)
+        public GetVolunteerCoordinatesHandler(ICoordinatedResetCache coordinatedResetCache, IVolunteerCache volunteerCache, IVolunteersFilteredByMinDistanceGetter volunteersFilteredByMinDistanceGetter)
         {
-            _getVolunteerCoordinatesResponseGetter = getVolunteerCoordinatesResponseGetter;
             _coordinatedResetCache = coordinatedResetCache;
+            _volunteerCache = volunteerCache;
+            _volunteersFilteredByMinDistanceGetter = volunteersFilteredByMinDistanceGetter;
         }
 
         public async Task<GetVolunteerCoordinatesResponse> Handle(GetVolunteerCoordinatesRequest request, CancellationToken cancellationToken)
         {
-            GetVolunteerCoordinatesResponse getVolunteerCoordinatesResponse;
+            IEnumerable<CachedVolunteerDto> cachedVolunteerDtos;
 
             // calculating coordinates that have a minimum distance between them is expensive so cache the result
-            if (request.MinDistanceBetweenInMetres != 0)
+            if (request.MinDistanceBetweenInMetres > 0)
             {
-                string key = $"{nameof(GetVolunteerCoordinatesResponse)}_{request}";
+                // round up to nearest 2000 metres to prevent repeated calculation of indistinguishable minimum distances and cache taking too much memory
+                request.MinDistanceBetweenInMetres = request.MinDistanceBetweenInMetres.RoundUpToNearest(2000);
+                string key = $"{nameof(CachedVolunteerDto)}_MinDistance_{request.MinDistanceBetweenInMetres}_{request.VolunteerType}_{request.IsVerifiedType}";
 
-                getVolunteerCoordinatesResponse = await _coordinatedResetCache.GetCachedDataAsync(async () => await _getVolunteerCoordinatesResponseGetter.GetVolunteerCoordinates(request, cancellationToken), key, CoordinatedResetCacheTime.OnHour);
+                cachedVolunteerDtos = await _coordinatedResetCache.GetCachedDataAsync(async (token) => await _volunteersFilteredByMinDistanceGetter.GetVolunteersFilteredByMinDistanceAsync(request, token), key, cancellationToken, CoordinatedResetCacheTime.OnHour);
             }
             else
             {
-                getVolunteerCoordinatesResponse = await _getVolunteerCoordinatesResponseGetter.GetVolunteerCoordinates(request, cancellationToken);
+                cachedVolunteerDtos = await _volunteerCache.GetCachedVolunteersAsync(request.VolunteerTypeEnum, request.IsVerifiedTypeEnum, cancellationToken);
             }
+
+            IReadOnlyList<VolunteerCoordinate> cachedVolunteerDtosWithinBoundary = cachedVolunteerDtos.WhereWithinBoundary(request.SWLatitude, request.SWLongitude, request.NELatitude, request.NELongitude)
+                .Select(x => new VolunteerCoordinate()
+                {
+                    Latitude = x.Latitude,
+                    Longitude = x.Longitude,
+                    Postcode = x.Postcode
+                }).ToList();
+
+            GetVolunteerCoordinatesResponse getVolunteerCoordinatesResponse = new GetVolunteerCoordinatesResponse()
+            {
+                Coordinates = cachedVolunteerDtosWithinBoundary
+            };
 
             return getVolunteerCoordinatesResponse;
         }
+
     }
 }
