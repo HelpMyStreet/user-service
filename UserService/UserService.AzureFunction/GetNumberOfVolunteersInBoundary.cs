@@ -30,7 +30,7 @@ namespace UserService.AzureFunction
         {
             try
             {
-                NewRelic.Api.Agent.NewRelic.SetTransactionName("UserService", "GetNumberOfVolunteersInBoundaryResponse");
+                NewRelic.Api.Agent.NewRelic.SetTransactionName("UserService", "GetNumberOfVolunteersInBoundary");
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
                 GetNumberOfVolunteersInBoundaryResponse response = await _mediator.Send(req);
