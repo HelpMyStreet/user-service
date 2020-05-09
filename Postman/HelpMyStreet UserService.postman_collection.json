@@ -337,13 +337,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/GetVolunteerCoordinates?SWLatitude=52.954885&SWLongitude=-1.155263&NELatitude=53.054885&NELongitude=-1.055263&VolunteerType=3&IsVerifiedType=3&MinDistanceBetweenInMetres=0",
+							"raw": "{{url}}/api/GetNumberOfVolunteersInBoundary?SWLatitude=52.954885&SWLongitude=-1.155263&NELatitude=53.054885&NELongitude=-1.055263",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
-								"GetVolunteerCoordinates"
+								"GetNumberOfVolunteersInBoundary"
 							],
 							"query": [
 								{
@@ -361,18 +361,6 @@
 								{
 									"key": "NELongitude",
 									"value": "-1.055263"
-								},
-								{
-									"key": "VolunteerType",
-									"value": "3"
-								},
-								{
-									"key": "IsVerifiedType",
-									"value": "3"
-								},
-								{
-									"key": "MinDistanceBetweenInMetres",
-									"value": "0"
 								}
 							]
 						},
