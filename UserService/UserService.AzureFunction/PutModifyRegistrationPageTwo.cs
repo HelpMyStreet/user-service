@@ -8,6 +8,7 @@ using System;
 using UserService.Core.Domains.Entities;
 using AzureFunctions.Extensions.Swashbuckle.Attribute;
 using System.Net;
+using Microsoft.AspNetCore.Http;
 
 namespace UserService.AzureFunction
 {
@@ -38,7 +39,11 @@ namespace UserService.AzureFunction
             catch (Exception exc)
             {
                 LogError.Log(log, exc, req);
-                return new BadRequestObjectResult(exc);
+
+                return new ObjectResult(exc)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
     }
