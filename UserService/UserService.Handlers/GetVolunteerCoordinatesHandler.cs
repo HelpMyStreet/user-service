@@ -68,11 +68,15 @@ namespace UserService.Handlers
 
             }
 
-
+            int numberOfStreetChampions = cachedVolunteerDtosWithinBoundary.Sum(x => x.NumberOfStreetChampions) ?? 0;
+            int numberOfHelpers = cachedVolunteerDtosWithinBoundary.Sum(x => x.NumberOfHelpers) ?? 0;
 
             GetVolunteerCoordinatesResponse getVolunteerCoordinatesResponse = new GetVolunteerCoordinatesResponse()
             {
-                Coordinates = cachedVolunteerDtosWithinBoundary
+                Coordinates = cachedVolunteerDtosWithinBoundary,
+                NumberOfStreetChampions = numberOfStreetChampions,
+                NumberOfHelpers = numberOfHelpers,
+                TotalNumberOfVolunteers = numberOfStreetChampions + numberOfHelpers
             };
 
             return getVolunteerCoordinatesResponse;

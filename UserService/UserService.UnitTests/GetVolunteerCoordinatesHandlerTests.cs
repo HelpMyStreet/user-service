@@ -57,6 +57,20 @@ namespace UserService.UnitTests
                     Latitude = 11,
                     Longitude = 11
                 },
+                new CachedVolunteerDto()
+                {
+                    Postcode = "NG1 1AC",
+                    Latitude = 1,
+                    Longitude = 2,
+                    VolunteerType = VolunteerType.StreetChampion
+                },
+                new CachedVolunteerDto()
+                {
+                    Postcode = "NG1 1AC",
+                    Latitude = 1,
+                    Longitude = 2,
+                    VolunteerType = VolunteerType.StreetChampion
+                },
             };
 
             _cachedVolunteerDtosReturnedByMinDistanceFilter = new List<CachedVolunteerDto>()
@@ -112,11 +126,15 @@ namespace UserService.UnitTests
 
             GetVolunteerCoordinatesResponse result = await getVolunteerCoordinatesHandler.Handle(request, CancellationToken.None);
 
-            Assert.AreEqual(1, result.Coordinates.Count);
+            Assert.AreEqual(2, result.Coordinates.Count);
             Assert.AreEqual(1, result.Coordinates.FirstOrDefault(x => x.Postcode == "NG1 1AA").Latitude);
             Assert.AreEqual(2, result.Coordinates.FirstOrDefault(x => x.Postcode == "NG1 1AA").Longitude);
             Assert.AreEqual(2, result.Coordinates.FirstOrDefault(x => x.Postcode == "NG1 1AA").NumberOfHelpers);
             Assert.AreEqual(1, result.Coordinates.FirstOrDefault(x => x.Postcode == "NG1 1AA").NumberOfStreetChampions);
+
+            Assert.AreEqual(2, result.NumberOfHelpers);
+            Assert.AreEqual(3, result.NumberOfStreetChampions);
+            Assert.AreEqual(5, result.TotalNumberOfVolunteers);
 
             _volunteerCache.Verify(x => x.GetCachedVolunteersAsync(It.IsAny<VolunteerType>(), It.IsAny<IsVerifiedType>(), It.IsAny<CancellationToken>()), Times.Once);
 
@@ -151,6 +169,11 @@ namespace UserService.UnitTests
             Assert.AreEqual(2, result.Coordinates.FirstOrDefault(x => x.Postcode == "NG1 1AA").Longitude);
             Assert.IsNull(result.Coordinates.FirstOrDefault(x => x.Postcode == "NG1 1AA").NumberOfHelpers);
             Assert.IsNull(result.Coordinates.FirstOrDefault(x => x.Postcode == "NG1 1AA").NumberOfStreetChampions);
+
+            // will need to be changed when grid aggregation functionality is implemented
+            Assert.AreEqual(0, result.NumberOfHelpers);
+            Assert.AreEqual(0, result.NumberOfStreetChampions);
+            Assert.AreEqual(0, result.TotalNumberOfVolunteers);
 
             _volunteerCache.Verify(x => x.GetCachedVolunteersAsync(It.IsAny<VolunteerType>(), It.IsAny<IsVerifiedType>(), It.IsAny<CancellationToken>()), Times.Never);
 

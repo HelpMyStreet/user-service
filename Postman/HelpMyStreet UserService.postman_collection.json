@@ -319,56 +319,6 @@
 					"response": []
 				},
 				{
-					"name": "GetNumberOfVolunteersInBoundary",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "x-functions-key",
-								"value": "{{code}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{url}}/api/GetNumberOfVolunteersInBoundary?SWLatitude=52.954885&SWLongitude=-1.155263&NELatitude=53.054885&NELongitude=-1.055263",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"api",
-								"GetNumberOfVolunteersInBoundary"
-							],
-							"query": [
-								{
-									"key": "SWLatitude",
-									"value": "52.954885"
-								},
-								{
-									"key": "SWLongitude",
-									"value": "-1.155263"
-								},
-								{
-									"key": "NELatitude",
-									"value": "53.054885"
-								},
-								{
-									"key": "NELongitude",
-									"value": "-1.055263"
-								}
-							]
-						},
-						"description": "GetNumberOfVolunteersInBoundary"
-					},
-					"response": []
-				},
-				{
 					"name": "PostCreateChampionForPostCode",
 					"request": {
 						"method": "POST",
