@@ -16,10 +16,10 @@ namespace UserService.Core.Domains.Entities
 
         // fields are temporarily nullable until the grid aggregation functionality is implemented
         [DataMember(Name = "sc")]
-        public double? NumberOfStreetChampions { get; set; }
+        public int? NumberOfStreetChampions { get; set; }
 
         [DataMember(Name = "h")]
-        public double? NumberOfHelpers { get; set; }
+        public int? NumberOfHelpers { get; set; }
 
     }
 }
