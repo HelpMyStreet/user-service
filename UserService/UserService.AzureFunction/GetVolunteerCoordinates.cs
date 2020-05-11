@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using UserService.Core.Domains.Entities;
 
 namespace UserService.AzureFunction
@@ -39,7 +40,11 @@ namespace UserService.AzureFunction
             catch (Exception exc)
             {
                 LogError.Log(log, exc, req);
-                return new BadRequestObjectResult(exc);
+
+                return new ObjectResult(exc)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
     }
