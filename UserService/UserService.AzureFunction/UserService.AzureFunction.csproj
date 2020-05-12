@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
 		<AzureFunctionsVersion>v2</AzureFunctionsVersion>
 	</PropertyGroup>
 	<ItemGroup>
@@ -8,8 +8,6 @@
 		<PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
 		<PackageReference Include="MediatR" Version="8.0.1" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="2.2.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.2.0" />
 		<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="2.2.0" />
