@@ -8,6 +8,7 @@ using UserService.Core;
 using UserService.Core.BusinessLogic;
 using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
+using UserService.Core.PreCalculation;
 
 namespace UserService.UnitTests
 {
@@ -17,7 +18,7 @@ namespace UserService.UnitTests
         private Mock<IVolunteerCache> _volunteerCache;
         private Mock<IMinDistanceFilter> _minDistanceFilter;
 
-        private IEnumerable<CachedVolunteerDto> _cachedVolunteerDtos;
+        private IEnumerable<PrecalculatedVolunteerDto> _cachedVolunteerDtos;
 
         [SetUp]
         public void SetUp()
@@ -25,9 +26,9 @@ namespace UserService.UnitTests
             _volunteerCache = new Mock<IVolunteerCache>();
             _volunteerCache.SetupAllProperties();
 
-            _cachedVolunteerDtos = new List<CachedVolunteerDto>()
+            _cachedVolunteerDtos = new List<PrecalculatedVolunteerDto>()
             {
-                new CachedVolunteerDto()
+                new PrecalculatedVolunteerDto()
                 {
                     UserId = 1,
                     Latitude = 2,
@@ -35,7 +36,7 @@ namespace UserService.UnitTests
                 }
             };
             _minDistanceFilter = new Mock<IMinDistanceFilter>();
-            _minDistanceFilter.Setup(x => x.FilterByMinDistance(It.IsAny<IEnumerable<CachedVolunteerDto>>(), It.IsAny<int>())).Returns(_cachedVolunteerDtos);
+            _minDistanceFilter.Setup(x => x.FilterByMinDistance(It.IsAny<IEnumerable<PrecalculatedVolunteerDto>>(), It.IsAny<int>())).Returns(_cachedVolunteerDtos);
         }
 
         [Test]
@@ -50,14 +51,14 @@ namespace UserService.UnitTests
 
             VolunteersFilteredByMinDistanceGetter volunteersFilteredByMinDistanceGetter = new VolunteersFilteredByMinDistanceGetter(_volunteerCache.Object, _minDistanceFilter.Object);
 
-            IEnumerable<CachedVolunteerDto> result = await volunteersFilteredByMinDistanceGetter.GetVolunteersFilteredByMinDistanceAsync(request, CancellationToken.None);
+            IEnumerable<PrecalculatedVolunteerDto> result = await volunteersFilteredByMinDistanceGetter.GetVolunteersFilteredByMinDistanceAsync(request, CancellationToken.None);
 
             Assert.AreEqual(1, result.Count());
             Assert.AreEqual(1, result.FirstOrDefault().UserId);
 
             _volunteerCache.Verify(x => x.GetCachedVolunteersAsync(It.Is<VolunteerType>(y => (int)y == 3), It.Is<IsVerifiedType>(y => (int)y == 3), It.IsAny<CancellationToken>()));
 
-            _minDistanceFilter.Verify(x => x.FilterByMinDistance(It.IsAny<IEnumerable<CachedVolunteerDto>>(), It.Is<int>(y => y == 100)));
+            _minDistanceFilter.Verify(x => x.FilterByMinDistance(It.IsAny<IEnumerable<PrecalculatedVolunteerDto>>(), It.Is<int>(y => y == 100)));
 
         }
 

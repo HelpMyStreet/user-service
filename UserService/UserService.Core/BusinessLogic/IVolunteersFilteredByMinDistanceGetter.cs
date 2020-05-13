@@ -8,6 +8,6 @@ namespace UserService.Core.BusinessLogic
 {
     public interface IVolunteersFilteredByMinDistanceGetter
     {
-        Task<IEnumerable<CachedVolunteerDto>> GetVolunteersFilteredByMinDistanceAsync(GetVolunteerCoordinatesRequest request, CancellationToken cancellationToken);
+        Task<IEnumerable<PrecalculatedVolunteerDto>> GetVolunteersFilteredByMinDistanceAsync(GetVolunteerCoordinatesRequest request, CancellationToken cancellationToken);
     }
 }

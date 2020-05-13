@@ -1,6 +1,7 @@
 ﻿using HelpMyStreet.Utils.CoordinatedResetCache;
 using MediatR;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,6 +10,8 @@ using UserService.Core.BusinessLogic;
 using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 using UserService.Core.Extensions;
+using UserService.Core.Interfaces.Repositories;
+using UserService.Core.PreCalculation;
 
 namespace UserService.Handlers
 {
@@ -17,17 +20,19 @@ namespace UserService.Handlers
         private readonly ICoordinatedResetCache _coordinatedResetCache;
         private readonly IVolunteerCache _volunteerCache;
         private readonly IVolunteersFilteredByMinDistanceGetter _volunteersFilteredByMinDistanceGetter;
+        private readonly IRepository _repository;
 
-        public GetVolunteerCoordinatesHandler(ICoordinatedResetCache coordinatedResetCache, IVolunteerCache volunteerCache, IVolunteersFilteredByMinDistanceGetter volunteersFilteredByMinDistanceGetter)
+        public GetVolunteerCoordinatesHandler(ICoordinatedResetCache coordinatedResetCache, IVolunteerCache volunteerCache, IVolunteersFilteredByMinDistanceGetter volunteersFilteredByMinDistanceGetter, IRepository repository)
         {
             _coordinatedResetCache = coordinatedResetCache;
             _volunteerCache = volunteerCache;
             _volunteersFilteredByMinDistanceGetter = volunteersFilteredByMinDistanceGetter;
+            _repository = repository;
         }
 
         public async Task<GetVolunteerCoordinatesResponse> Handle(GetVolunteerCoordinatesRequest request, CancellationToken cancellationToken)
         {
-            IEnumerable<CachedVolunteerDto> cachedVolunteerDtos;
+            IEnumerable<PrecalculatedVolunteerDto> cachedVolunteerDtos;
 
             IReadOnlyList<VolunteerCoordinate> cachedVolunteerDtosWithinBoundary;
 
@@ -36,7 +41,7 @@ namespace UserService.Handlers
             {
                 // round up to nearest 2000 metres to prevent repeated calculation of indistinguishable minimum distances and cache taking too much memory
                 request.MinDistanceBetweenInMetres = request.MinDistanceBetweenInMetres.RoundUpToNearest(2000);
-                string key = $"{nameof(CachedVolunteerDto)}_MinDistance_{request.MinDistanceBetweenInMetres}_{request.VolunteerType}_{request.IsVerifiedType}";
+                string key = $"{nameof(PrecalculatedVolunteerDto)}_MinDistance_{request.MinDistanceBetweenInMetres}_{request.VolunteerType}_{request.IsVerifiedType}";
 
                 cachedVolunteerDtos = await _coordinatedResetCache.GetCachedDataAsync(async (token) => await _volunteersFilteredByMinDistanceGetter.GetVolunteersFilteredByMinDistanceAsync(request, token), key, cancellationToken, CoordinatedResetCacheTime.OnHour);
 
@@ -53,19 +58,21 @@ namespace UserService.Handlers
             }
             else
             {
-                cachedVolunteerDtos = await _volunteerCache.GetCachedVolunteersAsync(request.VolunteerTypeEnum, request.IsVerifiedTypeEnum, cancellationToken);
+                var sw = Stopwatch.StartNew();
+                cachedVolunteerDtos = await _repository.GetPreCalculatedVolunteers(request.SWLatitude, request.SWLongitude, request.NELatitude, request.NELongitude, request.VolunteerTypeEnum, request.IsVerifiedTypeEnum);
+                sw.Stop();
+                Debug.WriteLine($"GetPreCalculatedVolunteers took {sw.ElapsedMilliseconds}");
 
-                cachedVolunteerDtosWithinBoundary = cachedVolunteerDtos.WhereWithinBoundary(request.SWLatitude, request.SWLongitude, request.NELatitude, request.NELongitude)
-                   .GroupBy(x => new { x.Postcode, x.Latitude, x.Longitude })
-                   .Select(x => new VolunteerCoordinate()
-                   {
-                       Latitude = x.Key.Latitude,
-                       Longitude = x.Key.Longitude,
-                       Postcode = x.Key.Postcode,
-                       NumberOfHelpers = x.Count(y => y.VolunteerType == VolunteerType.Helper),
-                       NumberOfStreetChampions = x.Count(y => y.VolunteerType == VolunteerType.StreetChampion),
-                   }).ToList();
-
+                cachedVolunteerDtosWithinBoundary = cachedVolunteerDtos
+                    .GroupBy(x => new { x.Postcode, x.Latitude, x.Longitude })
+                    .Select(x => new VolunteerCoordinate()
+                    {
+                        Latitude = x.Key.Latitude,
+                        Longitude = x.Key.Longitude,
+                        Postcode = x.Key.Postcode,
+                        NumberOfHelpers = x.Count(y => y.VolunteerType == VolunteerType.Helper),
+                        NumberOfStreetChampions = x.Count(y => y.VolunteerType == VolunteerType.StreetChampion),
+                    }).ToList();
             }
 
             int numberOfStreetChampions = cachedVolunteerDtosWithinBoundary.Sum(x => x.NumberOfStreetChampions) ?? 0;

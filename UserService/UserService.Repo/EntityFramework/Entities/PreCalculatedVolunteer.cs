@@ -1,8 +1,8 @@
 ﻿using UserService.Core.Domains.Entities;
 
-namespace UserService.Core.Dto
+namespace UserService.Repo.EntityFramework.Entities
 {
-    public class CachedVolunteerDto : ILatitudeLongitude
+   public class PrecalculatedVolunteer
     {
         public int UserId { get; set; }
         public string Postcode { get; set; }

@@ -12,6 +12,7 @@ using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
+using UserService.Core.PreCalculation;
 using UserService.Core.Utils;
 using UserService.Handlers;
 
@@ -24,7 +25,7 @@ namespace UserService.UnitTests
         private Mock<IAddressService> _addressService;
         private Mock<IRepository> _repository;
 
-        private IEnumerable<CachedVolunteerDto> _cachedVolunteerDtos;
+        private IEnumerable<PrecalculatedVolunteerDto> _cachedVolunteerDtos;
 
         private GetPostcodeCoordinatesResponse _getPostcodeCoordinatesResponse;
 
@@ -33,9 +34,9 @@ namespace UserService.UnitTests
         [SetUp]
         public void SetUp()
         {
-            _cachedVolunteerDtos = new List<CachedVolunteerDto>()
+            _cachedVolunteerDtos = new List<PrecalculatedVolunteerDto>()
             {
-                new CachedVolunteerDto()
+                new PrecalculatedVolunteerDto()
                 {
                     UserId = 1,
                     Postcode = "NG1 1AA",
@@ -45,7 +46,7 @@ namespace UserService.UnitTests
                     Longitude = 2,
                     SupportRadiusMiles = 2
                 },
-                new CachedVolunteerDto()
+                new PrecalculatedVolunteerDto()
                 {
                     UserId = 2,
                     Postcode = "NG1 1AB",

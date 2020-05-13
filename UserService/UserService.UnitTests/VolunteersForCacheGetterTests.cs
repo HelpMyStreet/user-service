@@ -14,6 +14,7 @@ using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
+using UserService.Core.PreCalculation;
 
 namespace UserService.UnitTests
 {
@@ -116,9 +117,9 @@ namespace UserService.UnitTests
         [Test]
         public async Task GetHelpersByPostcode()
         {
-            VolunteersForCacheGetter volunteersolunteersForCacheGetter = new VolunteersForCacheGetter(_repository.Object, _addressService.Object, _applicationConfig.Object);
+            PrecalculatedVolunteersGetter volunteersolunteersGetter = new PrecalculatedVolunteersGetter(_repository.Object, _addressService.Object, _applicationConfig.Object);
 
-            IEnumerable<CachedVolunteerDto> result = await volunteersolunteersForCacheGetter.GetAllVolunteersAsync(CancellationToken.None);
+            IEnumerable<PrecalculatedVolunteerDto> result = await volunteersolunteersGetter.GetAllPrecalculatedVolunteersAsync(CancellationToken.None);
 
             // check batch sizes are calculated correctly
             _repository.Verify(x => x.GetVolunteersForCacheAsync(It.Is<int>(y => y == 100), It.Is<int>(y => y == 199)), Times.Once);
@@ -162,9 +163,9 @@ namespace UserService.UnitTests
         {
             _repository.Setup(x => x.GetDistinctVolunteerUserCount()).Returns(0);
 
-            VolunteersForCacheGetter volunteersolunteersForCacheGetter = new VolunteersForCacheGetter(_repository.Object, _addressService.Object, _applicationConfig.Object);
+            PrecalculatedVolunteersGetter volunteersolunteersGetter = new PrecalculatedVolunteersGetter(_repository.Object, _addressService.Object, _applicationConfig.Object);
 
-            IEnumerable<CachedVolunteerDto> result = await volunteersolunteersForCacheGetter.GetAllVolunteersAsync(CancellationToken.None);
+            IEnumerable<PrecalculatedVolunteerDto> result = await volunteersolunteersGetter.GetAllPrecalculatedVolunteersAsync(CancellationToken.None);
 
             Assert.AreEqual(0, result.Count());
 

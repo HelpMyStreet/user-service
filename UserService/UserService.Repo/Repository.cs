@@ -11,6 +11,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using UserService.Core.Config;
+using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Repo.EntityFramework.Entities;
@@ -588,11 +589,94 @@ u.[ID] <= @ToUser1Id
                         Last2Hours = dailyReport.Last2Hours,
                         Today = dailyReport.Today,
                         SinceLaunch = dailyReport.SinceLaunch
-                    }) ;
+                    });
                 }
             }
 
             return response;
+        }
+
+
+        public async Task<IEnumerable<PrecalculatedVolunteerDto>> GetPreCalculatedVolunteers(double swLatitude, double swLongitude, double neLatitude, double neLongitude, VolunteerType volunteerType, IsVerifiedType isVerifiedType)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.SqlConnectionString))
+            {
+                IEnumerable<PrecalculatedVolunteerDto> result = await connection.QueryAsync<PrecalculatedVolunteerDto>("[PreCalculation].[GetVolunteersInBoundary]",
+                    commandType: CommandType.StoredProcedure,
+                    param: new { swLatitude = swLatitude, swLongitude = swLongitude,
+                        neLatitude = neLatitude, neLongitude = neLongitude,
+                        volunteerType = volunteerType, isVerifiedType = isVerifiedType },
+                    commandTimeout: 15);
+
+                return result;
+            }
+        }
+
+        public async Task AddOrUpdatePreCalculatedVolunteers(IEnumerable<PrecalculatedVolunteerDto> precalculatedVolunteers)
+        {
+            DataTable precalculatedVolunteerDataTable = CreatePreCalculatedVolunteerDataTable(precalculatedVolunteers);
+            using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.SqlConnectionString))
+            {
+                await connection.ExecuteAsync("[PreCalculation].[AddOrUpdateVolunteer]",
+                   commandType: CommandType.StoredProcedure,
+                   param: new { volunteers = precalculatedVolunteerDataTable },
+                   commandTimeout: 0);
+
+            }
+        }
+
+
+        private DataTable CreatePreCalculatedVolunteerDataTable(IEnumerable<PrecalculatedVolunteerDto> precalculatedVolunteers)
+        {
+            DataTable precalculatedVolunteerDataTable = new DataTable();
+            precalculatedVolunteerDataTable.Columns.Add(nameof(PrecalculatedVolunteer.UserId), typeof(int));
+            precalculatedVolunteerDataTable.Columns.Add(nameof(PrecalculatedVolunteer.Postcode), typeof(string));
+            precalculatedVolunteerDataTable.Columns.Add(nameof(PrecalculatedVolunteer.SupportRadiusMiles), typeof(double));
+            precalculatedVolunteerDataTable.Columns.Add(nameof(PrecalculatedVolunteer.Latitude), typeof(double));
+            precalculatedVolunteerDataTable.Columns.Add(nameof(PrecalculatedVolunteer.Longitude), typeof(double));
+            precalculatedVolunteerDataTable.Columns.Add(nameof(PrecalculatedVolunteer.VolunteerType), typeof(byte));
+            precalculatedVolunteerDataTable.Columns.Add(nameof(PrecalculatedVolunteer.IsVerifiedType), typeof(byte));
+
+            foreach (PrecalculatedVolunteerDto precalculatedVolunteer in precalculatedVolunteers)
+            {
+                DataRow precalculatedVolunteerRow = precalculatedVolunteerDataTable.NewRow();
+                precalculatedVolunteerRow[nameof(PrecalculatedVolunteer.UserId)] = precalculatedVolunteer.UserId;
+                precalculatedVolunteerRow[nameof(PrecalculatedVolunteer.Postcode)] = precalculatedVolunteer.Postcode;
+                precalculatedVolunteerRow[nameof(PrecalculatedVolunteer.SupportRadiusMiles)] = precalculatedVolunteer.SupportRadiusMiles;
+                precalculatedVolunteerRow[nameof(PrecalculatedVolunteer.Latitude)] = precalculatedVolunteer.Latitude;
+                precalculatedVolunteerRow[nameof(PrecalculatedVolunteer.Longitude)] = precalculatedVolunteer.Longitude;
+                precalculatedVolunteerRow[nameof(PrecalculatedVolunteer.VolunteerType)] = precalculatedVolunteer.VolunteerType;
+                precalculatedVolunteerRow[nameof(PrecalculatedVolunteer.IsVerifiedType)] = precalculatedVolunteer.IsVerifiedType;
+
+                precalculatedVolunteerDataTable.Rows.Add(precalculatedVolunteerRow);
+            }
+
+            return precalculatedVolunteerDataTable;
+        }
+
+        public async Task AddOrUpdateCachedData(string key, byte[] data)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.SqlConnectionString))
+            {
+                await connection.ExecuteAsync("[Cache].[AddOrUpdateData]",
+                    commandType: CommandType.StoredProcedure,
+                    param: new { key = key, data = data },
+                    commandTimeout: 30);
+
+            }
+        }
+
+        public async Task<CachedDataDto> GetCachedData(string key)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.SqlConnectionString))
+            {
+                CachedDataDto result = await connection.QuerySingleAsync<CachedDataDto>("[Cache].[GetData]",
+                    commandType: CommandType.Text,
+                    param: new { key = key },
+                    commandTimeout: 30);
+
+                return result;
+            }
         }
     }
 }

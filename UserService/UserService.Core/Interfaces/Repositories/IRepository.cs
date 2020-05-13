@@ -61,5 +61,13 @@ namespace UserService.Core.Interfaces.Repositories
         Task<IEnumerable<VolunteerForCacheDto>> GetVolunteersForCacheAsync(int fromUserId, int toUserId);
 
         Task<IEnumerable<User>> GetVolunteersByIdsAsync(IEnumerable<int> userIds);
+
+        Task<IEnumerable<PrecalculatedVolunteerDto>> GetPreCalculatedVolunteers(double swLatitude, double swLongitude, double neLatitude, double neLongitude, VolunteerType volunteerType, IsVerifiedType isVerifiedType);
+
+        Task AddOrUpdatePreCalculatedVolunteers(IEnumerable<PrecalculatedVolunteerDto> precalculatedVolunteers);
+
+        Task AddOrUpdateCachedData(string key, byte[] data);
+
+        Task<CachedDataDto> GetCachedData(string key);
     }
 }

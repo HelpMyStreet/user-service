@@ -199,6 +199,48 @@ namespace UserService.Repo
                     .HasMaxLength(10)
                     .IsUnicode(false);
             });
+
+            modelBuilder.Entity<PrecalculatedVolunteer>(entity =>
+            {
+                entity.ToTable("Volunteer", "Precalculation");
+
+                entity.HasKey(x => x.UserId);
+
+                entity.Property(e => e.UserId)
+                    .ValueGeneratedNever();
+
+                entity.HasIndex(u => new { u.Latitude, u.Longitude, u.VolunteerType, u.IsVerifiedType })
+                    .ForSqlServerInclude(nameof(PrecalculatedVolunteer.UserId), nameof(PrecalculatedVolunteer.Postcode), nameof(PrecalculatedVolunteer.SupportRadiusMiles)); ;
+
+                entity.Property(e => e.Postcode)
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<PrecalculationMetaData>(entity =>
+            {
+                entity.ToTable("MetaData", "Precalculation");
+
+                entity.HasKey(x => x.TableName);
+
+                entity.Property(e => e.TableName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LastUpdated)
+                    .HasColumnType("datetime2(0)");
+            });
+
+            modelBuilder.Entity<CachedData>(entity =>
+            {
+                entity.ToTable("Data", "Cache");
+
+                entity.HasKey(x => x.Key);
+
+                entity.Property(e => e.LastUpdated)
+                    .HasColumnType("datetime2(0)");
+            });
+
         }
     }
 }

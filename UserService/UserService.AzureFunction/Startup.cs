@@ -31,7 +31,7 @@ using UserService.Core.Utils;
 using Microsoft.AspNetCore.Mvc.Formatters.Json;
 using Polly;
 using UserService.Core.BusinessLogic;
-using UserService.Core.Cache;
+using UserService.Core.PreCalculation;
 
 
 [assembly: FunctionsStartup(typeof(UserService.AzureFunction.Startup))]
@@ -100,12 +100,14 @@ namespace UserService.AzureFunction
             builder.Services.AddTransient<IHttpClientWrapper, HttpClientWrapper>();
             builder.Services.AddTransient<IDistanceCalculator, DistanceCalculator>();
             builder.Services.AddTransient<IVolunteerCache, VolunteerCache>();
-            builder.Services.AddTransient<IVolunteersForCacheGetter, VolunteersForCacheGetter>();
+            builder.Services.AddTransient<IPrecalculatedVolunteersGetter, PrecalculatedVolunteersGetter>();
             builder.Services.AddSingleton<IPollyMemoryCacheProvider, PollyMemoryCacheProvider>();
             builder.Services.AddTransient<ISystemClock, MockableDateTime>();
             builder.Services.AddTransient<ICoordinatedResetCache, CoordinatedResetCache>();
             builder.Services.AddTransient<IVolunteersFilteredByMinDistanceGetter, VolunteersFilteredByMinDistanceGetter>();
             builder.Services.AddTransient<IMinDistanceFilter, MinDistanceFilter>();
+
+            builder.Services.AddTransient<IVolunteerPrecalculator, VolunteerPrecalculator>();
         }
     }
 }

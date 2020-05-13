@@ -12,6 +12,7 @@ using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
+using UserService.Core.PreCalculation;
 using UserService.Core.Utils;
 
 namespace UserService.Handlers
@@ -44,17 +45,17 @@ namespace UserService.Handlers
 
             VolunteerType volunteerType = VolunteerType.Helper | VolunteerType.StreetChampion;
             IsVerifiedType isVerifiedType = IsVerifiedType.IsVerified;
-            Task<IEnumerable<CachedVolunteerDto>> cachedVolunteerDtosTask = _volunteerCache.GetCachedVolunteersAsync(volunteerType, isVerifiedType, cancellationToken);
+            Task<IEnumerable<PrecalculatedVolunteerDto>> cachedVolunteerDtosTask = _volunteerCache.GetCachedVolunteersAsync(volunteerType, isVerifiedType, cancellationToken);
 
             await Task.WhenAll(postcodeCoordsTask, cachedVolunteerDtosTask);
 
             GetPostcodeCoordinatesResponse postcodeCoords = await postcodeCoordsTask;
             PostcodeCoordinate postcodeCoordsToCompareTo = postcodeCoords.PostcodeCoordinates.FirstOrDefault();
-            IEnumerable<CachedVolunteerDto> cachedVolunteerDtos = await cachedVolunteerDtosTask;
+            IEnumerable<PrecalculatedVolunteerDto> cachedVolunteerDtos = await cachedVolunteerDtosTask;
 
             List<int> idsOfHelpersWithinRadius = new List<int>();
 
-            foreach (CachedVolunteerDto cachedVolunteerDto in cachedVolunteerDtos)
+            foreach (PrecalculatedVolunteerDto cachedVolunteerDto in cachedVolunteerDtos)
             {
                 double distance = _distanceCalculator.GetDistanceInMiles(postcodeCoordsToCompareTo.Latitude, postcodeCoordsToCompareTo.Longitude, cachedVolunteerDto.Latitude, cachedVolunteerDto.Longitude);
 

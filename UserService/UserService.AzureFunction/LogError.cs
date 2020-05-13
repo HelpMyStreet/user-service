@@ -13,5 +13,9 @@ namespace UserService.AzureFunction
         {
             log.LogInformation(exc.ToString());
         }
+        public static void Log(ILogger log, Exception exc)
+        {
+            log.LogInformation(exc.ToString());
+        }
     }
 }
