@@ -95,6 +95,161 @@ namespace UserService.Repo.Migrations
                     b.ToTable("PersonalDetails","UserPersonal");
                 });
 
+            modelBuilder.Entity("UserService.Repo.EntityFramework.Entities.Postcode", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue(true);
+
+                    b.Property<DateTime>("LastUpdated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2(0)")
+                        .HasDefaultValueSql("GetUtcDate()");
+
+                    b.Property<decimal>("Latitude")
+                        .HasColumnType("decimal(9,6)");
+
+                    b.Property<decimal>("Longitude")
+                        .HasColumnType("decimal(9,6)");
+
+                    b.Property<string>("Postcode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .IsUnicode(false);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Postcode")
+                        .IsUnique()
+                        .HasName("UX_Postcode_Postcode");
+
+                    b.HasIndex("Postcode", "IsActive")
+                        .HasName("IX_Postcode_Postcode_IsActive")
+                        .HasAnnotation("SqlServer:Include", new[] { "Latitude", "Longitude" });
+
+                    b.HasIndex("Latitude", "Longitude", "IsActive")
+                        .HasName("IX_Postcode_Latitude_Longitude_IsActive")
+                        .HasAnnotation("SqlServer:Include", new[] { "Postcode" });
+
+                    b.ToTable("Postcode","Address");
+                });
+
+            modelBuilder.Entity("UserService.Repo.EntityFramework.Entities.PostcodeOld", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue(true);
+
+                    b.Property<DateTime>("LastUpdated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2(0)")
+                        .HasDefaultValueSql("GetUtcDate()");
+
+                    b.Property<decimal>("Latitude")
+                        .HasColumnType("decimal(9,6)");
+
+                    b.Property<decimal>("Longitude")
+                        .HasColumnType("decimal(9,6)");
+
+                    b.Property<string>("Postcode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .IsUnicode(false);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Postcode")
+                        .IsUnique()
+                        .HasName("UX_Postcode_Postcode");
+
+                    b.HasIndex("Postcode", "IsActive")
+                        .HasName("IX_Postcode_Postcode_IsActive")
+                        .HasAnnotation("SqlServer:Include", new[] { "Latitude", "Longitude" });
+
+                    b.HasIndex("Latitude", "Longitude", "IsActive")
+                        .HasName("IX_Postcode_Latitude_Longitude_IsActive")
+                        .HasAnnotation("SqlServer:Include", new[] { "Postcode" });
+
+                    b.ToTable("Postcode_Old","Staging");
+                });
+
+            modelBuilder.Entity("UserService.Repo.EntityFramework.Entities.PostcodeStaging", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue(true);
+
+                    b.Property<decimal>("Latitude")
+                        .HasColumnType("decimal(9,6)");
+
+                    b.Property<decimal>("Longitude")
+                        .HasColumnType("decimal(9,6)");
+
+                    b.Property<string>("Postcode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .IsUnicode(false);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Postcode_Staging","Staging");
+                });
+
+            modelBuilder.Entity("UserService.Repo.EntityFramework.Entities.PostcodeSwitch", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue(true);
+
+                    b.Property<DateTime>("LastUpdated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2(0)")
+                        .HasDefaultValueSql("GetUtcDate()");
+
+                    b.Property<decimal>("Latitude")
+                        .HasColumnType("decimal(9,6)");
+
+                    b.Property<decimal>("Longitude")
+                        .HasColumnType("decimal(9,6)");
+
+                    b.Property<string>("Postcode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .IsUnicode(false);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Postcode")
+                        .IsUnique()
+                        .HasName("UX_Postcode_Postcode");
+
+                    b.HasIndex("Postcode", "IsActive")
+                        .HasName("IX_Postcode_Postcode_IsActive")
+                        .HasAnnotation("SqlServer:Include", new[] { "Latitude", "Longitude" });
+
+                    b.HasIndex("Latitude", "Longitude", "IsActive")
+                        .HasName("IX_Postcode_Latitude_Longitude_IsActive")
+                        .HasAnnotation("SqlServer:Include", new[] { "Postcode" });
+
+                    b.ToTable("Postcode_Switch","Staging");
+                });
+
             modelBuilder.Entity("UserService.Repo.EntityFramework.Entities.RegistrationHistory", b =>
                 {
                     b.Property<int>("UserId")
