@@ -1,4 +1,6 @@
-﻿using UserService.Repo.EntityFramework.Entities;
+﻿using HelpMyStreet.PostcodeCoordinates.EF.Entities;
+using HelpMyStreet.PostcodeCoordinates.EF.Extensions;
+using UserService.Repo.EntityFramework.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -23,7 +25,7 @@ namespace UserService.Repo
         public virtual DbSet<RegistrationHistory> RegistrationHistory { get; set; }
         public virtual DbSet<User> User { get; set; }
 
-        public virtual DbSet<Postcode> Postcode { get; set; }
+        public virtual DbSet<PostcodeEntity> Postcode { get; set; }
 
         public virtual DbQuery<DailyReport> DailyReport { get; set; }
 
@@ -203,94 +205,10 @@ namespace UserService.Repo
                     .IsUnicode(false);
             });
 
-            modelBuilder.Entity<Postcode>(entity =>
-            {
-                entity.ToTable("Postcode", "Address");
-                SetupPostcodeTables(entity);
-            });
-
-            modelBuilder.Entity<PostcodeSwitch>(entity =>
-            {
-                entity.ToTable("Postcode_Switch", "Staging");
-                SetupPostcodeTables(entity);
-            });
-
-            modelBuilder.Entity<PostcodeOld>(entity =>
-            {
-                entity.ToTable("Postcode_Old", "Staging");
-                SetupPostcodeTables(entity);
-            });
-
-            modelBuilder.Entity<PostcodeStaging>(entity =>
-            {
-                entity.ToTable("Postcode_Staging", "Staging");
-
-                entity.Property(e => e.Id);
-
-                entity.Property(x => x.Id).ValueGeneratedOnAdd();
-
-                entity.HasKey(x => x.Id);
-
-                entity.Property(e => e.Postcode)
-                    .IsRequired()
-                    .HasMaxLength(10)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Latitude)
-                    .IsRequired()
-                    .HasColumnType("decimal(9,6)");
-
-                entity.Property(e => e.Longitude)
-                    .IsRequired()
-                    .HasColumnType("decimal(9,6)");
-
-                entity.Property(e => e.IsActive)
-                    .IsRequired()
-                    .HasDefaultValue(true);
-            });
+            modelBuilder.SetupPostcodeCoordinateTables();
+            modelBuilder.SetupPostcodeCoordinateDefaultIndexes();
         }
 
-        public void SetupPostcodeTables<T>(EntityTypeBuilder<T> entity) where T : PostcodeBase
-        {
-            entity.Property(e => e.Id);
-
-            entity.Property(x => x.Id).ValueGeneratedOnAdd();
-
-            entity.HasKey(x => x.Id);
-
-            entity.Property(e => e.Postcode)
-                .IsRequired()
-                .HasMaxLength(10)
-                .IsUnicode(false);
-
-            entity.Property(e => e.Latitude)
-                .IsRequired()
-                .HasColumnType("decimal(9,6)");
-
-            entity.Property(e => e.Longitude)
-                .IsRequired()
-                .HasColumnType("decimal(9,6)");
-
-            entity.HasIndex(u => u.Postcode)
-                .HasName("UX_Postcode_Postcode")
-                .IsUnique();
-
-            entity.HasIndex(u => new { u.Postcode, u.IsActive })
-                .HasName("IX_Postcode_Postcode_IsActive")
-                .ForSqlServerInclude(nameof(PostcodeBase.Latitude), nameof(PostcodeBase.Longitude));
-
-            entity.HasIndex(u => new { u.Latitude, u.Longitude, u.IsActive })
-                .ForSqlServerInclude(nameof(PostcodeBase.Postcode))
-                .HasName("IX_Postcode_Latitude_Longitude_IsActive");
-
-            entity.Property(e => e.LastUpdated)
-                .IsRequired()
-                .HasDefaultValueSql("GetUtcDate()")
-                .HasColumnType("datetime2(0)");
-
-            entity.Property(e => e.IsActive)
-                .IsRequired()
-                .HasDefaultValue(true);
-        }
+    
     }
 }
