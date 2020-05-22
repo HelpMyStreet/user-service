@@ -12,10 +12,41 @@ namespace UserService.Handlers
         public async Task<GetEmailRecipientResponse> Handle(GetEmailRecipientRequest request, CancellationToken cancellationToken)
         {
             List<EmailRecipient> emailRecipients = new List<EmailRecipient>();
+
+            emailRecipients.Add(new EmailRecipient()
+            {
+                UserID = 1,
+                IsVerified = true,
+                IsStreetChampionForGivenPostCode = false
+            });
             emailRecipients.Add(new EmailRecipient()
             {
                 UserID = 2,
-                IsVerified= true,
+                IsVerified = false,
+                IsStreetChampionForGivenPostCode = false
+            });
+            emailRecipients.Add(new EmailRecipient()
+            {
+                UserID = 3,
+                IsVerified = true,
+                IsStreetChampionForGivenPostCode = false
+            });
+            emailRecipients.Add(new EmailRecipient()
+            {
+                UserID = 4,
+                IsVerified = false,
+                IsStreetChampionForGivenPostCode = false
+            });
+            emailRecipients.Add(new EmailRecipient()
+            {
+                UserID = 5,
+                IsVerified = true,
+                IsStreetChampionForGivenPostCode = false
+            });
+            emailRecipients.Add(new EmailRecipient()
+            {
+                UserID = 6,
+                IsVerified = false,
                 IsStreetChampionForGivenPostCode = false
             });
             emailRecipients.Add(new EmailRecipient()
