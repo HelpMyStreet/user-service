@@ -3,6 +3,8 @@ using HelpMyStreet.PostcodeCoordinates.EF.Extensions;
 using UserService.Repo.EntityFramework.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using System.Data.SqlClient;
+using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace UserService.Repo
@@ -16,6 +18,12 @@ namespace UserService.Repo
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
+            SqlConnection conn = (SqlConnection)Database.GetDbConnection();
+
+            if (conn.DataSource.Contains("database.windows.net"))
+            {
+                conn.AccessToken = new AzureServiceTokenProvider().GetAccessTokenAsync("https://database.windows.net/").Result;
+            }
         }
 
         public virtual DbSet<ChampionPostcode> ChampionPostcode { get; set; }

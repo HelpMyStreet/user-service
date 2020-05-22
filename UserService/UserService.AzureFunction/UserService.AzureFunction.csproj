@@ -5,6 +5,8 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="AzureFunctions.Extensions.Swashbuckle" Version="1.4.4" />
+		<PackageReference Include="HelpMyStreet.Contracts" Version="1.1.122" />
+		<PackageReference Include="HelpMyStreet.Utils" Version="1.1.122" />
 		<PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
 		<PackageReference Include="MediatR" Version="8.0.1" />
@@ -40,4 +42,5 @@
 			<CopyToPublishDirectory>Never</CopyToPublishDirectory>
 		</None>
 	</ItemGroup>
+	<ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 </Project>

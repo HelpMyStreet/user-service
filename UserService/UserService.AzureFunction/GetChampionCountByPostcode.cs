@@ -9,6 +9,8 @@ using UserService.Core.Domains.Entities;
 using System.Net;
 using AzureFunctions.Extensions.Swashbuckle.Attribute;
 using NewRelic.Api.Agent;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
 
 namespace UserService.AzureFunction
 {
@@ -31,15 +33,26 @@ namespace UserService.AzureFunction
         {
             try
             {
+                NewRelic.Api.Agent.NewRelic.SetTransactionName("UserService", "GetChampionCountByPostcode");
+                
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
                 GetChampionCountByPostcodeResponse response = await _mediator.Send(req);
+
+                var eventAttributes = new Dictionary<string, object>() { { "result", "Success!" }, {"PostCode",req.PostCode },{ "Count", response.Count.ToString() } };
+                NewRelic.Api.Agent.NewRelic.RecordCustomEvent("GetChampionCountByPostcode response", eventAttributes);
+
+
                 return new OkObjectResult(response);
             }
             catch (Exception exc)
             {
                 LogError.Log(log, exc, req);
-                return new BadRequestObjectResult(exc);
+
+                return new ObjectResult(exc)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
     }

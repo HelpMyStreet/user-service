@@ -8,6 +8,7 @@ using NewRelic.Api.Agent;
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using UserService.Core.Domains.Entities;
 
 namespace UserService.AzureFunction
@@ -31,6 +32,7 @@ namespace UserService.AzureFunction
         {
             try
             {
+                NewRelic.Api.Agent.NewRelic.SetTransactionName("UserService", "GetHelpersByPostcode");
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
                 GetHelpersByPostcodeResponse response = await _mediator.Send(req);
@@ -40,7 +42,11 @@ namespace UserService.AzureFunction
             catch (Exception exc)
             {
                 LogError.Log(log, exc, req);
-                return new BadRequestObjectResult(exc);
+
+                return new ObjectResult(exc)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
     }

@@ -8,6 +8,7 @@ using System;
 using UserService.Core.Domains.Entities;
 using System.Net;
 using AzureFunctions.Extensions.Swashbuckle.Attribute;
+using Microsoft.AspNetCore.Http;
 
 namespace UserService.AzureFunction
 {
@@ -29,6 +30,7 @@ namespace UserService.AzureFunction
         {
             try
             {
+                NewRelic.Api.Agent.NewRelic.SetTransactionName("UserService", "PutModifyRegistrationPageThree");
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
                 PutModifyRegistrationPageThreeResponse response = await _mediator.Send(req);
@@ -37,7 +39,11 @@ namespace UserService.AzureFunction
             catch (Exception exc)
             {
                 LogError.Log(log, exc, req);
-                return new BadRequestObjectResult(exc);
+
+                return new ObjectResult(exc)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
     }

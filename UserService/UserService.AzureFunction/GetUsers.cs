@@ -5,41 +5,37 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using MediatR;
 using System;
-using System.Collections.Generic;
 using UserService.Core.Domains.Entities;
 using System.Net;
 using AzureFunctions.Extensions.Swashbuckle.Attribute;
-using HelpMyStreet.Utils.Enums;
-using HelpMyStreet.Utils.Models;
 using Microsoft.AspNetCore.Http;
 using NewRelic.Api.Agent;
+using HelpMyStreet.Contracts.UserService.Response;
 
 namespace UserService.AzureFunction
 {
-    public class GetChampionsByPostcode
+    public class GetUsers
     {
         private readonly IMediator _mediator;
 
-        public GetChampionsByPostcode(IMediator mediator)
+        public GetUsers(IMediator mediator)
         {
             _mediator = mediator;
         }
 
         [Transaction(Web = true)]
-        [FunctionName("GetChampionsByPostcode")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetChampionsByPostcodeResponse))]
+        [FunctionName("GetUsers")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetUsersResponse))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
-            [RequestBodyType(typeof(GetChampionsByPostcodeRequest), "product request")] GetChampionsByPostcodeRequest req,
+            [RequestBodyType(typeof(GetUsersRequest), "product request")] GetUsersRequest req,
             ILogger log)
         {
             try
             {
-                NewRelic.Api.Agent.NewRelic.SetTransactionName("UserService", "GetChampionsByPostcode");
+                NewRelic.Api.Agent.NewRelic.SetTransactionName("UserService", "GetUsersResponse");
                 log.LogInformation("C# HTTP trigger function processed a request.");
-
-                GetChampionsByPostcodeResponse response = await _mediator.Send(req);
-
+                GetUsersResponse response = await _mediator.Send(req);
                 return new OkObjectResult(response);
             }
             catch (Exception exc)
