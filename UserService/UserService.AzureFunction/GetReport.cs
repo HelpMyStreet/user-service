@@ -13,6 +13,7 @@ using HelpMyStreet.Utils.Enums;
 using HelpMyStreet.Utils.Models;
 using NewRelic.Api.Agent;
 using HelpMyStreet.Contracts.ReportService.Response;
+using Microsoft.AspNetCore.Http;
 
 namespace UserService.AzureFunction
 {
@@ -35,6 +36,7 @@ namespace UserService.AzureFunction
         {
             try
             {
+                NewRelic.Api.Agent.NewRelic.SetTransactionName("UserService", "GetReport");
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
                 GetReportResponse response = await _mediator.Send(req);
@@ -44,7 +46,11 @@ namespace UserService.AzureFunction
             catch (Exception exc)
             {
                 LogError.Log(log, exc, req);
-                return new BadRequestObjectResult(exc);
+
+                return new ObjectResult(exc)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
     }

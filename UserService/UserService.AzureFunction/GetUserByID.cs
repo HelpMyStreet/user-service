@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net;
 using AzureFunctions.Extensions.Swashbuckle.Attribute;
+using Microsoft.AspNetCore.Http;
 using NewRelic.Api.Agent;
 
 namespace UserService.AzureFunction
@@ -34,18 +35,11 @@ namespace UserService.AzureFunction
         {
             try
             {
+                NewRelic.Api.Agent.NewRelic.SetTransactionName("UserService", "GetUserByID");
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
-                List<HelpMyStreet.Utils.Enums.SupportActivities> supportActivities = new System.Collections.Generic.List<HelpMyStreet.Utils.Enums.SupportActivities>();
-                supportActivities.Add(HelpMyStreet.Utils.Enums.SupportActivities.Errands);
-                supportActivities.Add(HelpMyStreet.Utils.Enums.SupportActivities.DogWalking);
-
-                RegistrationStepThree registrationStepThree = new RegistrationStepThree()
-                {
-                    Activities = supportActivities
-                };
-
-                string jsonData = JsonConvert.SerializeObject(registrationStepThree);
+                var eventAttributes = new Dictionary<string, object>() { { "userID", req.ID.ToString() } };
+                NewRelic.Api.Agent.NewRelic.RecordCustomEvent("GetChampionCountByPostcode request", eventAttributes);
 
                 GetUserByIDResponse response = await _mediator.Send(req);
                 return new OkObjectResult(response);
@@ -53,7 +47,11 @@ namespace UserService.AzureFunction
             catch (Exception exc)
             {
                 LogError.Log(log, exc, req);
-                return new BadRequestObjectResult(exc);
+
+                return new ObjectResult(exc)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
     }
