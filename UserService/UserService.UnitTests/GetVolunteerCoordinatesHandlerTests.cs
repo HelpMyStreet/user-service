@@ -23,6 +23,7 @@ namespace UserService.UnitTests
         private Mock<IVolunteersFilteredByMinDistanceGetter> _volunteersFilteredByMinDistanceGetter;
 
         private IEnumerable<CachedVolunteerDto> _cachedVolunteerDtos;
+        private IEnumerable<CachedVolunteerDto> _cachedVolunteerDtosReturnedByMinDistanceFilter;
 
         [SetUp]
         public void SetUp()
@@ -33,7 +34,53 @@ namespace UserService.UnitTests
                 {
                     Postcode = "NG1 1AA",
                     Latitude = 1,
-                    Longitude = 2
+                    Longitude = 2,
+                    VolunteerType = VolunteerType.Helper
+                },
+                new CachedVolunteerDto()
+                {
+                    Postcode = "NG1 1AA",
+                    Latitude = 1,
+                    Longitude = 2,
+                    VolunteerType = VolunteerType.Helper
+                },
+                new CachedVolunteerDto()
+                {
+                    Postcode = "NG1 1AA",
+                    Latitude = 1,
+                    Longitude = 2,
+                    VolunteerType = VolunteerType.StreetChampion
+                },
+                new CachedVolunteerDto()
+                {
+                    Postcode = "NG1 1AB",
+                    Latitude = 11,
+                    Longitude = 11
+                },
+                new CachedVolunteerDto()
+                {
+                    Postcode = "NG1 1AC",
+                    Latitude = 1,
+                    Longitude = 2,
+                    VolunteerType = VolunteerType.StreetChampion
+                },
+                new CachedVolunteerDto()
+                {
+                    Postcode = "NG1 1AC",
+                    Latitude = 1,
+                    Longitude = 2,
+                    VolunteerType = VolunteerType.StreetChampion
+                },
+            };
+
+            _cachedVolunteerDtosReturnedByMinDistanceFilter = new List<CachedVolunteerDto>()
+            {
+                new CachedVolunteerDto()
+                {
+                    Postcode = "NG1 1AA",
+                    Latitude = 1,
+                    Longitude = 2,
+                    VolunteerType = VolunteerType.Helper
                 },
                 new CachedVolunteerDto()
                 {
@@ -48,14 +95,14 @@ namespace UserService.UnitTests
 
             _volunteersFilteredByMinDistanceGetter = new Mock<IVolunteersFilteredByMinDistanceGetter>();
 
-            _volunteersFilteredByMinDistanceGetter.Setup(x => x.GetVolunteersFilteredByMinDistanceAsync(It.IsAny<GetVolunteerCoordinatesRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(_cachedVolunteerDtos);
+            _volunteersFilteredByMinDistanceGetter.Setup(x => x.GetVolunteersFilteredByMinDistanceAsync(It.IsAny<GetVolunteerCoordinatesRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(_cachedVolunteerDtosReturnedByMinDistanceFilter);
 
 
             _coordinatedResetCache = new Mock<ICoordinatedResetCache>();
 
             _coordinatedResetCache.Setup(x => x.GetCachedDataAsync(It.IsAny<Func<CancellationToken, Task<IEnumerable<CachedVolunteerDto>>>>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<CoordinatedResetCacheTime>())).Returns((Func<CancellationToken, Task<IEnumerable<CachedVolunteerDto>>> func, string key, CancellationToken token, CoordinatedResetCacheTime resetTime) =>
             {
-                return _volunteersFilteredByMinDistanceGetter.Object.GetVolunteersFilteredByMinDistanceAsync(It.Is<GetVolunteerCoordinatesRequest>(y=>y.MinDistanceBetweenInMetres==2000), It.IsAny<CancellationToken>());
+                return _volunteersFilteredByMinDistanceGetter.Object.GetVolunteersFilteredByMinDistanceAsync(It.Is<GetVolunteerCoordinatesRequest>(y => y.MinDistanceBetweenInMetres == 2000), It.IsAny<CancellationToken>());
             });
 
         }
@@ -79,9 +126,15 @@ namespace UserService.UnitTests
 
             GetVolunteerCoordinatesResponse result = await getVolunteerCoordinatesHandler.Handle(request, CancellationToken.None);
 
-            Assert.AreEqual(1, result.Coordinates.Count);
+            Assert.AreEqual(2, result.Coordinates.Count);
             Assert.AreEqual(1, result.Coordinates.FirstOrDefault(x => x.Postcode == "NG1 1AA").Latitude);
             Assert.AreEqual(2, result.Coordinates.FirstOrDefault(x => x.Postcode == "NG1 1AA").Longitude);
+            Assert.AreEqual(2, result.Coordinates.FirstOrDefault(x => x.Postcode == "NG1 1AA").NumberOfHelpers);
+            Assert.AreEqual(1, result.Coordinates.FirstOrDefault(x => x.Postcode == "NG1 1AA").NumberOfStreetChampions);
+
+            Assert.AreEqual(2, result.NumberOfHelpers);
+            Assert.AreEqual(3, result.NumberOfStreetChampions);
+            Assert.AreEqual(5, result.TotalNumberOfVolunteers);
 
             _volunteerCache.Verify(x => x.GetCachedVolunteersAsync(It.IsAny<VolunteerType>(), It.IsAny<IsVerifiedType>(), It.IsAny<CancellationToken>()), Times.Once);
 
@@ -114,10 +167,17 @@ namespace UserService.UnitTests
             Assert.AreEqual(1, result.Coordinates.Count);
             Assert.AreEqual(1, result.Coordinates.FirstOrDefault(x => x.Postcode == "NG1 1AA").Latitude);
             Assert.AreEqual(2, result.Coordinates.FirstOrDefault(x => x.Postcode == "NG1 1AA").Longitude);
+            Assert.IsNull(result.Coordinates.FirstOrDefault(x => x.Postcode == "NG1 1AA").NumberOfHelpers);
+            Assert.IsNull(result.Coordinates.FirstOrDefault(x => x.Postcode == "NG1 1AA").NumberOfStreetChampions);
+
+            // will need to be changed when grid aggregation functionality is implemented
+            Assert.AreEqual(0, result.NumberOfHelpers);
+            Assert.AreEqual(0, result.NumberOfStreetChampions);
+            Assert.AreEqual(0, result.TotalNumberOfVolunteers);
 
             _volunteerCache.Verify(x => x.GetCachedVolunteersAsync(It.IsAny<VolunteerType>(), It.IsAny<IsVerifiedType>(), It.IsAny<CancellationToken>()), Times.Never);
 
-            _coordinatedResetCache.Verify(x => x.GetCachedDataAsync(It.IsAny<Func<CancellationToken, Task<IEnumerable<CachedVolunteerDto>>>>(), It.Is<string>(y=> y== key), It.IsAny<CancellationToken>(), It.IsAny<CoordinatedResetCacheTime>()), Times.Once);
+            _coordinatedResetCache.Verify(x => x.GetCachedDataAsync(It.IsAny<Func<CancellationToken, Task<IEnumerable<CachedVolunteerDto>>>>(), It.Is<string>(y => y == key), It.IsAny<CancellationToken>(), It.IsAny<CoordinatedResetCacheTime>()), Times.Once);
 
             _volunteersFilteredByMinDistanceGetter.Verify(x => x.GetVolunteersFilteredByMinDistanceAsync(It.IsAny<GetVolunteerCoordinatesRequest>(), It.IsAny<CancellationToken>()), Times.Once);
         }

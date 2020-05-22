@@ -1,8 +1,11 @@
-﻿using UserService.Repo.EntityFramework.Entities;
+﻿using HelpMyStreet.PostcodeCoordinates.EF.Entities;
+using HelpMyStreet.PostcodeCoordinates.EF.Extensions;
+using UserService.Repo.EntityFramework.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Data.SqlClient;
 using Microsoft.Azure.Services.AppAuthentication;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace UserService.Repo
 {
@@ -29,6 +32,8 @@ namespace UserService.Repo
         public virtual DbSet<SupportPostcode> SupportPostcode { get; set; }
         public virtual DbSet<RegistrationHistory> RegistrationHistory { get; set; }
         public virtual DbSet<User> User { get; set; }
+
+        public virtual DbSet<PostcodeEntity> Postcode { get; set; }
 
         public virtual DbQuery<DailyReport> DailyReport { get; set; }
 
@@ -207,6 +212,11 @@ namespace UserService.Repo
                     .HasMaxLength(10)
                     .IsUnicode(false);
             });
+
+            modelBuilder.SetupPostcodeCoordinateTables();
+            modelBuilder.SetupPostcodeCoordinateDefaultIndexes();
         }
+
+    
     }
 }
