@@ -13,8 +13,8 @@
 		<PackageReference Include="AutoMapper" Version="9.0.0" />
 		<PackageReference Include="Dapper" Version="2.0.35" />
 		<PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.4.0" />
-		<PackageReference Include="HelpMyStreet.Utils" Version="1.1.128" />
-		<PackageReference Include="HelpMyStreet.PostcodeCoordinates.EF" Version="1.1.122" />
+		<PackageReference Include="HelpMyStreet.Utils" Version="1.1.132" />
+		<PackageReference Include="HelpMyStreet.PostcodeCoordinates.EF" Version="1.1.132" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.0" />

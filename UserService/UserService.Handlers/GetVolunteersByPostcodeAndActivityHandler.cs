@@ -7,64 +7,64 @@ using System.Collections.Generic;
 
 namespace UserService.Handlers
 {
-    public class GetEmailRecipientHandler : IRequestHandler<GetEmailRecipientRequest, GetEmailRecipientResponse>
+    public class GetVolunteersByPostcodeAndActivityHandler : IRequestHandler<GetVolunteersByPostcodeAndActivityRequest, GetVolunteersByPostcodeAndActivityResponse>
     {
-        public async Task<GetEmailRecipientResponse> Handle(GetEmailRecipientRequest request, CancellationToken cancellationToken)
+        public async Task<GetVolunteersByPostcodeAndActivityResponse> Handle(GetVolunteersByPostcodeAndActivityRequest request, CancellationToken cancellationToken)
         {
-            List<EmailRecipient> emailRecipients = new List<EmailRecipient>();
+            List<VolunteerSummary> volunteers = new List<VolunteerSummary>();
 
-            emailRecipients.Add(new EmailRecipient()
+            volunteers.Add(new VolunteerSummary()
             {
                 UserID = 1,
                 IsVerified = true,
                 IsStreetChampionForGivenPostCode = false
             });
-            emailRecipients.Add(new EmailRecipient()
+            volunteers.Add(new VolunteerSummary()
             {
                 UserID = 2,
                 IsVerified = false,
                 IsStreetChampionForGivenPostCode = false
             });
-            emailRecipients.Add(new EmailRecipient()
+            volunteers.Add(new VolunteerSummary()
             {
                 UserID = 3,
                 IsVerified = true,
                 IsStreetChampionForGivenPostCode = false
             });
-            emailRecipients.Add(new EmailRecipient()
+            volunteers.Add(new VolunteerSummary()
             {
                 UserID = 4,
                 IsVerified = false,
                 IsStreetChampionForGivenPostCode = false
             });
-            emailRecipients.Add(new EmailRecipient()
+            volunteers.Add(new VolunteerSummary()
             {
                 UserID = 5,
                 IsVerified = true,
                 IsStreetChampionForGivenPostCode = false
             });
-            emailRecipients.Add(new EmailRecipient()
+            volunteers.Add(new VolunteerSummary()
             {
                 UserID = 6,
                 IsVerified = false,
                 IsStreetChampionForGivenPostCode = false
             });
-            emailRecipients.Add(new EmailRecipient()
+            volunteers.Add(new VolunteerSummary()
             {
                 UserID = 32,
                 IsVerified = false,
                 IsStreetChampionForGivenPostCode = false
             });
-            emailRecipients.Add(new EmailRecipient()
+            volunteers.Add(new VolunteerSummary()
             {
                 UserID = 85,
                 IsVerified = true,
                 IsStreetChampionForGivenPostCode = false
             });
 
-            GetEmailRecipientResponse response = new GetEmailRecipientResponse()
+            GetVolunteersByPostcodeAndActivityResponse response = new GetVolunteersByPostcodeAndActivityResponse()
             {
-                EmailRecipients = emailRecipients
+                Volunteers = volunteers
             };
 
             return response;

@@ -15,28 +15,28 @@ using HelpMyStreet.Contracts.UserService.Request;
 
 namespace UserService.AzureFunction
 {
-    public class GetEmailRecipient
+    public class GetVolunteersByPostcodeAndActivity
     {
         private readonly IMediator _mediator;
 
-        public GetEmailRecipient(IMediator mediator)
+        public GetVolunteersByPostcodeAndActivity(IMediator mediator)
         {
             _mediator = mediator;
         }
 
         [Transaction(Web = true)]
-        [FunctionName("GetEmailRecipient")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetEmailRecipientResponse))]
+        [FunctionName("GetVolunteersByPostcodeAndActivity")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetVolunteersByPostcodeAndActivityResponse))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
-            [RequestBodyType(typeof(GetEmailRecipientRequest), "product request")] GetEmailRecipientRequest req,
+            [RequestBodyType(typeof(GetVolunteersByPostcodeAndActivityRequest), "product request")] GetVolunteersByPostcodeAndActivityRequest req,
             ILogger log)
         {
             try
             {
-                NewRelic.Api.Agent.NewRelic.SetTransactionName("UserService", "GetEmailRecipientResponse");
+                NewRelic.Api.Agent.NewRelic.SetTransactionName("UserService", "GetVolunteersByPostcodeAndActivityResponse");
                 log.LogInformation("C# HTTP trigger function processed a request.");
-                GetEmailRecipientResponse response = await _mediator.Send(req);
+                GetVolunteersByPostcodeAndActivityResponse response = await _mediator.Send(req);
                 return new OkObjectResult(response);
             }
             catch (Exception exc)
