@@ -6,11 +6,14 @@ using UserService.Core.Domains.Entities;
 using HelpMyStreet.Utils.Models;
 using HelpMyStreet.Contracts.ReportService.Response;
 using UserService.Core.Dto;
+using HelpMyStreet.Contracts.UserService.Response;
 
 namespace UserService.Core.Interfaces.Repositories
 {
     public interface IRepository
     {
+        List<UserDetails> GetUserDetails();
+
         List<ReportItem> GetDailyReport();
 
         User GetUserByID(int userId);

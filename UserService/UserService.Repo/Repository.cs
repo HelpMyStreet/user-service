@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Dapper;
 using HelpMyStreet.Contracts.ReportService.Response;
+using HelpMyStreet.Contracts.UserService.Response;
 using HelpMyStreet.Utils.Enums;
 using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.EntityFrameworkCore;
@@ -598,6 +599,23 @@ u.[ID] <= @ToUser1Id
             }
 
             return response;
+        }
+
+        public List<UserDetails> GetUserDetails()
+        {
+            return _context.User
+                .Include(i => i.PersonalDetails)
+                .Select(u => new UserDetails
+            {
+                UserID = u.Id,
+                IsVerified = u.IsVerified.Value,
+                IsVolunteer = u.IsVolunteer.Value,
+                IsStreetChampion = u.StreetChampionRoleUnderstood.Value,
+                FirstName = u.PersonalDetails.FirstName,
+                LastName = u.PersonalDetails.LastName,
+                EmailAddress = u.PersonalDetails.EmailAddress,
+                PostCode = u.PostalCode
+            }).ToList();
         }
     }
 }
