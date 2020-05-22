@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using UserService.Core.Config;
 using UserService.Core.Dto;
@@ -601,9 +602,9 @@ u.[ID] <= @ToUser1Id
             return response;
         }
 
-        public List<UserDetails> GetUserDetails()
+        public async  Task<List<UserDetails>> GetUserDetailsAsync(CancellationToken cancellationToken)
         {
-            return _context.User
+            return await _context.User
                 .Include(i => i.PersonalDetails)
                 .Select(u => new UserDetails
             {
@@ -615,7 +616,7 @@ u.[ID] <= @ToUser1Id
                 LastName = u.PersonalDetails.LastName,
                 EmailAddress = u.PersonalDetails.EmailAddress,
                 PostCode = u.PostalCode
-            }).ToList();
+            }).ToListAsync(cancellationToken);
         }
     }
 }

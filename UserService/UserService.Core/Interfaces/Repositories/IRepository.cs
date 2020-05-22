@@ -2,17 +2,16 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using UserService.Core.Domains.Entities;
-using HelpMyStreet.Utils.Models;
 using HelpMyStreet.Contracts.ReportService.Response;
 using UserService.Core.Dto;
 using HelpMyStreet.Contracts.UserService.Response;
+using System.Threading;
 
 namespace UserService.Core.Interfaces.Repositories
 {
     public interface IRepository
     {
-        List<UserDetails> GetUserDetails();
+        Task<List<UserDetails>> GetUserDetailsAsync(CancellationToken cancellationToken);
 
         List<ReportItem> GetDailyReport();
 

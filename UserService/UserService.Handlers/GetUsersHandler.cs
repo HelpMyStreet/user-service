@@ -19,14 +19,14 @@ namespace UserService.Handlers
             _repository = repository;
         }
 
-        public Task<GetUsersResponse> Handle(GetUsersRequest request, CancellationToken cancellationToken)
+        public async Task<GetUsersResponse> Handle(GetUsersRequest request, CancellationToken cancellationToken)
         {
-            List<UserDetails> userDetails = _repository.GetUserDetails();
+            List<UserDetails> userDetails = await _repository.GetUserDetailsAsync(cancellationToken);
 
-            return Task.FromResult(new GetUsersResponse()
+            return new GetUsersResponse()
             {
                 UserDetails = userDetails
-            });
+            };
         }
     }
 }
