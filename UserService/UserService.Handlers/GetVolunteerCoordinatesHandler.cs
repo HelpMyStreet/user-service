@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using HelpMyStreet.Cache;
 using UserService.Core;
 using UserService.Core.BusinessLogic;
 using UserService.Core.Domains.Entities;
@@ -14,13 +15,13 @@ namespace UserService.Handlers
 {
     public class GetVolunteerCoordinatesHandler : IRequestHandler<GetVolunteerCoordinatesRequest, GetVolunteerCoordinatesResponse>
     {
-        private readonly ICoordinatedResetCache _coordinatedResetCache;
+        private readonly IMemDistCache<IEnumerable<CachedVolunteerDto>> _memDistCache;
         private readonly IVolunteerCache _volunteerCache;
         private readonly IVolunteersFilteredByMinDistanceGetter _volunteersFilteredByMinDistanceGetter;
 
-        public GetVolunteerCoordinatesHandler(ICoordinatedResetCache coordinatedResetCache, IVolunteerCache volunteerCache, IVolunteersFilteredByMinDistanceGetter volunteersFilteredByMinDistanceGetter)
+        public GetVolunteerCoordinatesHandler(IMemDistCache<IEnumerable<CachedVolunteerDto>> memDistCache, IVolunteerCache volunteerCache, IVolunteersFilteredByMinDistanceGetter volunteersFilteredByMinDistanceGetter)
         {
-            _coordinatedResetCache = coordinatedResetCache;
+            _memDistCache = memDistCache;
             _volunteerCache = volunteerCache;
             _volunteersFilteredByMinDistanceGetter = volunteersFilteredByMinDistanceGetter;
         }
@@ -38,7 +39,7 @@ namespace UserService.Handlers
                 request.MinDistanceBetweenInMetres = request.MinDistanceBetweenInMetres.RoundUpToNearest(2000);
                 string key = $"{nameof(CachedVolunteerDto)}_MinDistance_{request.MinDistanceBetweenInMetres}_{request.VolunteerType}_{request.IsVerifiedType}";
 
-                cachedVolunteerDtos = await _coordinatedResetCache.GetCachedDataAsync(async (token) => await _volunteersFilteredByMinDistanceGetter.GetVolunteersFilteredByMinDistanceAsync(request, token), key, cancellationToken, CoordinatedResetCacheTime.OnHour);
+                cachedVolunteerDtos = await _memDistCache.GetCachedDataAsync(async (token) => await _volunteersFilteredByMinDistanceGetter.GetVolunteersFilteredByMinDistanceAsync(request, token), key, RefreshBehaviour.DontWaitForFreshData, cancellationToken);
 
                 cachedVolunteerDtosWithinBoundary = cachedVolunteerDtos.WhereWithinBoundary(request.SWLatitude, request.SWLongitude, request.NELatitude, request.NELongitude)
                     .Select(x => new VolunteerCoordinate()

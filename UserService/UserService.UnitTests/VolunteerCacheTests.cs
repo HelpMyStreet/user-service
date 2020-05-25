@@ -1,5 +1,4 @@
-﻿using HelpMyStreet.Utils.CoordinatedResetCache;
-using Microsoft.EntityFrameworkCore.Internal;
+﻿using HelpMyStreet.Cache;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -18,7 +17,7 @@ namespace UserService.UnitTests
     {
 
         private Mock<IVolunteersForCacheGetter> _volunteersForCacheGetter;
-        private Mock<ICoordinatedResetCache> _coordinatedResetCache;
+        private Mock<IMemDistCache<IEnumerable<CachedVolunteerDto>>> _memDistCache;
 
         private IEnumerable<CachedVolunteerDto> _cachedVolunteerDtos;
 
@@ -61,14 +60,14 @@ namespace UserService.UnitTests
             _volunteersForCacheGetter = new Mock<IVolunteersForCacheGetter>();
             _volunteersForCacheGetter.SetupAllProperties();
 
-            _coordinatedResetCache = new Mock<ICoordinatedResetCache>();
-            _coordinatedResetCache.Setup(x => x.GetCachedDataAsync(It.IsAny<Func<Task<IEnumerable<CachedVolunteerDto>>>>(), It.Is<string>(y => y == "AllCachedVolunteerDtos"), It.Is<CoordinatedResetCacheTime>(y => y == CoordinatedResetCacheTime.OnHour))).ReturnsAsync(_cachedVolunteerDtos);
+            _memDistCache = new Mock<IMemDistCache<IEnumerable<CachedVolunteerDto>>>();
+            _memDistCache.Setup(x => x.GetCachedDataAsync(It.IsAny<Func<CancellationToken, Task<IEnumerable<CachedVolunteerDto>>>>(), It.Is<string>(y => y == "AllCachedVolunteerDtos"), It.Is<RefreshBehaviour>(y => y == RefreshBehaviour.DontRefreshData), It.IsAny<CancellationToken>())).ReturnsAsync(_cachedVolunteerDtos);
         }
 
         [Test]
         public async Task GetAll()
         {
-            VolunteerCache volunteerCache = new VolunteerCache(_coordinatedResetCache.Object, _volunteersForCacheGetter.Object);
+            VolunteerCache volunteerCache = new VolunteerCache(_memDistCache.Object, _volunteersForCacheGetter.Object);
 
             VolunteerType volunteerType = VolunteerType.Helper | VolunteerType.StreetChampion;
             IsVerifiedType isVerifiedType = IsVerifiedType.IsVerified | IsVerifiedType.IsNotVerified;
@@ -85,7 +84,7 @@ namespace UserService.UnitTests
         [Test]
         public async Task GetAllStreetChampions()
         {
-            VolunteerCache volunteerCache = new VolunteerCache(_coordinatedResetCache.Object, _volunteersForCacheGetter.Object);
+            VolunteerCache volunteerCache = new VolunteerCache(_memDistCache.Object, _volunteersForCacheGetter.Object);
 
             VolunteerType volunteerType = VolunteerType.StreetChampion;
             IsVerifiedType isVerifiedType = IsVerifiedType.IsVerified | IsVerifiedType.IsNotVerified;
@@ -99,7 +98,7 @@ namespace UserService.UnitTests
         [Test]
         public async Task GetAllHelpers()
         {
-            VolunteerCache volunteerCache = new VolunteerCache(_coordinatedResetCache.Object, _volunteersForCacheGetter.Object);
+            VolunteerCache volunteerCache = new VolunteerCache(_memDistCache.Object, _volunteersForCacheGetter.Object);
 
             VolunteerType volunteerType = VolunteerType.Helper;
             IsVerifiedType isVerifiedType = IsVerifiedType.IsVerified | IsVerifiedType.IsNotVerified;
@@ -113,7 +112,7 @@ namespace UserService.UnitTests
         [Test]
         public async Task GetAllVerfied()
         {
-            VolunteerCache volunteerCache = new VolunteerCache(_coordinatedResetCache.Object, _volunteersForCacheGetter.Object);
+            VolunteerCache volunteerCache = new VolunteerCache(_memDistCache.Object, _volunteersForCacheGetter.Object);
 
             VolunteerType volunteerType = VolunteerType.Helper | VolunteerType.StreetChampion;
             IsVerifiedType isVerifiedType = IsVerifiedType.IsVerified;
@@ -128,7 +127,7 @@ namespace UserService.UnitTests
         [Test]
         public async Task GetAllNonVerfied()
         {
-            VolunteerCache volunteerCache = new VolunteerCache(_coordinatedResetCache.Object, _volunteersForCacheGetter.Object);
+            VolunteerCache volunteerCache = new VolunteerCache(_memDistCache.Object, _volunteersForCacheGetter.Object);
 
             VolunteerType volunteerType = VolunteerType.Helper | VolunteerType.StreetChampion;
             IsVerifiedType isVerifiedType = IsVerifiedType.IsNotVerified;
