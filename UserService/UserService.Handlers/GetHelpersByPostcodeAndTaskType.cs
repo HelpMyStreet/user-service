@@ -37,7 +37,8 @@ namespace UserService.Handlers
             {
                 Users = users.Select(x => new HelperContactInformation
                 {
-                    UserID = x.ID,                  
+                    Email = x.UserPersonalDetails.EmailAddress,
+                    DisplayName = x.UserPersonalDetails.DisplayName,                  
                     IsVerified = x.IsVerified.HasValue && x.IsVerified.Value,
                     IsStreetChampionOfPostcode = x.ChampionPostcodes.Contains(request.Postcode),
                     SupportedActivites = x.SupportActivities
