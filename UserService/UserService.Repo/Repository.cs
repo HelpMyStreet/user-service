@@ -578,6 +578,29 @@ u.[ID] <= @ToUser1Id
             return response;
         }
 
+        public async Task<IEnumerable<model.User>> GetVolunteersByIdsAndSupportActivitesAsync(IEnumerable<int> userIds, List<SupportActivities> supportActivities)
+        {
+            var users = await _context.User
+                .Where(x => x.IsVolunteer == true
+                            && x.IsVerified == true
+                            && userIds.Contains(x.Id)
+                            && supportActivities.Any(sa => x.SupportActivity.Any(s => s.ActivityId == (int)sa)))
+                .Include(x => x.ChampionPostcode)
+                .Include(x => x.SupportActivity)
+                .Include(x => x.PersonalDetails)
+                .Include(x => x.RegistrationHistory)
+                .ToListAsync();
+
+
+            List<model.User> response = new List<model.User>();
+            foreach (var user in users)
+            {
+                response.Add(MapEFUserToModelUser(user));
+            }
+
+            return response;
+        }
+
         public List<ReportItem> GetDailyReport()
         {
             List<ReportItem> response = new List<ReportItem>();

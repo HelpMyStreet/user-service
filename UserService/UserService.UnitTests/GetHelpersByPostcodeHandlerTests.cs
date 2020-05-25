@@ -12,6 +12,7 @@ using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
+using UserService.Core.Services;
 using UserService.Core.Utils;
 using UserService.Handlers;
 
@@ -22,6 +23,7 @@ namespace UserService.UnitTests
         private Mock<IVolunteerCache> _volunteerCache;
         private Mock<IDistanceCalculator> _distanceCalculator;
         private Mock<IAddressService> _addressService;
+        private IHelperService _helperService;
         private Mock<IRepository> _repository;
 
         private IEnumerable<CachedVolunteerDto> _cachedVolunteerDtos;
@@ -82,7 +84,7 @@ namespace UserService.UnitTests
             _addressService = new Mock<IAddressService>();
 
             _addressService.Setup(x => x.GetPostcodeCoordinatesAsync(It.IsAny<GetPostcodeCoordinatesRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(_getPostcodeCoordinatesResponse);
-
+            _helperService = new HelperService(_addressService.Object, _volunteerCache.Object, _distanceCalculator.Object);
 
             _users = new List<User>()
             {
@@ -104,7 +106,7 @@ namespace UserService.UnitTests
                 Postcode = "NG1 1AE"
             };
 
-            GetHelpersByPostcodeHandler getHelpersByPostcodeHandler = new GetHelpersByPostcodeHandler(_volunteerCache.Object, _distanceCalculator.Object, _addressService.Object, _repository.Object);
+            GetHelpersByPostcodeHandler getHelpersByPostcodeHandler = new GetHelpersByPostcodeHandler(_helperService, _repository.Object);
 
             GetHelpersByPostcodeResponse result = await getHelpersByPostcodeHandler.Handle(request, CancellationToken.None);
 

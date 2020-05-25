@@ -6,6 +6,7 @@ using UserService.Core.Domains.Entities;
 using HelpMyStreet.Utils.Models;
 using HelpMyStreet.Contracts.ReportService.Response;
 using UserService.Core.Dto;
+using HelpMyStreet.Utils.Enums;
 
 namespace UserService.Core.Interfaces.Repositories
 {
@@ -57,9 +58,9 @@ namespace UserService.Core.Interfaces.Repositories
 
         Task<int> GetMaxUserIdAsync();
 
-
+        
         Task<IEnumerable<VolunteerForCacheDto>> GetVolunteersForCacheAsync(int fromUserId, int toUserId);
-
         Task<IEnumerable<User>> GetVolunteersByIdsAsync(IEnumerable<int> userIds);
+        Task<IEnumerable<User>> GetVolunteersByIdsAndSupportActivitesAsync(IEnumerable<int> userIds, List<SupportActivities> supportActivities);
     }
 }

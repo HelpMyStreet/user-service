@@ -97,6 +97,7 @@ namespace UserService.AzureFunction
 
             builder.Services.AddTransient<IRepository, Repository>();
             builder.Services.AddTransient<IAddressService, Core.Services.AddressService>();
+            builder.Services.AddTransient<IHelperService, HelperService>();
             builder.Services.AddTransient<IHttpClientWrapper, HttpClientWrapper>();
             builder.Services.AddTransient<IDistanceCalculator, DistanceCalculator>();
             builder.Services.AddTransient<IVolunteerCache, VolunteerCache>();

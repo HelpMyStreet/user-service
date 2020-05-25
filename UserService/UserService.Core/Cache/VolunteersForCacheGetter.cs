@@ -91,6 +91,7 @@ namespace UserService.Core
                 postcodeCoordinates.AddRange(getPostcodeCoordinatesResponse.PostcodeCoordinates);
             }
 
+            
             List<CachedVolunteerDto> cachedVolunteerDtos =
                 (from volunteerForCacheDto in volunteerForCacheDtos
                  join postcodeCoordinate in postcodeCoordinates
