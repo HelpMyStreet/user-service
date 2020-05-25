@@ -36,7 +36,7 @@ namespace UserService.Core.Services
         }
 
 
-        public async Task<IEnumerable<User>> GetHelpersWithinRadius(string postcode, CancellationToken token)
+        public async Task<IEnumerable<HelperWithinRadiusDTO>> GetHelpersWithinRadius(string postcode, CancellationToken token)
         {
 
             GetPostcodeCoordinatesRequest getPostcodeCoordsRequest = new GetPostcodeCoordinatesRequest()
@@ -56,7 +56,8 @@ namespace UserService.Core.Services
             PostcodeCoordinate postcodeCoordsToCompareTo = postcodeCoords.PostcodeCoordinates.FirstOrDefault();
             IEnumerable<CachedVolunteerDto> cachedVolunteerDtos = await cachedVolunteerDtosTask;
 
-            List<int> idsOfHelpersWithinRadius = new List<int>();
+       
+            Dictionary<int, double> idsOfHelpersWithinRadius = new Dictionary<int, double>();
 
             foreach (CachedVolunteerDto cachedVolunteerDto in cachedVolunteerDtos)
             {
@@ -66,11 +67,12 @@ namespace UserService.Core.Services
 
                 if (isWithinSupportRadius)
                 {
-                    idsOfHelpersWithinRadius.Add(cachedVolunteerDto.UserId);
+                    idsOfHelpersWithinRadius.Add(cachedVolunteerDto.UserId, distance);
                 }
             }
-
-            return  await _repository.GetVolunteersByIdsAsync(idsOfHelpersWithinRadius);
+            var users = await _repository.GetVolunteersByIdsAsync(idsOfHelpersWithinRadius.Keys);
+            var helpers =  users.Select(x => new HelperWithinRadiusDTO { User = x, Distance = idsOfHelpersWithinRadius[x.ID] }).ToList(); 
+            return helpers;
         }
     }
 }

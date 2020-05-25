@@ -5,11 +5,12 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using UserService.Core.Domains.Entities;
+using UserService.Core.Dto;
 
 namespace UserService.Core.Interfaces.Services
 {
     public interface IHelperService
     {
-        Task<IEnumerable<User>> GetHelpersWithinRadius(string postcode, CancellationToken token);
+        Task<IEnumerable<HelperWithinRadiusDTO>> GetHelpersWithinRadius(string postcode, CancellationToken token);
     }
 }

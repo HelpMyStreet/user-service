@@ -31,11 +31,11 @@ namespace UserService.Handlers
         {
             request.Postcode = PostcodeFormatter.FormatPostcode(request.Postcode);
 
-            var users = await _helperService.GetHelpersWithinRadius(request.Postcode, cancellationToken);
+            var helpers = await _helperService.GetHelpersWithinRadius(request.Postcode, cancellationToken);
             
             GetHelpersByPostcodeResponse response = new GetHelpersByPostcodeResponse()
             {
-                Users = users.ToList()
+                Users = helpers.Select(x => x.User).ToList()
             };
 
             return response;

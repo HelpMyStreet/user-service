@@ -37,11 +37,12 @@ namespace UserService.Handlers
             {
                 Users = users.Select(x => new HelperContactInformation
                 {
-                    Email = x.UserPersonalDetails.EmailAddress,
-                    DisplayName = x.UserPersonalDetails.DisplayName,                  
-                    IsVerified = x.IsVerified.HasValue && x.IsVerified.Value,
-                    IsStreetChampionOfPostcode = x.ChampionPostcodes.Contains(request.Postcode),
-                    SupportedActivites = x.SupportActivities
+                    Email = x.User.UserPersonalDetails.EmailAddress,
+                    DisplayName = x.User.UserPersonalDetails.DisplayName,                  
+                    IsVerified = x.User.IsVerified.HasValue && x.User.IsVerified.Value,
+                    IsStreetChampionOfPostcode = x.User.ChampionPostcodes.Contains(request.Postcode),
+                    SupportedActivites = x.User.SupportActivities,
+                    DistanceFromPostcode = x.Distance,
 
                 }).Where(x => x.IsStreetChampionOfPostcode || x.SupportedActivites.Any(sa => request.RequestedTasks.SupportActivities.Any(ra => sa == ra))) .ToList()             
             };
