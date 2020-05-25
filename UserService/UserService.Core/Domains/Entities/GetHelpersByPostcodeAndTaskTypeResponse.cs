@@ -3,6 +3,7 @@ using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using HelpMyStreet.Utils.Enums;
 
 namespace UserService.Core.Domains.Entities
 {
@@ -13,10 +14,10 @@ namespace UserService.Core.Domains.Entities
 
     public class HelperContactInformation
     {
-        public string DisplayName { get; set; }
-        public string Email { get; set; }
+        public int UserID { get; set; }
         public bool IsStreetChampionOfPostcode { get; set; }
         public bool IsVerified { get; set; }
+        public List<SupportActivities> SupportedActivites { get; set; }
 
     }
 

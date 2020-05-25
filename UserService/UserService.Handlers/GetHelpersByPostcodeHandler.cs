@@ -31,9 +31,8 @@ namespace UserService.Handlers
         {
             request.Postcode = PostcodeFormatter.FormatPostcode(request.Postcode);
 
-            var idsOfHelpersWithinRadius = await _helperService.GetHelpersWithinRadius(request.Postcode, cancellationToken);
-            IEnumerable<User> users = await _repository.GetVolunteersByIdsAsync(idsOfHelpersWithinRadius);
-
+            var users = await _helperService.GetHelpersWithinRadius(request.Postcode, cancellationToken);
+            
             GetHelpersByPostcodeResponse response = new GetHelpersByPostcodeResponse()
             {
                 Users = users.ToList()

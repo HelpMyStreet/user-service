@@ -60,7 +60,6 @@ namespace UserService.Core.Interfaces.Repositories
 
         
         Task<IEnumerable<VolunteerForCacheDto>> GetVolunteersForCacheAsync(int fromUserId, int toUserId);
-        Task<IEnumerable<User>> GetVolunteersByIdsAsync(IEnumerable<int> userIds);
-        Task<IEnumerable<User>> GetVolunteersByIdsAndSupportActivitesAsync(IEnumerable<int> userIds, List<SupportActivities> supportActivities);
+        Task<IEnumerable<User>> GetVolunteersByIdsAsync(IEnumerable<int> userIds);        
     }
 }

@@ -1,5 +1,6 @@
 ﻿using HelpMyStreet.Contracts.AddressService.Request;
 using HelpMyStreet.Contracts.AddressService.Response;
+using HelpMyStreet.Utils.Models;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,6 +10,6 @@ namespace UserService.Core.Interfaces.Services
 {
     public interface IHelperService
     {
-        Task<List<int>> GetHelpersWithinRadius(string postcode, CancellationToken token);
+        Task<IEnumerable<User>> GetHelpersWithinRadius(string postcode, CancellationToken token);
     }
 }

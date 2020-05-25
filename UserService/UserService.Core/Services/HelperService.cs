@@ -1,6 +1,7 @@
 ﻿using HelpMyStreet.Contracts.AddressService.Request;
 using HelpMyStreet.Contracts.AddressService.Response;
 using HelpMyStreet.Contracts.Shared;
+using HelpMyStreet.Utils.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 using UserService.Core.Config;
 using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
+using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
 using UserService.Core.Interfaces.Utils;
 using UserService.Core.Utils;
@@ -24,15 +26,17 @@ namespace UserService.Core.Services
         private readonly IVolunteerCache _volunteerCache;
         private readonly IDistanceCalculator _distanceCalculator;
         private readonly IAddressService _addressService;
-        public HelperService(IAddressService addressService, IVolunteerCache volunteerCache, IDistanceCalculator distanceCalculator)
+        private readonly IRepository _repository;
+        public HelperService(IAddressService addressService, IVolunteerCache volunteerCache, IDistanceCalculator distanceCalculator, IRepository repository)
         {
             _addressService = addressService;
             _volunteerCache = volunteerCache;
             _distanceCalculator = distanceCalculator;
+            _repository = repository;
         }
 
 
-        public async Task<List<int>> GetHelpersWithinRadius(string postcode, CancellationToken token)
+        public async Task<IEnumerable<User>> GetHelpersWithinRadius(string postcode, CancellationToken token)
         {
 
             GetPostcodeCoordinatesRequest getPostcodeCoordsRequest = new GetPostcodeCoordinatesRequest()
@@ -66,7 +70,7 @@ namespace UserService.Core.Services
                 }
             }
 
-            return idsOfHelpersWithinRadius;
+            return  await _repository.GetVolunteersByIdsAsync(idsOfHelpersWithinRadius);
         }
     }
 }

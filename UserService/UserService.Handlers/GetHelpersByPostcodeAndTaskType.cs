@@ -31,18 +31,18 @@ namespace UserService.Handlers
         {
             request.Postcode = PostcodeFormatter.FormatPostcode(request.Postcode);
 
-            var idsOfHelpersWithinRadius = await _helperService.GetHelpersWithinRadius(request.Postcode, cancellationToken);
-            IEnumerable<User> users = await _repository.GetVolunteersByIdsAndSupportActivitesAsync(idsOfHelpersWithinRadius, request.RequestedTasks.SupportActivities);
+            var users = await _helperService.GetHelpersWithinRadius(request.Postcode, cancellationToken);       
 
             GetHelpersByPostcodeAndTaskTypeResponse response = new GetHelpersByPostcodeAndTaskTypeResponse
             {
                 Users = users.Select(x => new HelperContactInformation
                 {
-                    DisplayName = x.UserPersonalDetails.DisplayName,
-                    Email = x.UserPersonalDetails.EmailAddress,
+                    UserID = x.ID,                  
                     IsVerified = x.IsVerified.HasValue && x.IsVerified.Value,
-                    IsStreetChampionOfPostcode = x.ChampionPostcodes.Contains(request.Postcode)
-                }).ToList()                
+                    IsStreetChampionOfPostcode = x.ChampionPostcodes.Contains(request.Postcode),
+                    SupportedActivites = x.SupportActivities
+
+                }).Where(x => x.IsStreetChampionOfPostcode || x.SupportedActivites.Any(sa => request.RequestedTasks.SupportActivities.Any(ra => sa == ra))) .ToList()             
             };
 
             return response;
