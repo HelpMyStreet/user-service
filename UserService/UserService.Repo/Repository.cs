@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Dapper;
 using HelpMyStreet.Contracts.ReportService.Response;
+using HelpMyStreet.Contracts.UserService.Response;
 using HelpMyStreet.Utils.Enums;
 using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using UserService.Core.Config;
 using UserService.Core.Dto;
@@ -599,6 +601,23 @@ u.[ID] <= @ToUser1Id
             }
 
             return response;
+        }
+
+        public async  Task<List<UserDetails>> GetUserDetailsAsync(CancellationToken cancellationToken)
+        {
+            return await _context.User
+                .Include(i => i.PersonalDetails)
+                .Select(u => new UserDetails
+            {
+                UserID = u.Id,
+                IsVerified = u.IsVerified.Value,
+                IsVolunteer = u.IsVolunteer.Value,
+                IsStreetChampion = u.StreetChampionRoleUnderstood.Value,
+                FirstName = u.PersonalDetails.FirstName,
+                LastName = u.PersonalDetails.LastName,
+                EmailAddress = u.PersonalDetails.EmailAddress,
+                PostCode = u.PostalCode
+            }).ToListAsync(cancellationToken);
         }
     }
 }

@@ -2,16 +2,17 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using UserService.Core.Domains.Entities;
-using HelpMyStreet.Utils.Models;
 using HelpMyStreet.Contracts.ReportService.Response;
 using UserService.Core.Dto;
-using HelpMyStreet.Utils.Enums;
+using HelpMyStreet.Contracts.UserService.Response;
+using System.Threading;
 
 namespace UserService.Core.Interfaces.Repositories
 {
     public interface IRepository
     {
+        Task<List<UserDetails>> GetUserDetailsAsync(CancellationToken cancellationToken);
+
         List<ReportItem> GetDailyReport();
 
         User GetUserByID(int userId);
@@ -58,8 +59,9 @@ namespace UserService.Core.Interfaces.Repositories
 
         Task<int> GetMaxUserIdAsync();
 
-        
+
         Task<IEnumerable<VolunteerForCacheDto>> GetVolunteersForCacheAsync(int fromUserId, int toUserId);
-        Task<IEnumerable<User>> GetVolunteersByIdsAsync(IEnumerable<int> userIds);        
+
+        Task<IEnumerable<User>> GetVolunteersByIdsAsync(IEnumerable<int> userIds);
     }
 }

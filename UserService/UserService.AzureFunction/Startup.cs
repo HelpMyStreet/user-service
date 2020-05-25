@@ -1,37 +1,30 @@
-﻿using AutoMapper;
-using UserService.Core.Interfaces.Repositories;
-using UserService.Handlers;
-using UserService.Mappers;
-using UserService.Repo;
+﻿using HelpMyStreet.Utils.CoordinatedResetCache;
+using HelpMyStreet.Utils.PollyPolicies;
+using HelpMyStreet.Utils.Utils;
 using MediatR;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Internal;
+using Microsoft.Extensions.Options;
+using Polly;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using HelpMyStreet.Utils.CoordinatedResetCache;
-using HelpMyStreet.Utils.PollyPolicies;
-using HelpMyStreet.Utils.Utils;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters.Json.Internal;
-using Microsoft.Azure.WebJobs.Host.Bindings;
-using Microsoft.Extensions.Internal;
-using Microsoft.Extensions.Options;
 using UserService.Core;
-using UserService.Core.Config;
-using UserService.Core.Interfaces.Services;
-using UserService.Core.Interfaces.Utils;
-using UserService.Core.Services;
-using UserService.Core.Utils;
-using Microsoft.AspNetCore.Mvc.Formatters.Json;
-using Polly;
 using UserService.Core.BusinessLogic;
 using UserService.Core.Cache;
+using UserService.Core.Config;
+using UserService.Core.Interfaces.Repositories;
+using UserService.Core.Interfaces.Services;
+using UserService.Core.Interfaces.Utils;
+using UserService.Core.Utils;
+using UserService.Handlers;
+using UserService.Repo;
 
 
 [assembly: FunctionsStartup(typeof(UserService.AzureFunction.Startup))]
@@ -107,6 +100,14 @@ namespace UserService.AzureFunction
             builder.Services.AddTransient<ICoordinatedResetCache, CoordinatedResetCache>();
             builder.Services.AddTransient<IVolunteersFilteredByMinDistanceGetter, VolunteersFilteredByMinDistanceGetter>();
             builder.Services.AddTransient<IMinDistanceFilter, MinDistanceFilter>();
+
+            // automatically apply EF migrations
+            DbContextOptionsBuilder<ApplicationDbContext> dbContextOptionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+            dbContextOptionsBuilder.UseSqlServer(sqlConnectionString);
+            ApplicationDbContext dbContext = new ApplicationDbContext(dbContextOptionsBuilder.Options);
+
+            dbContext.Database.Migrate();
+
         }
     }
 }

@@ -14,5 +14,12 @@ namespace UserService.Core.Domains.Entities
         [DataMember(Name = "lng")]
         public double Longitude { get; set; }
 
+        // fields are temporarily nullable until the grid aggregation functionality is implemented
+        [DataMember(Name = "sc")]
+        public int? NumberOfStreetChampions { get; set; }
+
+        [DataMember(Name = "h")]
+        public int? NumberOfHelpers { get; set; }
+
     }
 }
