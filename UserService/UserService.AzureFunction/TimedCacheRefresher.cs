@@ -24,7 +24,7 @@ namespace UserService.AzureFunction
         }
 
         [FunctionName("TimedCacheRefresher")]
-        public async Task Run([TimerTrigger("%TimedCacheRefresherCronExpression%", RunOnStartup = true)] TimerInfo timerInfo, CancellationToken cancellationToken, ILogger log)
+        public async Task Run([TimerTrigger("%TimedCacheRefresherCronExpression%")] TimerInfo timerInfo, CancellationToken cancellationToken, ILogger log)
         {
             log.LogInformation($"TimedCacheRefresher CRON trigger executed at : {DateTimeOffset.Now}");
             
