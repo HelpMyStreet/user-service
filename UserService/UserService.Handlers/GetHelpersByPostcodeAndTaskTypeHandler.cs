@@ -16,12 +16,12 @@ using UserService.Core.Utils;
 
 namespace UserService.Handlers
 {
-    public class GetHelpersByPostcodeAndTaskType : IRequestHandler<GetHelpersByPostcodeAndTaskTypeRequest, GetHelpersByPostcodeAndTaskTypeResponse>
+    public class GetHelpersByPostcodeAndTaskTypeHandler : IRequestHandler<GetHelpersByPostcodeAndTaskTypeRequest, GetHelpersByPostcodeAndTaskTypeResponse>
     {
         private readonly IHelperService _helperService;
         private readonly IRepository _repository;
 
-        public GetHelpersByPostcodeAndTaskType(IHelperService helperService, IRepository repository)
+        public GetHelpersByPostcodeAndTaskTypeHandler(IHelperService helperService, IRepository repository)
         {
             _helperService = helperService;
             _repository = repository;

@@ -22,6 +22,7 @@ using UserService.Core.Config;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
 using UserService.Core.Interfaces.Utils;
+using UserService.Core.Services;
 using UserService.Core.Utils;
 using UserService.Handlers;
 using UserService.Repo;

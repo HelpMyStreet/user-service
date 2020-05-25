@@ -18,7 +18,7 @@ using UserService.Handlers;
 
 namespace UserService.UnitTests
 {
-    public class GetHelpersByPostcodeHandlerTests
+    public class GetHelpersByPostcodeAndTaskTypeHandlerTests
     {
         private Mock<IVolunteerCache> _volunteerCache;
         private Mock<IDistanceCalculator> _distanceCalculator;
@@ -60,6 +60,7 @@ namespace UserService.UnitTests
             };
 
             _repository = new Mock<IRepository>();
+
             _volunteerCache = new Mock<IVolunteerCache>();
             _volunteerCache.Setup(x => x.GetCachedVolunteersAsync(It.IsAny<VolunteerType>(), It.IsAny<IsVerifiedType>(), It.IsAny<CancellationToken>())).ReturnsAsync(_cachedVolunteerDtos);
 
@@ -90,34 +91,104 @@ namespace UserService.UnitTests
             {
                 new User()
                 {
-                    ID = 1
+                    ID = 1,
+                    UserPersonalDetails = new UserPersonalDetails
+                    {
+                        DisplayName = "Test",
+                        EmailAddress = "test@test.com"
+                    },
+                    SupportActivities = new List<HelpMyStreet.Utils.Enums.SupportActivities>{HelpMyStreet.Utils.Enums.SupportActivities.CheckingIn},                    
+                    ChampionPostcodes= new List<string>{ "NG1 1AE" }
+                    
                 }
             };
-         
+
             _repository.Setup(x => x.GetVolunteersByIdsAsync(It.IsAny<IEnumerable<int>>())).ReturnsAsync(_users);
         }
 
         [Test]
-        public async Task GetAllVolunteersWithinRadius()
+        public async Task WhenIGetStreetChampion_WithNoLinkedActivity_StreetChampionIsReturned()
         {
 
-            GetHelpersByPostcodeRequest request = new GetHelpersByPostcodeRequest()
+            GetHelpersByPostcodeAndTaskTypeRequest request = new GetHelpersByPostcodeAndTaskTypeRequest()
             {
-                Postcode = "NG1 1AE"
+                Postcode = "NG1 1AE",
+                RequestedTasks = new TasksRequested
+                {
+                    SupportActivities = new List<HelpMyStreet.Utils.Enums.SupportActivities> { HelpMyStreet.Utils.Enums.SupportActivities.Shopping }
+                }
             };
 
-            GetHelpersByPostcodeHandler getHelpersByPostcodeHandler = new GetHelpersByPostcodeHandler(_helperService, _repository.Object);
+            GetHelpersByPostcodeAndTaskTypeHandler getHelpersByPostcodeAndTaskTypeHandler = new GetHelpersByPostcodeAndTaskTypeHandler(_helperService, _repository.Object);
 
-            GetHelpersByPostcodeResponse result = await getHelpersByPostcodeHandler.Handle(request, CancellationToken.None);
+            GetHelpersByPostcodeAndTaskTypeResponse result = await getHelpersByPostcodeAndTaskTypeHandler.Handle(request, CancellationToken.None);
 
             Assert.AreEqual(1, result.Users.Count);
-            Assert.AreEqual(1, result.Users.FirstOrDefault().ID);
+            Assert.AreEqual(true, result.Users.First().IsStreetChampionOfPostcode);
 
             _volunteerCache.Verify(x => x.GetCachedVolunteersAsync(It.Is<VolunteerType>(y => y == (VolunteerType.Helper | VolunteerType.StreetChampion)), It.Is<IsVerifiedType>(y => y == IsVerifiedType.IsVerified), It.IsAny<CancellationToken>()));
-
             _repository.Verify(x => x.GetVolunteersByIdsAsync(It.Is<IEnumerable<int>>(y => y.Count() == 1 && y.Any(z => z == 1))));
-
             _addressService.Verify(x => x.GetPostcodeCoordinatesAsync(It.Is<GetPostcodeCoordinatesRequest>(y => y.Postcodes.Count() == 1 && y.Postcodes.Contains("NG1 1AE")), It.IsAny<CancellationToken>()));
+        }
+
+
+        [Test]
+        public async Task WhenIGetHelper_WithNoStreetChampionOrNoLinkedActivity_NoUserIsReturned()
+        {
+   
+            GetHelpersByPostcodeAndTaskTypeRequest request = new GetHelpersByPostcodeAndTaskTypeRequest()
+            {
+                Postcode = "NG1 1AA",
+                RequestedTasks = new TasksRequested
+                {
+                    SupportActivities = new List<HelpMyStreet.Utils.Enums.SupportActivities> { HelpMyStreet.Utils.Enums.SupportActivities.Shopping }
+                }
+            };
+
+            GetHelpersByPostcodeAndTaskTypeHandler getHelpersByPostcodeAndTaskTypeHandler = new GetHelpersByPostcodeAndTaskTypeHandler(_helperService, _repository.Object);
+
+            GetHelpersByPostcodeAndTaskTypeResponse result = await getHelpersByPostcodeAndTaskTypeHandler.Handle(request, CancellationToken.None);
+
+            Assert.AreEqual(0, result.Users.Count);            
+       
+        }
+
+
+        [Test]
+        public async Task WhenIGetHelper_WithNoStreetChampionButWithLinkedActivity_IGetOneUserReturened()
+        {
+            _users = new List<User>()
+            {
+                new User()
+                {
+                    ID = 1,
+                    UserPersonalDetails = new UserPersonalDetails
+                    {
+                        DisplayName = "Test",
+                        EmailAddress = "test@test.com"
+                    },
+                    SupportActivities = new List<HelpMyStreet.Utils.Enums.SupportActivities>{HelpMyStreet.Utils.Enums.SupportActivities.Shopping},
+                    ChampionPostcodes= new List<string>{ "NG1 1AE" }
+
+                }
+            };
+            _repository.Setup(x => x.GetVolunteersByIdsAsync(It.IsAny<IEnumerable<int>>())).ReturnsAsync(_users);
+
+            GetHelpersByPostcodeAndTaskTypeRequest request = new GetHelpersByPostcodeAndTaskTypeRequest()
+            {
+                Postcode = "NG1 1AA",
+                RequestedTasks = new TasksRequested
+                {
+                    SupportActivities = new List<HelpMyStreet.Utils.Enums.SupportActivities> { HelpMyStreet.Utils.Enums.SupportActivities.Shopping }
+                }
+            };
+
+            GetHelpersByPostcodeAndTaskTypeHandler getHelpersByPostcodeAndTaskTypeHandler = new GetHelpersByPostcodeAndTaskTypeHandler(_helperService, _repository.Object);
+
+            GetHelpersByPostcodeAndTaskTypeResponse result = await getHelpersByPostcodeAndTaskTypeHandler.Handle(request, CancellationToken.None);
+
+            Assert.AreEqual(1, result.Users.Count);
+            Assert.AreEqual(true, result.Users.First().SupportedActivites.Contains(HelpMyStreet.Utils.Enums.SupportActivities.Shopping));
         }
     }
 }
