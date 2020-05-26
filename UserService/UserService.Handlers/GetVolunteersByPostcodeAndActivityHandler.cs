@@ -17,49 +17,57 @@ namespace UserService.Handlers
             {
                 UserID = 1,
                 IsVerified = true,
-                IsStreetChampionForGivenPostCode = false
+                IsStreetChampionForGivenPostCode = false,
+                DistanceInMiles = 5d,
             });
             volunteers.Add(new VolunteerSummary()
             {
                 UserID = 2,
                 IsVerified = false,
-                IsStreetChampionForGivenPostCode = false
+                IsStreetChampionForGivenPostCode = false,
+                DistanceInMiles = 10d,
             });
             volunteers.Add(new VolunteerSummary()
             {
                 UserID = 3,
                 IsVerified = true,
-                IsStreetChampionForGivenPostCode = false
+                IsStreetChampionForGivenPostCode = false,
+                DistanceInMiles = 15d,
             });
             volunteers.Add(new VolunteerSummary()
             {
                 UserID = 4,
                 IsVerified = false,
-                IsStreetChampionForGivenPostCode = false
+                IsStreetChampionForGivenPostCode = false,
+                DistanceInMiles = 20d,
             });
             volunteers.Add(new VolunteerSummary()
             {
                 UserID = 5,
                 IsVerified = true,
-                IsStreetChampionForGivenPostCode = false
+                IsStreetChampionForGivenPostCode = false,
+                DistanceInMiles = 25d,
             });
             volunteers.Add(new VolunteerSummary()
             {
                 UserID = 6,
                 IsVerified = false,
-                IsStreetChampionForGivenPostCode = false
+                IsStreetChampionForGivenPostCode = false,
+                DistanceInMiles = 30d,
             });
             volunteers.Add(new VolunteerSummary()
             {
                 UserID = 32,
                 IsVerified = false,
-                IsStreetChampionForGivenPostCode = false
+                IsStreetChampionForGivenPostCode = false,
+                DistanceInMiles = 35d,
             });
             volunteers.Add(new VolunteerSummary()
             {
                 UserID = 85,
                 IsVerified = true,
-                IsStreetChampionForGivenPostCode = false
+                IsStreetChampionForGivenPostCode = false,
+                DistanceInMiles = 40d
             });
 
             GetVolunteersByPostcodeAndActivityResponse response = new GetVolunteersByPostcodeAndActivityResponse()
