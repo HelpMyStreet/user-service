@@ -1,4 +1,6 @@
 ﻿using AzureFunctions.Extensions.Swashbuckle.Attribute;
+using HelpMyStreet.Contracts.UserService.Request;
+using HelpMyStreet.Contracts.UserService.Response;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -12,21 +14,21 @@ using UserService.Core.Domains.Entities;
 
 namespace UserService.AzureFunction
 {
-    public class GetHelpersByPostcodeAndTaskType
+    public class GetVolunteersByPostcodeAndActivity
     {
         private readonly IMediator _mediator;
 
-        public GetHelpersByPostcodeAndTaskType(IMediator mediator)
+        public GetVolunteersByPostcodeAndActivity(IMediator mediator)
         {
             _mediator = mediator;
         }
 
         [Transaction(Web = true)]
-        [FunctionName("GetHelpersByPostcodeAndTaskType")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetHelpersByPostcodeAndTaskTypeResponse))]
+        [FunctionName("GetVolunteersByPostcodeAndActivity")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetVolunteersByPostcodeAndActivityResponse))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
-            [RequestBodyType(typeof(GetHelpersByPostcodeAndTaskTypeRequest), "product request")] GetHelpersByPostcodeAndTaskTypeRequest req,
+            [RequestBodyType(typeof(GetVolunteersByPostcodeAndActivityRequest), "product request")] GetVolunteersByPostcodeAndActivityRequest req,
             ILogger log)
         {
             try
@@ -34,7 +36,7 @@ namespace UserService.AzureFunction
                 NewRelic.Api.Agent.NewRelic.SetTransactionName("UserService", "GetHelpersContactInformationByPostcode");
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
-                GetHelpersByPostcodeAndTaskTypeResponse response = await _mediator.Send(req);
+                GetVolunteersByPostcodeAndActivityResponse response = await _mediator.Send(req);
 
                 return new OkObjectResult(response);
             }

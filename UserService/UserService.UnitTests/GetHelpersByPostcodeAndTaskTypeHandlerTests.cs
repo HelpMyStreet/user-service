@@ -119,7 +119,7 @@ namespace UserService.UnitTests
                 }
             };
 
-            GetHelpersByPostcodeAndTaskTypeHandler getHelpersByPostcodeAndTaskTypeHandler = new GetHelpersByPostcodeAndTaskTypeHandler(_helperService, _repository.Object);
+            GetVolunteersByPostcodeAndActivityHandler getHelpersByPostcodeAndTaskTypeHandler = new GetVolunteersByPostcodeAndActivityHandler(_helperService, _repository.Object);
 
             GetHelpersByPostcodeAndTaskTypeResponse result = await getHelpersByPostcodeAndTaskTypeHandler.Handle(request, CancellationToken.None);
 
@@ -145,7 +145,7 @@ namespace UserService.UnitTests
                 }
             };
 
-            GetHelpersByPostcodeAndTaskTypeHandler getHelpersByPostcodeAndTaskTypeHandler = new GetHelpersByPostcodeAndTaskTypeHandler(_helperService, _repository.Object);
+            GetVolunteersByPostcodeAndActivityHandler getHelpersByPostcodeAndTaskTypeHandler = new GetVolunteersByPostcodeAndActivityHandler(_helperService, _repository.Object);
 
             GetHelpersByPostcodeAndTaskTypeResponse result = await getHelpersByPostcodeAndTaskTypeHandler.Handle(request, CancellationToken.None);
 
@@ -183,7 +183,7 @@ namespace UserService.UnitTests
                 }
             };
 
-            GetHelpersByPostcodeAndTaskTypeHandler getHelpersByPostcodeAndTaskTypeHandler = new GetHelpersByPostcodeAndTaskTypeHandler(_helperService, _repository.Object);
+            GetVolunteersByPostcodeAndActivityHandler getHelpersByPostcodeAndTaskTypeHandler = new GetVolunteersByPostcodeAndActivityHandler(_helperService, _repository.Object);
 
             GetHelpersByPostcodeAndTaskTypeResponse result = await getHelpersByPostcodeAndTaskTypeHandler.Handle(request, CancellationToken.None);
 

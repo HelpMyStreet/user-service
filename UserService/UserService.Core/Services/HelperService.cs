@@ -36,7 +36,7 @@ namespace UserService.Core.Services
         }
 
 
-        public async Task<IEnumerable<HelperWithinRadiusDTO>> GetHelpersWithinRadius(string postcode, CancellationToken token)
+        public async Task<IEnumerable<HelperWithinRadiusDTO>> GetHelpersWithinRadius(string postcode, IsVerifiedType verifiedType, CancellationToken token)
         {
 
             GetPostcodeCoordinatesRequest getPostcodeCoordsRequest = new GetPostcodeCoordinatesRequest()
@@ -47,7 +47,7 @@ namespace UserService.Core.Services
             Task<GetPostcodeCoordinatesResponse> postcodeCoordsTask = _addressService.GetPostcodeCoordinatesAsync(getPostcodeCoordsRequest, token);
 
             VolunteerType volunteerType = VolunteerType.Helper | VolunteerType.StreetChampion;
-            IsVerifiedType isVerifiedType = IsVerifiedType.IsVerified;
+            IsVerifiedType isVerifiedType = verifiedType;
             Task<IEnumerable<CachedVolunteerDto>> cachedVolunteerDtosTask = _volunteerCache.GetCachedVolunteersAsync(volunteerType, isVerifiedType, token);
 
             await Task.WhenAll(postcodeCoordsTask, cachedVolunteerDtosTask);
