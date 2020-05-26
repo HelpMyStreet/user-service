@@ -34,17 +34,18 @@ namespace UserService.Handlers
             request.VolunteerFilter.Postcode = PostcodeFormatter.FormatPostcode(request.VolunteerFilter.Postcode);
 
             var users = await _helperService.GetHelpersWithinRadius(request.VolunteerFilter.Postcode, IsVerifiedType.All,  cancellationToken);
-
-            //TODO
+            
             GetVolunteersByPostcodeAndActivityResponse response = new GetVolunteersByPostcodeAndActivityResponse
             {
-                Volunteers = users.Select(x => new VolunteerSummary
+
+                Volunteers = users.Where(x => x.User.ChampionPostcodes.Contains(request.VolunteerFilter.Postcode) || x.User.SupportActivities.Any(sa => request.VolunteerFilter.Activities.Any(ra => sa == ra)))
+                .Select(x => new VolunteerSummary
                 {
                     UserID = x.User.ID,
                     IsVerified = x.User.IsVerified.HasValue && x.User.IsVerified.Value,
                     IsStreetChampionForGivenPostCode = x.User.ChampionPostcodes.Contains(request.VolunteerFilter.Postcode),
                     DistanceInMiles = x.Distance
-                }).ToList()       
+                }).ToList()
             };
 
             return response;
