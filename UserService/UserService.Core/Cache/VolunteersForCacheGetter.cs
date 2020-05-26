@@ -36,7 +36,7 @@ namespace UserService.Core
 
             int minUserId = await _repository.GetMinUserIdAsync();
             int maxUserId = await _repository.GetMaxUserIdAsync();
-
+ 
             // this is a rough calculation because not all IDs could be used, but is accurate enough (can't use totalVolunteerCount above because the User ID might not start at 1)
             int totalVolunteersCountForBatching = maxUserId - minUserId + 1;
 

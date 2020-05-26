@@ -14,6 +14,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UserService.Core.Config;
+using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Repo.EntityFramework.Entities;
@@ -569,17 +570,15 @@ u.[ID] <= @ToUser1Id
         }
 
         public async Task<IEnumerable<model.User>> GetVolunteersByIdsAsync(IEnumerable<int> userIds)
-        {
+        {            
             var users = await _context.User
-                .Where(x => x.IsVolunteer == true
-                            && x.IsVerified == true
+                .Where(x => x.IsVolunteer == true         
                             && userIds.Contains(x.Id))
                 .Include(x => x.ChampionPostcode)
                 .Include(x => x.SupportActivity)
                 .Include(x => x.PersonalDetails)
                 .Include(x => x.RegistrationHistory)
                 .ToListAsync();
-
 
             List<model.User> response = new List<model.User>();
             foreach (var user in users)

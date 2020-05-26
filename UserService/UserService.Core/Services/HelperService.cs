@@ -59,6 +59,12 @@ namespace UserService.Core.Services
                 }
             }
             var users = await _repository.GetVolunteersByIdsAsync(idsOfHelpersWithinRadius.Keys);
+
+            if(isVerifiedType != IsVerifiedType.All)
+            {
+                users  = users.Where(x => x.IsVerified == (verifiedType == IsVerifiedType.IsVerified) ? true : false);    
+            }
+            
             var helpers =  users.Select(x => new HelperWithinRadiusDTO { User = x, Distance = idsOfHelpersWithinRadius[x.ID] }).ToList(); 
             return helpers;
         }
