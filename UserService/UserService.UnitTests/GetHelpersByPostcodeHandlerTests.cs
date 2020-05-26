@@ -19,73 +19,39 @@ using UserService.Handlers;
 namespace UserService.UnitTests
 {
     public class GetHelpersByPostcodeHandlerTests
-    {
-        private Mock<IVolunteerCache> _volunteerCache;
-        private Mock<IDistanceCalculator> _distanceCalculator;
-        private Mock<IAddressService> _addressService;
-        private IHelperService _helperService;
+    {                        
+        private Mock<IHelperService> _helperService;
         private Mock<IRepository> _repository;
-
-        private IEnumerable<CachedVolunteerDto> _cachedVolunteerDtos;
-
-        private GetPostcodeCoordinatesResponse _getPostcodeCoordinatesResponse;
-
+                
+        private IEnumerable<HelperWithinRadiusDTO> _helpers;
         private IEnumerable<User> _users;
 
         [SetUp]
         public void SetUp()
         {
-            _cachedVolunteerDtos = new List<CachedVolunteerDto>()
+            _helpers = new List<HelperWithinRadiusDTO>
             {
-                new CachedVolunteerDto()
+                new HelperWithinRadiusDTO {
+                    User =    new User
                 {
-                    UserId = 1,
-                    Postcode = "NG1 1AA",
-                    VolunteerType = VolunteerType.Helper,
-                    IsVerifiedType = IsVerifiedType.IsVerified,
-                    Latitude = 1,
-                    Longitude = 2,
-                    SupportRadiusMiles = 2
-                },
-                new CachedVolunteerDto()
-                {
-                    UserId = 2,
-                    Postcode = "NG1 1AB",
-                    VolunteerType = VolunteerType.Helper,
-                    IsVerifiedType = IsVerifiedType.IsVerified,
-                    Latitude = 3,
-                    Longitude = 4,
-                    SupportRadiusMiles = 1.9
-                },
-            };
-
-            _repository = new Mock<IRepository>();
-            _volunteerCache = new Mock<IVolunteerCache>();
-            _volunteerCache.Setup(x => x.GetCachedVolunteersAsync(It.IsAny<VolunteerType>(), It.IsAny<IsVerifiedType>(), It.IsAny<CancellationToken>())).ReturnsAsync(_cachedVolunteerDtos);
-
-            _distanceCalculator = new Mock<IDistanceCalculator>();
-
-            _distanceCalculator.Setup(x => x.GetDistanceInMiles(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>())).Returns(2);
-
-
-            _getPostcodeCoordinatesResponse = new GetPostcodeCoordinatesResponse()
-            {
-                PostcodeCoordinates = new List<PostcodeCoordinate>()
-                {
-                    new PostcodeCoordinate()
+                    ID = 1,
+                    UserPersonalDetails = new UserPersonalDetails
                     {
-                        Postcode = "NG1 1AE",
-                        Latitude = 9,
-                        Longitude = 10
-                    }
+                        DisplayName = "Test",
+                        EmailAddress = "test@test.com"
+                    },
+                    SupportActivities = new List<HelpMyStreet.Utils.Enums.SupportActivities>{HelpMyStreet.Utils.Enums.SupportActivities.Shopping},
+                    ChampionPostcodes= new List<string>{ "NG1 1AE" }
+
+                },
+                    Distance = 1,
                 }
             };
 
-            _addressService = new Mock<IAddressService>();
+            _repository = new Mock<IRepository>();
 
-            _addressService.Setup(x => x.GetPostcodeCoordinatesAsync(It.IsAny<GetPostcodeCoordinatesRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(_getPostcodeCoordinatesResponse);
-            _helperService = new HelperService(_volunteerCache.Object, _distanceCalculator.Object, _repository.Object);
-
+            _helperService = new Mock<IHelperService>();
+            _helperService.Setup(x => x.GetHelpersWithinRadius(It.IsAny<string>(), It.IsAny<IsVerifiedType>(), It.IsAny<CancellationToken>())).ReturnsAsync(() => _helpers);
             _users = new List<User>()
             {
                 new User()
@@ -106,18 +72,14 @@ namespace UserService.UnitTests
                 Postcode = "NG1 1AE"
             };
 
-            GetHelpersByPostcodeHandler getHelpersByPostcodeHandler = new GetHelpersByPostcodeHandler(_helperService, _repository.Object);
+            GetHelpersByPostcodeHandler getHelpersByPostcodeHandler = new GetHelpersByPostcodeHandler(_helperService.Object, _repository.Object);
 
             GetHelpersByPostcodeResponse result = await getHelpersByPostcodeHandler.Handle(request, CancellationToken.None);
 
             Assert.AreEqual(1, result.Users.Count);
             Assert.AreEqual(1, result.Users.FirstOrDefault().ID);
-
-            _volunteerCache.Verify(x => x.GetCachedVolunteersAsync(It.Is<VolunteerType>(y => y == (VolunteerType.Helper | VolunteerType.StreetChampion)), It.Is<IsVerifiedType>(y => y == IsVerifiedType.IsVerified), It.IsAny<CancellationToken>()));
-
-            _repository.Verify(x => x.GetVolunteersByIdsAsync(It.Is<IEnumerable<int>>(y => y.Count() == 1 && y.Any(z => z == 1))));
-
-            _addressService.Verify(x => x.GetPostcodeCoordinatesAsync(It.Is<GetPostcodeCoordinatesRequest>(y => y.Postcodes.Count() == 1 && y.Postcodes.Contains("NG1 1AE")), It.IsAny<CancellationToken>()));
+            _helperService.Verify(X => X.GetHelpersWithinRadius("NG1 1AE", IsVerifiedType.IsVerified, It.IsAny<CancellationToken>()));
+                                    
         }
     }
 }

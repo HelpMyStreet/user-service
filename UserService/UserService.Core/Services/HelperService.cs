@@ -36,6 +36,7 @@ namespace UserService.Core.Services
 
         public async Task<IEnumerable<HelperWithinRadiusDTO>> GetHelpersWithinRadius(string postcode, IsVerifiedType verifiedType, CancellationToken token)
         {
+            var helpers = new List<HelperWithinRadiusDTO>();
             LatitudeAndLongitudeDTO comparePostcode = _repository.GetLatitudeAndLongitude(postcode);
 
             VolunteerType volunteerType = VolunteerType.Helper | VolunteerType.StreetChampion;
@@ -60,12 +61,16 @@ namespace UserService.Core.Services
             }
             var users = await _repository.GetVolunteersByIdsAsync(idsOfHelpersWithinRadius.Keys);
 
-            if(isVerifiedType != IsVerifiedType.All)
+
+
+            if (users.Any())
             {
-                users  = users.Where(x => x.IsVerified == (verifiedType == IsVerifiedType.IsVerified) ? true : false);    
+                if (isVerifiedType != IsVerifiedType.All)
+                {
+                    users = users.Where(x => x.IsVerified == (verifiedType == IsVerifiedType.IsVerified) ? true : false);
+                }
+                helpers = users.Select(x => new HelperWithinRadiusDTO { User = x, Distance = idsOfHelpersWithinRadius[x.ID] }).ToList();
             }
-            
-            var helpers =  users.Select(x => new HelperWithinRadiusDTO { User = x, Distance = idsOfHelpersWithinRadius[x.ID] }).ToList(); 
             return helpers;
         }
     }

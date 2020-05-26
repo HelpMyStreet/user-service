@@ -6,6 +6,7 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using UserService.Core;
 using UserService.Core.BusinessLogic;
 using UserService.Core.Domains.Entities;
@@ -20,13 +21,12 @@ namespace UserService.UnitTests
     public class HelperServiceTests {
 
         private Mock<IVolunteerCache> _volunteerCache;
-        private Mock<IDistanceCalculator> _distanceCalculator;
-        private Mock<IAddressService> _addressService;
+        private Mock<IDistanceCalculator> _distanceCalculator;        
         private IHelperService _helperService;
         private Mock<IRepository> _repository;
         private IEnumerable<CachedVolunteerDto> _cachedVolunteerDtos;
         private IEnumerable<User> _users;
-        private GetPostcodeCoordinatesResponse _getPostcodeCoordinatesResponse;
+        private int _distanceInMiles;
         [SetUp]
         public void SetUp()
         {
@@ -53,19 +53,6 @@ namespace UserService.UnitTests
                     SupportRadiusMiles = 1.9
                 },
             };
-
-            _getPostcodeCoordinatesResponse = new GetPostcodeCoordinatesResponse()
-            {
-                PostcodeCoordinates = new List<PostcodeCoordinate>()
-                {
-                    new PostcodeCoordinate()
-                    {
-                        Postcode = "NG1 1AE",
-                        Latitude = 9,
-                        Longitude = 10
-                    }
-                }
-            };
             _users = new List<User>()
             {
                 new User()
@@ -76,27 +63,88 @@ namespace UserService.UnitTests
                         DisplayName = "Test",
                         EmailAddress = "test@test.com"
                     },
+                    IsVerified = true,
                     SupportActivities = new List<HelpMyStreet.Utils.Enums.SupportActivities>{HelpMyStreet.Utils.Enums.SupportActivities.Shopping},
                     ChampionPostcodes= new List<string>{ "NG1 1AE" }
+                },
+                             new User()
+                {
+                    ID = 2,
+                    UserPersonalDetails = new UserPersonalDetails
+                    {
+                        DisplayName = "Test",
+                        EmailAddress = "test@test.com"
+                    },
+                    IsVerified = false,
+                    SupportActivities = new List<HelpMyStreet.Utils.Enums.SupportActivities>{HelpMyStreet.Utils.Enums.SupportActivities.Shopping},
+                    ChampionPostcodes= new List<string>{ "NG1 1AB" }
 
                 }
             };
 
-
-            _repository.Setup(x => x.GetVolunteersByIdsAsync(It.IsAny<IEnumerable<int>>())).ReturnsAsync(_users);
+            _repository = new Mock<IRepository>();
+            _repository.Setup(x => x.GetVolunteersByIdsAsync(It.IsAny<IEnumerable<int>>())).ReturnsAsync(() => _users);
+            _repository.Setup(x => x.GetLatitudeAndLongitude(It.IsAny<string>())).Returns(new LatitudeAndLongitudeDTO
+            {
+                Latitude = 1,
+                Longitude = 2,
+            });
 
             _volunteerCache = new Mock<IVolunteerCache>();
             _volunteerCache.Setup(x => x.GetCachedVolunteersAsync(It.IsAny<VolunteerType>(), It.IsAny<IsVerifiedType>(), It.IsAny<CancellationToken>())).ReturnsAsync(_cachedVolunteerDtos);
 
             _distanceCalculator = new Mock<IDistanceCalculator>();
+            _distanceInMiles = 1;
+            _distanceCalculator.Setup(x => x.GetDistanceInMiles(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>())).Returns(() => _distanceInMiles);
+            _helperService = new HelperService(_volunteerCache.Object, _distanceCalculator.Object, _repository.Object);
 
-            _distanceCalculator.Setup(x => x.GetDistanceInMiles(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>())).Returns(2);
+        }
 
-            _addressService = new Mock<IAddressService>();
+        [Test]
+        public async Task WhenICall_WithHappyPath_ICallRequiredFunctions()
+        {
+            var users = await _helperService.GetHelpersWithinRadius("T35T 3TY", IsVerifiedType.All, new CancellationToken());
+            _repository.Verify(x => x.GetLatitudeAndLongitude("T35T 3TY"), Times.Once);
+            _volunteerCache.Verify(x => x.GetCachedVolunteersAsync(VolunteerType.Helper | VolunteerType.StreetChampion, IsVerifiedType.All, It.IsAny<CancellationToken>()), Times.Once);
+            _distanceCalculator.Verify(x => x.GetDistanceInMiles(1, 2, 1, 2), Times.Once);
+            _distanceCalculator.Verify(x => x.GetDistanceInMiles(1, 2, 3, 4), Times.Once);
+            _repository.Verify(x => x.GetVolunteersByIdsAsync(new List<int> { 1, 2 }), Times.Once);
+        }
 
-            _addressService.Setup(x => x.GetPostcodeCoordinatesAsync(It.IsAny<GetPostcodeCoordinatesRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(_getPostcodeCoordinatesResponse);
-            _helperService = new HelperService(_addressService.Object, _volunteerCache.Object, _distanceCalculator.Object, _repository.Object);
+        [Test]
+        public async Task WhenICall_WithHelpers_OutsideOfSupportRadius_IGetNoUsers()
+        {
+            _distanceInMiles = 5;
+            _users = new List<User>();
 
+            var users = await _helperService.GetHelpersWithinRadius("T35T 3TY", IsVerifiedType.All, new CancellationToken());
+            Assert.AreEqual(0, users.Count());
+        }
+
+        [Test]
+        public async Task WhenICall_WithHelpers_InsideSupportRadius_IGetUsers()
+        {
+ 
+            var users = await _helperService.GetHelpersWithinRadius("T35T 3TY", IsVerifiedType.All, new CancellationToken());
+            Assert.AreEqual(2, users.Count());
+        }
+
+        [Test]
+        public async Task WhenICall_WithIsVerifiedType_EqualsFalse_IGetUnverifiedUsers()
+        {
+            var users =  await _helperService.GetHelpersWithinRadius("T35T 3TY", IsVerifiedType.IsNotVerified, new CancellationToken());
+            _volunteerCache.Verify(x => x.GetCachedVolunteersAsync(VolunteerType.Helper | VolunteerType.StreetChampion, IsVerifiedType.IsNotVerified, It.IsAny<CancellationToken>()), Times.Once);
+            Assert.AreEqual(1, users.Count());
+            Assert.AreEqual(false, users.First().User.IsVerified);
+
+        }
+        [Test]
+        public async Task WhenICall_WithIsVerifiedType_EqualsTrue_IGetVerifiedUsers()
+        {
+            var users = await _helperService.GetHelpersWithinRadius("T35T 3TY", IsVerifiedType.IsVerified, new CancellationToken());
+            _volunteerCache.Verify(x => x.GetCachedVolunteersAsync(VolunteerType.Helper | VolunteerType.StreetChampion, IsVerifiedType.IsVerified, It.IsAny<CancellationToken>()), Times.Once);
+            Assert.AreEqual(1, users.Count());
+            Assert.AreEqual(true, users.First().User.IsVerified);
         }
     }
 }
