@@ -1,70 +1,51 @@
-﻿using MediatR;
+﻿using HelpMyStreet.Utils.Models;
+using HelpMyStreet.Utils.Utils;
+using MediatR;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using HelpMyStreet.Contracts.AddressService.Request;
+using HelpMyStreet.Contracts.AddressService.Response;
+using UserService.Core;
+using UserService.Core.Domains.Entities;
+using UserService.Core.Dto;
+using UserService.Core.Interfaces.Repositories;
+using UserService.Core.Interfaces.Services;
+using UserService.Core.Utils;
 using HelpMyStreet.Contracts.UserService.Request;
 using HelpMyStreet.Contracts.UserService.Response;
-using System.Collections.Generic;
 
 namespace UserService.Handlers
 {
     public class GetVolunteersByPostcodeAndActivityHandler : IRequestHandler<GetVolunteersByPostcodeAndActivityRequest, GetVolunteersByPostcodeAndActivityResponse>
     {
+        private readonly IHelperService _helperService;
+        private readonly IRepository _repository;
+
+        public GetVolunteersByPostcodeAndActivityHandler(IHelperService helperService, IRepository repository)
+        {
+            _helperService = helperService;
+            _repository = repository;
+        } 
+
         public async Task<GetVolunteersByPostcodeAndActivityResponse> Handle(GetVolunteersByPostcodeAndActivityRequest request, CancellationToken cancellationToken)
         {
-            List<VolunteerSummary> volunteers = new List<VolunteerSummary>();
+            request.VolunteerFilter.Postcode = PostcodeFormatter.FormatPostcode(request.VolunteerFilter.Postcode);
 
-            volunteers.Add(new VolunteerSummary()
+            var users = await _helperService.GetHelpersWithinRadius(request.VolunteerFilter.Postcode, IsVerifiedType.All,  cancellationToken);
+            
+            GetVolunteersByPostcodeAndActivityResponse response = new GetVolunteersByPostcodeAndActivityResponse
             {
-                UserID = 1,
-                IsVerified = true,
-                IsStreetChampionForGivenPostCode = false
-            });
-            volunteers.Add(new VolunteerSummary()
-            {
-                UserID = 2,
-                IsVerified = false,
-                IsStreetChampionForGivenPostCode = false
-            });
-            volunteers.Add(new VolunteerSummary()
-            {
-                UserID = 3,
-                IsVerified = true,
-                IsStreetChampionForGivenPostCode = false
-            });
-            volunteers.Add(new VolunteerSummary()
-            {
-                UserID = 4,
-                IsVerified = false,
-                IsStreetChampionForGivenPostCode = false
-            });
-            volunteers.Add(new VolunteerSummary()
-            {
-                UserID = 5,
-                IsVerified = true,
-                IsStreetChampionForGivenPostCode = false
-            });
-            volunteers.Add(new VolunteerSummary()
-            {
-                UserID = 6,
-                IsVerified = false,
-                IsStreetChampionForGivenPostCode = false
-            });
-            volunteers.Add(new VolunteerSummary()
-            {
-                UserID = 32,
-                IsVerified = false,
-                IsStreetChampionForGivenPostCode = false
-            });
-            volunteers.Add(new VolunteerSummary()
-            {
-                UserID = 85,
-                IsVerified = true,
-                IsStreetChampionForGivenPostCode = false
-            });
 
-            GetVolunteersByPostcodeAndActivityResponse response = new GetVolunteersByPostcodeAndActivityResponse()
-            {
-                Volunteers = volunteers
+                Volunteers = users.Where(x => x.User.ChampionPostcodes.Contains(request.VolunteerFilter.Postcode) || x.User.SupportActivities.Any(sa => request.VolunteerFilter.Activities.Any(ra => sa == ra)))
+                .Select(x => new VolunteerSummary
+                {
+                    UserID = x.User.ID,
+                    IsVerified = x.User.IsVerified.HasValue && x.User.IsVerified.Value,
+                    IsStreetChampionForGivenPostCode = x.User.ChampionPostcodes.Contains(request.VolunteerFilter.Postcode),
+                    DistanceInMiles = x.Distance
+                }).ToList()
             };
 
             return response;

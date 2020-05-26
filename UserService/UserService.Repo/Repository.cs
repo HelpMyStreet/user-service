@@ -14,6 +14,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UserService.Core.Config;
+using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Repo.EntityFramework.Entities;
@@ -383,6 +384,13 @@ namespace UserService.Repo
                 .Count();
         }
 
+        public int GetAllDistinctVolunteerUserCount()
+        {
+            return _context.User
+                .Distinct()
+                .Count();
+        }
+
         public int ModifyUserRegistrationPageTwo(model.RegistrationStepTwo registrationStepTwo)
         {
             User EFUser = _context.User
@@ -528,14 +536,17 @@ WHERE [StreetChampionRoleUnderstood] = 1
 GROUP BY [ID]
 )
 
-SELECT [ID] AS [UserId], 
+SELECT u.[ID] AS [UserId], 
 [PostalCode] AS [Postcode], 
+pc.Longitude,
+pc.Latitude,
 [SupportRadiusMiles],
 IIF(u.[IsVerified] = 1, 1, 2) [IsVerifiedType],
 IIF(sc.UserId IS NOT NULL, 2, 1) as [VolunteerType]
 FROM [User].[User] u
 LEFT JOIN StreetChampions sc
 on u.ID = sc.UserId
+INNER JOIN Address.Postcode pc on u.PostalCode = pc.Postcode
 WHERE 
 u.[SupportRadiusMiles] IS NOT NULL AND 
 u.[IsVolunteer] = 1  AND
@@ -559,17 +570,15 @@ u.[ID] <= @ToUser1Id
         }
 
         public async Task<IEnumerable<model.User>> GetVolunteersByIdsAsync(IEnumerable<int> userIds)
-        {
+        {            
             var users = await _context.User
-                .Where(x => x.IsVolunteer == true
-                            && x.IsVerified == true
+                .Where(x => x.IsVolunteer == true         
                             && userIds.Contains(x.Id))
                 .Include(x => x.ChampionPostcode)
                 .Include(x => x.SupportActivity)
                 .Include(x => x.PersonalDetails)
                 .Include(x => x.RegistrationHistory)
                 .ToListAsync();
-
 
             List<model.User> response = new List<model.User>();
             foreach (var user in users)
@@ -579,6 +588,7 @@ u.[ID] <= @ToUser1Id
 
             return response;
         }
+
 
         public List<ReportItem> GetDailyReport()
         {
@@ -617,6 +627,23 @@ u.[ID] <= @ToUser1Id
                 EmailAddress = u.PersonalDetails.EmailAddress,
                 PostCode = u.PostalCode
             }).ToListAsync(cancellationToken);
+        }
+
+        public LatitudeAndLongitudeDTO GetLatitudeAndLongitude(string postCode)
+        {
+            var postcodeDetails =  _context.Postcode.Where(x => x.Postcode == postCode).FirstOrDefault();
+            if (postcodeDetails != null)
+            {
+                return new LatitudeAndLongitudeDTO()
+                {
+                    Latitude = Convert.ToDouble(postcodeDetails.Latitude),
+                    Longitude = Convert.ToDouble(postcodeDetails.Longitude)
+                };
+            }
+            else
+            {
+                throw new Exception($"Cannot find longitude and latitude for {postCode}");
+            }
         }
     }
 }
