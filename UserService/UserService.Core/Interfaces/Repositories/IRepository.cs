@@ -35,6 +35,9 @@ namespace UserService.Core.Interfaces.Repositories
 
         int GetDistinctVolunteerUserCount();
 
+        int GetAllDistinctVolunteerUserCount();
+
+
         bool GetUserIsVerified(int userId);
 
         int PostCreateUser(string firebaseUserId, string emailAddress, DateTime? dateCreated);
@@ -63,5 +66,7 @@ namespace UserService.Core.Interfaces.Repositories
         Task<IEnumerable<VolunteerForCacheDto>> GetVolunteersForCacheAsync(int fromUserId, int toUserId);
 
         Task<IEnumerable<User>> GetVolunteersByIdsAsync(IEnumerable<int> userIds);
+
+        LatitudeAndLongitudeDTO GetLatitudeAndLongitude(string postCode);
     }
 }

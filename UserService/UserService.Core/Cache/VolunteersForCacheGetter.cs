@@ -14,14 +14,12 @@ namespace UserService.Core
 {
     public class VolunteersForCacheGetter : IVolunteersForCacheGetter
     {
-        private readonly IRepository _repository;
-        private readonly IAddressService _addressService;
+        private readonly IRepository _repository;        
         private readonly IOptionsSnapshot<ApplicationConfig> _applicationConfig;
 
-        public VolunteersForCacheGetter(IRepository repository, IAddressService addressService, IOptionsSnapshot<ApplicationConfig> applicationConfig)
+        public VolunteersForCacheGetter(IRepository repository, IOptionsSnapshot<ApplicationConfig> applicationConfig)
         {
             _repository = repository;
-            _addressService = addressService;
             _applicationConfig = applicationConfig;
         }
 
@@ -29,7 +27,7 @@ namespace UserService.Core
         {
             int batchSize = _applicationConfig.Value.GetVolunteersForCacheBatchSize;
 
-            int totalVolunteerCount = _repository.GetDistinctVolunteerUserCount();
+            int totalVolunteerCount = _repository.GetAllDistinctVolunteerUserCount();
 
             if (totalVolunteerCount == 0)
             {
@@ -47,9 +45,7 @@ namespace UserService.Core
             {
                 numberOfBatches++;
             }
-
-            // get users from DB and call Address Service for coordinates in concurrent batches for speed
-
+            
             List<Task<IEnumerable<VolunteerForCacheDto>>> volunteersInBatchTasks = new List<Task<IEnumerable<VolunteerForCacheDto>>>();
 
             int from = minUserId;
@@ -63,8 +59,7 @@ namespace UserService.Core
                 to += batchSize;
             }
 
-            List<VolunteerForCacheDto> volunteerForCacheDtos = new List<VolunteerForCacheDto>(totalVolunteersCountForBatching);
-            List<Task<GetPostcodeCoordinatesResponse>> getPostcodeCoordinatesTasks = new List<Task<GetPostcodeCoordinatesResponse>>();
+            List<VolunteerForCacheDto> volunteerForCacheDtos = new List<VolunteerForCacheDto>(totalVolunteersCountForBatching);            
             while (volunteersInBatchTasks.Count > 0)
             {
                 Task<IEnumerable<VolunteerForCacheDto>> finishedTask = await Task.WhenAny(volunteersInBatchTasks);
@@ -72,30 +67,11 @@ namespace UserService.Core
 
                 IEnumerable<VolunteerForCacheDto> volunteersBatch = await finishedTask;
 
-                volunteerForCacheDtos.AddRange(volunteersBatch);
-
-                GetPostcodeCoordinatesRequest getPostcodeCoordinatesRequest = new GetPostcodeCoordinatesRequest();
-
-                getPostcodeCoordinatesRequest.Postcodes = volunteersBatch.Select(x => x.Postcode);
-
-                Task<GetPostcodeCoordinatesResponse> getPostcodeCoordinatesResponseTask = _addressService.GetPostcodeCoordinatesAsync(getPostcodeCoordinatesRequest, cancellationToken);
-                getPostcodeCoordinatesTasks.Add(getPostcodeCoordinatesResponseTask);
+                volunteerForCacheDtos.AddRange(volunteersBatch);            
             }
-
-            await Task.WhenAll(getPostcodeCoordinatesTasks);
-            List<PostcodeCoordinate> postcodeCoordinates = new List<PostcodeCoordinate>(totalVolunteersCountForBatching);
-
-            foreach (Task<GetPostcodeCoordinatesResponse> getPostcodeCoordinatesTask in getPostcodeCoordinatesTasks)
-            {
-                GetPostcodeCoordinatesResponse getPostcodeCoordinatesResponse = await getPostcodeCoordinatesTask;
-                postcodeCoordinates.AddRange(getPostcodeCoordinatesResponse.PostcodeCoordinates);
-            }
-
             
             List<CachedVolunteerDto> cachedVolunteerDtos =
                 (from volunteerForCacheDto in volunteerForCacheDtos
-                 join postcodeCoordinate in postcodeCoordinates
-                     on volunteerForCacheDto.Postcode equals postcodeCoordinate.Postcode
                  select new CachedVolunteerDto
                  {
                      UserId = volunteerForCacheDto.UserId,
@@ -103,8 +79,8 @@ namespace UserService.Core
                      IsVerifiedType = volunteerForCacheDto.IsVerifiedType,
                      SupportRadiusMiles = volunteerForCacheDto.SupportRadiusMiles,
                      VolunteerType = volunteerForCacheDto.VolunteerType,
-                     Latitude = postcodeCoordinate.Latitude,
-                     Longitude = postcodeCoordinate.Longitude
+                     Latitude = volunteerForCacheDto.Latitude,
+                     Longitude = volunteerForCacheDto.Longitude
                  }).ToList();
 
             return cachedVolunteerDtos;

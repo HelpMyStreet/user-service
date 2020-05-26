@@ -116,7 +116,7 @@ namespace UserService.UnitTests
         [Test]
         public async Task GetHelpersByPostcode()
         {
-            VolunteersForCacheGetter volunteersolunteersForCacheGetter = new VolunteersForCacheGetter(_repository.Object, _addressService.Object, _applicationConfig.Object);
+            VolunteersForCacheGetter volunteersolunteersForCacheGetter = new VolunteersForCacheGetter(_repository.Object, _applicationConfig.Object);
 
             IEnumerable<CachedVolunteerDto> result = await volunteersolunteersForCacheGetter.GetAllVolunteersAsync(CancellationToken.None);
 
@@ -162,7 +162,7 @@ namespace UserService.UnitTests
         {
             _repository.Setup(x => x.GetDistinctVolunteerUserCount()).Returns(0);
 
-            VolunteersForCacheGetter volunteersolunteersForCacheGetter = new VolunteersForCacheGetter(_repository.Object, _addressService.Object, _applicationConfig.Object);
+            VolunteersForCacheGetter volunteersolunteersForCacheGetter = new VolunteersForCacheGetter(_repository.Object, _applicationConfig.Object);
 
             IEnumerable<CachedVolunteerDto> result = await volunteersolunteersForCacheGetter.GetAllVolunteersAsync(CancellationToken.None);
 

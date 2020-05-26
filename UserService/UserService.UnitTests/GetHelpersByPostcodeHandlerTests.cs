@@ -84,7 +84,7 @@ namespace UserService.UnitTests
             _addressService = new Mock<IAddressService>();
 
             _addressService.Setup(x => x.GetPostcodeCoordinatesAsync(It.IsAny<GetPostcodeCoordinatesRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(_getPostcodeCoordinatesResponse);
-            _helperService = new HelperService(_addressService.Object, _volunteerCache.Object, _distanceCalculator.Object, _repository.Object);
+            _helperService = new HelperService(_volunteerCache.Object, _distanceCalculator.Object, _repository.Object);
 
             _users = new List<User>()
             {

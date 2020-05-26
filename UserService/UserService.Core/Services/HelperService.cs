@@ -24,12 +24,10 @@ namespace UserService.Core.Services
     public class HelperService : IHelperService
     {
         private readonly IVolunteerCache _volunteerCache;
-        private readonly IDistanceCalculator _distanceCalculator;
-        private readonly IAddressService _addressService;
+        private readonly IDistanceCalculator _distanceCalculator;        
         private readonly IRepository _repository;
-        public HelperService(IAddressService addressService, IVolunteerCache volunteerCache, IDistanceCalculator distanceCalculator, IRepository repository)
+        public HelperService(IVolunteerCache volunteerCache, IDistanceCalculator distanceCalculator, IRepository repository)
         {
-            _addressService = addressService;
             _volunteerCache = volunteerCache;
             _distanceCalculator = distanceCalculator;
             _repository = repository;
@@ -38,30 +36,20 @@ namespace UserService.Core.Services
 
         public async Task<IEnumerable<HelperWithinRadiusDTO>> GetHelpersWithinRadius(string postcode, IsVerifiedType verifiedType, CancellationToken token)
         {
-
-            GetPostcodeCoordinatesRequest getPostcodeCoordsRequest = new GetPostcodeCoordinatesRequest()
-            {
-                Postcodes = new List<string>() { postcode }
-            };
-
-            Task<GetPostcodeCoordinatesResponse> postcodeCoordsTask = _addressService.GetPostcodeCoordinatesAsync(getPostcodeCoordsRequest, token);
+            LatitudeAndLongitudeDTO comparePostcode = _repository.GetLatitudeAndLongitude(postcode);
 
             VolunteerType volunteerType = VolunteerType.Helper | VolunteerType.StreetChampion;
             IsVerifiedType isVerifiedType = verifiedType;
             Task<IEnumerable<CachedVolunteerDto>> cachedVolunteerDtosTask = _volunteerCache.GetCachedVolunteersAsync(volunteerType, isVerifiedType, token);
 
-            await Task.WhenAll(postcodeCoordsTask, cachedVolunteerDtosTask);
-
-            GetPostcodeCoordinatesResponse postcodeCoords = await postcodeCoordsTask;
-            PostcodeCoordinate postcodeCoordsToCompareTo = postcodeCoords.PostcodeCoordinates.FirstOrDefault();
+            await Task.WhenAll(cachedVolunteerDtosTask);
             IEnumerable<CachedVolunteerDto> cachedVolunteerDtos = await cachedVolunteerDtosTask;
-
        
             Dictionary<int, double> idsOfHelpersWithinRadius = new Dictionary<int, double>();
 
             foreach (CachedVolunteerDto cachedVolunteerDto in cachedVolunteerDtos)
             {
-                double distance = _distanceCalculator.GetDistanceInMiles(postcodeCoordsToCompareTo.Latitude, postcodeCoordsToCompareTo.Longitude, cachedVolunteerDto.Latitude, cachedVolunteerDto.Longitude);
+                double distance = _distanceCalculator.GetDistanceInMiles(comparePostcode.Latitude, comparePostcode.Longitude, cachedVolunteerDto.Latitude, cachedVolunteerDto.Longitude);
 
                 bool isWithinSupportRadius = distance <= cachedVolunteerDto.SupportRadiusMiles;
 
