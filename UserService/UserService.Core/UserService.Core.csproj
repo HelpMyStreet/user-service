@@ -5,10 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HelpMyStreet.Cache" Version="1.1.145" />
-    <PackageReference Include="HelpMyStreet.Contracts" Version="1.1.145" />
+    <PackageReference Include="HelpMyStreet.Cache" Version="1.1.151" />
+    <PackageReference Include="HelpMyStreet.Contracts" Version="1.1.151" />
     <PackageReference Include="Enums.NET" Version="3.0.3" />
-    <PackageReference Include="HelpMyStreet.Utils" Version="1.1.145" />
+    <PackageReference Include="HelpMyStreet.Utils" Version="1.1.151" />
     <PackageReference Include="MediatR" Version="8.0.1" />
     <PackageReference Include="Polly.Caching.Memory" Version="3.0.2" />
     <PackageReference Include="Polly.Contrib.DuplicateRequestCollapser" Version="0.2.0" />

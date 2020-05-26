@@ -36,7 +36,10 @@ namespace UserService.UnitTests
                 Postcode = "NG1 1AA",
                 SupportRadiusMiles = 1.2,
                 VolunteerType = VolunteerType.StreetChampion,
-                IsVerifiedType = IsVerifiedType.IsVerified
+                IsVerifiedType = IsVerifiedType.IsVerified,
+                Latitude = 1,
+                Longitude = 2,
+                
             }
 
             };
@@ -48,7 +51,9 @@ namespace UserService.UnitTests
                     Postcode = "NG1 1AB",
                     SupportRadiusMiles = 2.4,
                     VolunteerType = VolunteerType.Helper,
-                    IsVerifiedType = IsVerifiedType.IsVerified
+                    IsVerifiedType = IsVerifiedType.IsVerified,
+                    Latitude = 3,
+                    Longitude = 4,
                 }
 
             };
@@ -61,7 +66,7 @@ namespace UserService.UnitTests
             _repository.Setup(x => x.GetMinUserIdAsync()).ReturnsAsync(100);
             _repository.Setup(x => x.GetMaxUserIdAsync()).ReturnsAsync(250);
             _repository.Setup(x => x.GetDistinctVolunteerUserCount()).Returns(150);
-
+            _repository.Setup(x => x.GetAllDistinctVolunteerUserCount()).Returns(150);
             IEnumerable<User> users = new List<User>(){
                 new User()
             {
@@ -73,35 +78,6 @@ namespace UserService.UnitTests
 
             _addressService = new Mock<IAddressService>();
 
-            GetPostcodeCoordinatesResponse isPostcodeWithinRadiiBatch1 = new GetPostcodeCoordinatesResponse()
-            {
-                PostcodeCoordinates = new List<PostcodeCoordinate>()
-               {
-                   new PostcodeCoordinate()
-                   {
-                       Postcode = "NG1 1AA",
-                       Latitude = 1,
-                       Longitude = 2
-                   }
-               }
-            };
-
-            GetPostcodeCoordinatesResponse isPostcodeWithinRadiiBatch2 = new GetPostcodeCoordinatesResponse()
-            {
-                PostcodeCoordinates = new List<PostcodeCoordinate>()
-                {
-                    new PostcodeCoordinate()
-                    {
-                        Postcode ="NG1 1AB",
-                        Latitude = 3,
-                        Longitude = 4
-                    }
-                }
-            };
-
-            _addressService.SetupSequence(x => x.GetPostcodeCoordinatesAsync(It.IsAny<GetPostcodeCoordinatesRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(isPostcodeWithinRadiiBatch1)
-                .ReturnsAsync(isPostcodeWithinRadiiBatch2);
 
             ApplicationConfig applicationConfig = new ApplicationConfig()
             {
@@ -116,23 +92,13 @@ namespace UserService.UnitTests
         [Test]
         public async Task GetHelpersByPostcode()
         {
-            VolunteersForCacheGetter volunteersolunteersForCacheGetter = new VolunteersForCacheGetter(_repository.Object, _addressService.Object, _applicationConfig.Object);
+            VolunteersForCacheGetter volunteersolunteersForCacheGetter = new VolunteersForCacheGetter(_repository.Object, _applicationConfig.Object);
 
             IEnumerable<CachedVolunteerDto> result = await volunteersolunteersForCacheGetter.GetAllVolunteersAsync(CancellationToken.None);
 
             // check batch sizes are calculated correctly
             _repository.Verify(x => x.GetVolunteersForCacheAsync(It.Is<int>(y => y == 100), It.Is<int>(y => y == 199)), Times.Once);
             _repository.Verify(x => x.GetVolunteersForCacheAsync(It.Is<int>(y => y == 200), It.Is<int>(y => y == 299)), Times.Once);
-
-
-            _addressService.Verify(x => x.GetPostcodeCoordinatesAsync(It.Is<GetPostcodeCoordinatesRequest>(
-                y => y.Postcodes.Count() == 1 && y.Postcodes.Contains("NG1 1AA")
-                ), It.IsAny<CancellationToken>()), Times.Once);
-
-
-            _addressService.Verify(x => x.GetPostcodeCoordinatesAsync(It.Is<GetPostcodeCoordinatesRequest>(
-                y => y.Postcodes.Count() == 1 && y.Postcodes.Contains("NG1 1AB")
-            ), It.IsAny<CancellationToken>()), Times.Once);
 
 
             _repository.Verify(x => x.GetVolunteersForCacheAsync(It.Is<int>(y => y == 100), It.Is<int>(y => y == 199)), Times.Once);
@@ -160,9 +126,9 @@ namespace UserService.UnitTests
         [Test]
         public async Task NoVolunteersInDbReturnsAnEmptyList()
         {
-            _repository.Setup(x => x.GetDistinctVolunteerUserCount()).Returns(0);
+            _repository.Setup(x => x.GetAllDistinctVolunteerUserCount()).Returns(0);
 
-            VolunteersForCacheGetter volunteersolunteersForCacheGetter = new VolunteersForCacheGetter(_repository.Object, _addressService.Object, _applicationConfig.Object);
+            VolunteersForCacheGetter volunteersolunteersForCacheGetter = new VolunteersForCacheGetter(_repository.Object, _applicationConfig.Object);
 
             IEnumerable<CachedVolunteerDto> result = await volunteersolunteersForCacheGetter.GetAllVolunteersAsync(CancellationToken.None);
 

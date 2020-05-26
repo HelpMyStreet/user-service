@@ -25,6 +25,7 @@ using UserService.Core.Dto;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
 using UserService.Core.Interfaces.Utils;
+using UserService.Core.Services;
 using UserService.Core.Utils;
 using UserService.Handlers;
 using UserService.Repo;
@@ -93,6 +94,7 @@ namespace UserService.AzureFunction
 
             builder.Services.AddTransient<IRepository, Repository>();
             builder.Services.AddTransient<IAddressService, Core.Services.AddressService>();
+            builder.Services.AddTransient<IHelperService, HelperService>();
             builder.Services.AddTransient<IHttpClientWrapper, HttpClientWrapper>();
             builder.Services.AddTransient<IDistanceCalculator, DistanceCalculator>();
             builder.Services.AddTransient<IVolunteerCache, VolunteerCache>();
