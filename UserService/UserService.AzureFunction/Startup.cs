@@ -15,10 +15,13 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using HelpMyStreet.Cache;
+using HelpMyStreet.Cache.Extensions;
 using UserService.Core;
 using UserService.Core.BusinessLogic;
 using UserService.Core.Cache;
 using UserService.Core.Config;
+using UserService.Core.Dto;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
 using UserService.Core.Interfaces.Utils;
@@ -101,6 +104,14 @@ namespace UserService.AzureFunction
             builder.Services.AddTransient<ICoordinatedResetCache, CoordinatedResetCache>();
             builder.Services.AddTransient<IVolunteersFilteredByMinDistanceGetter, VolunteersFilteredByMinDistanceGetter>();
             builder.Services.AddTransient<IMinDistanceFilter, MinDistanceFilter>();
+
+            // add cache
+            RedisConfig redisConfig = new RedisConfig();
+            config.GetSection("RedisConfig").Bind(redisConfig);
+            builder.Services.AddMemDistCache(redisConfig.AppName, redisConfig.ConnectionString);
+            
+            builder.Services.AddSingleton<IMemDistCache<IEnumerable<CachedVolunteerDto>>>(x => x.GetService<IMemDistCacheFactory<IEnumerable<CachedVolunteerDto>>>().GetCache(new TimeSpan(7, 0, 0, 0), ResetTimeFactory.OnHour));
+
 
             // automatically apply EF migrations
             DbContextOptionsBuilder<ApplicationDbContext> dbContextOptionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();

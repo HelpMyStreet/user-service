@@ -1,4 +1,4 @@
-﻿using HelpMyStreet.Utils.CoordinatedResetCache;
+﻿using HelpMyStreet.Cache;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -19,7 +19,7 @@ namespace UserService.UnitTests
     {
 
         private Mock<IVolunteerCache> _volunteerCache;
-        private Mock<ICoordinatedResetCache> _coordinatedResetCache;
+        private Mock<IMemDistCache<IEnumerable<CachedVolunteerDto>>> _memDistCache;
         private Mock<IVolunteersFilteredByMinDistanceGetter> _volunteersFilteredByMinDistanceGetter;
 
         private IEnumerable<CachedVolunteerDto> _cachedVolunteerDtos;
@@ -97,10 +97,9 @@ namespace UserService.UnitTests
 
             _volunteersFilteredByMinDistanceGetter.Setup(x => x.GetVolunteersFilteredByMinDistanceAsync(It.IsAny<GetVolunteerCoordinatesRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(_cachedVolunteerDtosReturnedByMinDistanceFilter);
 
+            _memDistCache = new Mock<IMemDistCache<IEnumerable<CachedVolunteerDto>>>();
 
-            _coordinatedResetCache = new Mock<ICoordinatedResetCache>();
-
-            _coordinatedResetCache.Setup(x => x.GetCachedDataAsync(It.IsAny<Func<CancellationToken, Task<IEnumerable<CachedVolunteerDto>>>>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<CoordinatedResetCacheTime>())).Returns((Func<CancellationToken, Task<IEnumerable<CachedVolunteerDto>>> func, string key, CancellationToken token, CoordinatedResetCacheTime resetTime) =>
+            _memDistCache.Setup(x => x.GetCachedDataAsync(It.IsAny<Func<CancellationToken, Task<IEnumerable<CachedVolunteerDto>>>>(), It.IsAny<string>(), It.IsAny<RefreshBehaviour>(), It.IsAny<CancellationToken>())).Returns((Func<CancellationToken, Task<IEnumerable<CachedVolunteerDto>>> func, string key, RefreshBehaviour refreshBehaviour, CancellationToken token) =>
             {
                 return _volunteersFilteredByMinDistanceGetter.Object.GetVolunteersFilteredByMinDistanceAsync(It.Is<GetVolunteerCoordinatesRequest>(y => y.MinDistanceBetweenInMetres == 2000), It.IsAny<CancellationToken>());
             });
@@ -122,7 +121,10 @@ namespace UserService.UnitTests
                 NELongitude = 4
             };
 
-            GetVolunteerCoordinatesHandler getVolunteerCoordinatesHandler = new GetVolunteerCoordinatesHandler(_coordinatedResetCache.Object, _volunteerCache.Object, _volunteersFilteredByMinDistanceGetter.Object);
+
+            string key = $"{nameof(CachedVolunteerDto)}_MinDistance_{request.MinDistanceBetweenInMetres.RoundUpToNearest(2000)}_{request.VolunteerType}_{request.IsVerifiedType}";
+
+            GetVolunteerCoordinatesHandler getVolunteerCoordinatesHandler = new GetVolunteerCoordinatesHandler(_memDistCache.Object, _volunteerCache.Object, _volunteersFilteredByMinDistanceGetter.Object);
 
             GetVolunteerCoordinatesResponse result = await getVolunteerCoordinatesHandler.Handle(request, CancellationToken.None);
 
@@ -139,7 +141,7 @@ namespace UserService.UnitTests
             _volunteerCache.Verify(x => x.GetCachedVolunteersAsync(It.IsAny<VolunteerType>(), It.IsAny<IsVerifiedType>(), It.IsAny<CancellationToken>()), Times.Once);
 
 
-            _coordinatedResetCache.Verify(x => x.GetCachedData(It.IsAny<Func<IEnumerable<CachedVolunteerDto>>>(), It.IsAny<string>(), It.IsAny<CoordinatedResetCacheTime>()), Times.Never);
+            _memDistCache.Verify(x => x.GetCachedData(It.IsAny<Func<CancellationToken, IEnumerable<CachedVolunteerDto>>>(), It.Is<string>(y => y == key), It.Is<RefreshBehaviour>(y => y == RefreshBehaviour.DontWaitForFreshData), It.IsAny<CancellationToken>()), Times.Never);
 
             _volunteersFilteredByMinDistanceGetter.Verify(x => x.GetVolunteersFilteredByMinDistanceAsync(It.IsAny<GetVolunteerCoordinatesRequest>(), It.IsAny<CancellationToken>()), Times.Never);
         }
@@ -160,7 +162,7 @@ namespace UserService.UnitTests
 
             string key = $"{nameof(CachedVolunteerDto)}_MinDistance_{request.MinDistanceBetweenInMetres.RoundUpToNearest(2000)}_{request.VolunteerType}_{request.IsVerifiedType}";
 
-            GetVolunteerCoordinatesHandler getVolunteerCoordinatesHandler = new GetVolunteerCoordinatesHandler(_coordinatedResetCache.Object, _volunteerCache.Object, _volunteersFilteredByMinDistanceGetter.Object);
+            GetVolunteerCoordinatesHandler getVolunteerCoordinatesHandler = new GetVolunteerCoordinatesHandler(_memDistCache.Object, _volunteerCache.Object, _volunteersFilteredByMinDistanceGetter.Object);
 
             GetVolunteerCoordinatesResponse result = await getVolunteerCoordinatesHandler.Handle(request, CancellationToken.None);
 
@@ -177,7 +179,7 @@ namespace UserService.UnitTests
 
             _volunteerCache.Verify(x => x.GetCachedVolunteersAsync(It.IsAny<VolunteerType>(), It.IsAny<IsVerifiedType>(), It.IsAny<CancellationToken>()), Times.Never);
 
-            _coordinatedResetCache.Verify(x => x.GetCachedDataAsync(It.IsAny<Func<CancellationToken, Task<IEnumerable<CachedVolunteerDto>>>>(), It.Is<string>(y => y == key), It.IsAny<CancellationToken>(), It.IsAny<CoordinatedResetCacheTime>()), Times.Once);
+            _memDistCache.Verify(x => x.GetCachedDataAsync(It.IsAny<Func<CancellationToken, Task<IEnumerable<CachedVolunteerDto>>>>(), It.Is<string>(y => y == key), It.Is<RefreshBehaviour>(y => y == RefreshBehaviour.DontWaitForFreshData), It.IsAny<CancellationToken>()), Times.Once);
 
             _volunteersFilteredByMinDistanceGetter.Verify(x => x.GetVolunteersFilteredByMinDistanceAsync(It.IsAny<GetVolunteerCoordinatesRequest>(), It.IsAny<CancellationToken>()), Times.Once);
         }
