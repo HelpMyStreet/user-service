@@ -616,6 +616,7 @@ u.[ID] <= @ToUser1Id
         {
             return await _context.User
                 .Include(i => i.PersonalDetails)
+                .Include(i => i.SupportActivity)
                 .Select(u => new UserDetails
             {
                 UserID = u.Id,
@@ -625,8 +626,10 @@ u.[ID] <= @ToUser1Id
                 FirstName = u.PersonalDetails.FirstName,
                 LastName = u.PersonalDetails.LastName,
                 EmailAddress = u.PersonalDetails.EmailAddress,
-                PostCode = u.PostalCode
-            }).ToListAsync(cancellationToken);
+                PostCode = u.PostalCode,
+                SupportActivities = GetSupportActivities(u.SupportActivity),
+                SupportRadiusMiles = u.SupportRadiusMiles.Value
+                }).ToListAsync(cancellationToken);
         }
 
         public LatitudeAndLongitudeDTO GetLatitudeAndLongitude(string postCode)
