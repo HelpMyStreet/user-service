@@ -628,7 +628,7 @@ u.[ID] <= @ToUser1Id
                 EmailAddress = u.PersonalDetails.EmailAddress,
                 PostCode = u.PostalCode,
                 SupportActivities = GetSupportActivities(u.SupportActivity),
-                SupportRadiusMiles = u.SupportRadiusMiles.Value
+                SupportRadiusMiles = u.SupportRadiusMiles
                 }).ToListAsync(cancellationToken);
         }
 
