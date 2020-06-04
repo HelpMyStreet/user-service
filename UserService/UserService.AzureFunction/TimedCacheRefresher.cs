@@ -1,4 +1,5 @@
 ﻿using HelpMyStreet.Cache;
+using HelpMyStreet.Utils.Utils;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using System;
@@ -16,25 +17,34 @@ namespace UserService.AzureFunction
     {
         private readonly IMemDistCache<IEnumerable<CachedVolunteerDto>> _memDistCache;
         private readonly IVolunteersForCacheGetter _volunteersForCacheGetter;
+        private readonly ILoggerWrapper<TimedCacheRefresher> _logger;
 
-        public TimedCacheRefresher(IMemDistCache<IEnumerable<CachedVolunteerDto>> memDistCache, IVolunteersForCacheGetter volunteersForCacheGetter)
+        public TimedCacheRefresher(IMemDistCache<IEnumerable<CachedVolunteerDto>> memDistCache, IVolunteersForCacheGetter volunteersForCacheGetter, ILoggerWrapper<TimedCacheRefresher> logger)
         {
             _memDistCache = memDistCache;
             _volunteersForCacheGetter = volunteersForCacheGetter;
+            _logger = logger;
         }
 
         [FunctionName("TimedCacheRefresher")]
         public async Task Run([TimerTrigger("%TimedCacheRefresherCronExpression%")] TimerInfo timerInfo, CancellationToken cancellationToken, ILogger log)
         {
-            log.LogInformation($"TimedCacheRefresher CRON trigger executed at : {DateTimeOffset.Now}");
-            
+            _logger.LogInformation($"TimedCacheRefresher CRON trigger executed at : {DateTimeOffset.Now}");
+
             Stopwatch stopwatch = Stopwatch.StartNew();
 
-            await _memDistCache.RefreshDataAsync(async (token) => await _volunteersForCacheGetter.GetAllVolunteersAsync(token), CacheKey.AllCachedVolunteerDtos.ToString(), cancellationToken);
+            try
+            {
+                await _memDistCache.RefreshDataAsync(async (token) => await _volunteersForCacheGetter.GetAllVolunteersAsync(token), CacheKey.AllCachedVolunteerDtos.ToString(), cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error running TimedCacheRefresher", ex);
+            }
 
             stopwatch.Stop();
 
-            log.LogInformation($"TimedCacheRefresher CRON trigger took: {stopwatch.Elapsed:%m' min '%s' sec'}");
+            _logger.LogInformation($"TimedCacheRefresher CRON trigger took: {stopwatch.Elapsed:%m' min '%s' sec'}");
         }
     }
 }
