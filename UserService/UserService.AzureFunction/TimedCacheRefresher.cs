@@ -40,6 +40,7 @@ namespace UserService.AzureFunction
             catch (Exception ex)
             {
                 _logger.LogError("Error running TimedCacheRefresher", ex);
+                throw;
             }
 
             stopwatch.Stop();
