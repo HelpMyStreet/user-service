@@ -563,7 +563,7 @@ u.[ID] <= @ToUser1Id
                 IEnumerable<VolunteerForCacheDto> result = await connection.QueryAsync<VolunteerForCacheDto>(query,
                     commandType: CommandType.Text,
                     param: new { FromUserId = fromUserId, ToUser1Id = toUserId },
-                    commandTimeout: 15);
+                    commandTimeout: 300); // it shouldn't matter if this takes a long time to run as it's only used to load the cache in a timed trigger function
 
                 return result;
             }
