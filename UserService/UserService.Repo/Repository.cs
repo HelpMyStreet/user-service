@@ -655,7 +655,8 @@ u.[ID] <= @ToUser1Id
                .Select(g => new UserRegistrationStep
                {
                    RegistrationStep = g.Max(x => x.RegistrationStep),
-                   UserId = g.Key
+                   UserId = g.Key,
+                   DateCompleted = g.Max(x=> x.DateCompleted)
                })
                .Where(a=> a.RegistrationStep!=5).ToList());
         }
