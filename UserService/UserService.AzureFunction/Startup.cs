@@ -93,7 +93,8 @@ namespace UserService.AzureFunction
                 options.UseSqlServer(sqlConnectionString));
 
             builder.Services.AddTransient<IRepository, Repository>();
-            builder.Services.AddTransient<IAddressService, Core.Services.AddressService>();
+            builder.Services.AddTransient<IAddressService, AddressService>();
+            builder.Services.AddTransient<ICommunicationService, CommunicationService>();
             builder.Services.AddTransient<IHelperService, HelperService>();
             builder.Services.AddTransient<IHttpClientWrapper, HttpClientWrapper>();
             builder.Services.AddTransient<IDistanceCalculator, DistanceCalculator>();

@@ -2,6 +2,7 @@
 {
     public enum HttpClientConfigName
     {
-        AddressService = 1
+        AddressService = 1,
+        CommunicationService = 2
     }
 }
