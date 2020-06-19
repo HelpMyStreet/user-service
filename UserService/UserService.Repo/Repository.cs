@@ -648,5 +648,17 @@ u.[ID] <= @ToUser1Id
                 throw new Exception($"Cannot find longitude and latitude for {postCode}");
             }
         }
+
+        public Task<List<UserRegistrationStep>> GetIncompleteRegistrationStatusAsync(CancellationToken cancellationToken)
+        {
+              return Task.FromResult(_context.RegistrationHistory.GroupBy(a => a.UserId)
+               .Select(g => new UserRegistrationStep
+               {
+                   RegistrationStep = g.Max(x => x.RegistrationStep),
+                   UserId = g.Key,
+                   DateCompleted = g.Max(x=> x.DateCompleted)
+               })
+               .Where(a=> a.RegistrationStep!=5).ToList());
+        }
     }
 }
