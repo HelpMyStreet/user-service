@@ -22,7 +22,7 @@ namespace UserService.AzureFunction
         }
 
         [FunctionName("RegistrationChasers")]
-        public async Task Run([TimerTrigger("0 */30 * * * *")]TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("%RegistrationChasersCronExpression%")]TimerInfo myTimer, ILogger log)
         {
             RequestCommunicationRequest req = new RequestCommunicationRequest()
             {
