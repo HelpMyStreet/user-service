@@ -26,8 +26,9 @@ namespace UserService.Repo.EntityFramework.Entities
         public DateTime? DateCreated { get; set; }
         public double? SupportRadiusMiles { get; set; }
         public bool? SupportVolunteersByPhone { get; set; }
-
         public bool? StreetChampionRoleUnderstood { get; set; }
+        public int? ReferringGroupId { get; set; }
+        public string Source { get; set; }
 
         public virtual PersonalDetails PersonalDetails { get; set; }
         public virtual ICollection<ChampionPostcode> ChampionPostcode { get; set; }

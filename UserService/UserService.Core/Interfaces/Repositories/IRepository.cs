@@ -43,7 +43,7 @@ namespace UserService.Core.Interfaces.Repositories
 
         bool GetUserIsVerified(int userId);
 
-        int PostCreateUser(string firebaseUserId, string emailAddress, DateTime? dateCreated);
+        int PostCreateUser(string firebaseUserId, string emailAddress, DateTime? dateCreated, int? referringGroupID, string source);
 
         int ModifyUser(User user);
 
