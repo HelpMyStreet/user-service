@@ -159,7 +159,7 @@ namespace UserService.Repo
                 .Count(x => x.PostalCode == postCode && x.User.IsVerified.Value == true);
         }
 
-        public int PostCreateUser(string firebaseUserId, string emailAddress, DateTime? dateCreated)
+        public int PostCreateUser(string firebaseUserId, string emailAddress, DateTime? dateCreated, int? referringGroupID, string source)
         {
             User user = new User()
             {
@@ -168,7 +168,9 @@ namespace UserService.Repo
                 PersonalDetails = new PersonalDetails()
                 {
                     EmailAddress = emailAddress
-                }
+                },
+                ReferringGroupId = referringGroupID,
+                Source = source
             };
             _context.User.Add(user);
             AddRegistrationHistoryForUser(user, RegistrationSteps.StepOne);
@@ -230,7 +232,9 @@ namespace UserService.Repo
                 SupportActivities = GetSupportActivities(user.SupportActivity),
                 ChampionPostcodes = GetChampionPostCodes(user.ChampionPostcode),
                 RegistrationHistory = GetRegistrationHistories(user.RegistrationHistory),
-                UserPersonalDetails = MapEFPersonalDetailsToModelPersonalDetails(user.PersonalDetails)
+                UserPersonalDetails = MapEFPersonalDetailsToModelPersonalDetails(user.PersonalDetails),
+                ReferringGroupId = user.ReferringGroupId,
+                Source = user.Source
             };
         }
 
