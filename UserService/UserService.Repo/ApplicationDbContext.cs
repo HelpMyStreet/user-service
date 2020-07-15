@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using System.Data.SqlClient;
 using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using UserService.Repo.Helpers;
 
 namespace UserService.Repo
 {
@@ -37,6 +38,8 @@ namespace UserService.Repo
 
         public virtual DbQuery<DailyReport> DailyReport { get; set; }
 
+        public virtual DbSet<EnumSupportActivities> EnumSupportActivities { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -47,6 +50,15 @@ namespace UserService.Repo
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Query<DailyReport>().ToQuery(() => DailyReport.FromSql("TwoHourlyReport"));
+
+            modelBuilder.Entity<EnumSupportActivities>(entity =>
+            {
+                entity.ToTable("SupportActivity", "Lookup");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.SetEnumSupportActivityData();
+            });
 
             modelBuilder.Entity<ChampionPostcode>(entity =>
             {
