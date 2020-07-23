@@ -113,6 +113,9 @@ namespace UserService.AzureFunction
             
             builder.Services.AddSingleton<IMemDistCache<IEnumerable<CachedVolunteerDto>>>(x => x.GetService<IMemDistCacheFactory<IEnumerable<CachedVolunteerDto>>>().GetCache(new TimeSpan(7, 0, 0, 0), ResetTimeFactory.OnHour));
 
+            IConfigurationSection firebaseConfigSettings = config.GetSection("FirebaseConfig");
+            builder.Services.Configure<FirebaseConfig>(firebaseConfigSettings);
+            builder.Services.AddTransient<IAuthService, AuthService>();
 
             // automatically apply EF migrations
             DbContextOptionsBuilder<ApplicationDbContext> dbContextOptionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
