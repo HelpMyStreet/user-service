@@ -664,5 +664,32 @@ u.[ID] <= @ToUser1Id
                })
                .Where(a=> a.RegistrationStep!=5).ToList());
         }
+
+        public async Task<bool> DeleteUserAsync(int userId, CancellationToken cancellationToken)
+        {
+            bool success = false;
+            var user = _context.User.FirstOrDefault(x => x.Id == userId);
+
+            if (user != null)
+            {
+                var championPostcodes = _context.ChampionPostcode.Where(x => x.UserId == userId);
+                _context.ChampionPostcode.RemoveRange(championPostcodes);
+
+                var supportActivities = _context.SupportActivity.Where(x => x.UserId == userId);
+                _context.SupportActivity.RemoveRange(supportActivities);
+
+                var registationHistories = _context.RegistrationHistory.Where(x => x.UserId == userId);
+                _context.RegistrationHistory.RemoveRange(registationHistories);
+
+                var personalDetails = _context.PersonalDetails.Where(x => x.UserId == userId);
+                _context.PersonalDetails.RemoveRange(personalDetails);
+
+                _context.User.Remove(user);
+
+                await _context.SaveChangesAsync(cancellationToken);
+                success = true;
+            }
+            return success;
+        }
     }
 }
