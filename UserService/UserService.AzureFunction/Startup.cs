@@ -115,7 +115,7 @@ namespace UserService.AzureFunction
 
             IConfigurationSection firebaseConfigSettings = config.GetSection("FirebaseConfig");
             builder.Services.Configure<FirebaseConfig>(firebaseConfigSettings);
-            builder.Services.AddTransient<IAuthService, AuthService>();
+            builder.Services.AddSingleton<IAuthService, AuthService>();
 
             // automatically apply EF migrations
             DbContextOptionsBuilder<ApplicationDbContext> dbContextOptionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
