@@ -2,19 +2,15 @@
 using HelpMyStreet.Contracts.AddressService.Response;
 using HelpMyStreet.Contracts.Shared;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using HelpMyStreet.Utils.Utils;
-using UserService.Core.Config;
-using UserService.Core.Domains.Entities;
 using UserService.Core.Interfaces.Services;
-using UserService.Core.Interfaces.Utils;
-using UserService.Core.Utils;
 using Utf8Json.Resolvers;
+using HelpMyStreet.Utils.Enums;
 
 namespace UserService.Core.Services
 {

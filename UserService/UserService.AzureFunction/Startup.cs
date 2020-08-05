@@ -24,12 +24,11 @@ using UserService.Core.Config;
 using UserService.Core.Dto;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
-using UserService.Core.Interfaces.Utils;
 using UserService.Core.Services;
 using UserService.Core.Utils;
 using UserService.Handlers;
 using UserService.Repo;
-
+using HelpMyStreet.Utils.Enums;
 
 [assembly: FunctionsStartup(typeof(UserService.AzureFunction.Startup))]
 namespace UserService.AzureFunction
