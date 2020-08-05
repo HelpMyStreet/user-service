@@ -12,6 +12,8 @@ namespace UserService.Core.Interfaces.Repositories
 {
     public interface IRepository
     {
+        Task<bool> DeleteUserAsync(int userId, CancellationToken cancellationToken);
+
         Task<List<UserRegistrationStep>> GetIncompleteRegistrationStatusAsync(CancellationToken cancellationToken);
 
         Task<List<UserDetails>> GetUserDetailsAsync(CancellationToken cancellationToken);
