@@ -7,6 +7,7 @@ using System.Data.SqlClient;
 using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using UserService.Repo.Helpers;
+using HelpMyStreet.Utils.Extensions;
 
 namespace UserService.Repo
 {
@@ -20,11 +21,7 @@ namespace UserService.Repo
             : base(options)
         {
             SqlConnection conn = (SqlConnection)Database.GetDbConnection();
-
-            if (conn.DataSource.Contains("database.windows.net"))
-            {
-                conn.AccessToken = new AzureServiceTokenProvider().GetAccessTokenAsync("https://database.windows.net/").Result;
-            }
+            conn.AddAzureToken();
         }
 
         public virtual DbSet<ChampionPostcode> ChampionPostcode { get; set; }
