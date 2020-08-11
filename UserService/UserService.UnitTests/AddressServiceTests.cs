@@ -1,6 +1,8 @@
 ﻿using HelpMyStreet.Contracts.AddressService.Request;
 using HelpMyStreet.Contracts.AddressService.Response;
 using HelpMyStreet.Contracts.Shared;
+using HelpMyStreet.Utils.Enums;
+using HelpMyStreet.Utils.Utils;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -10,10 +12,6 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using UserService.Core.Config;
-using UserService.Core.Domains.Entities;
-using UserService.Core.Interfaces.Utils;
-using UserService.Core.Services;
 
 namespace UserService.UnitTests
 {
