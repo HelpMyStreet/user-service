@@ -39,7 +39,7 @@ namespace UserService.AzureFunction
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
                 var eventAttributes = new Dictionary<string, object>() { { "userID", req.ID.ToString() } };
-                NewRelic.Api.Agent.NewRelic.RecordCustomEvent("GetChampionCountByPostcode request", eventAttributes);
+                NewRelic.Api.Agent.NewRelic.RecordCustomEvent("GetUserByID request", eventAttributes);
 
                 GetUserByIDResponse response = await _mediator.Send(req);
                 return new OkObjectResult(response);

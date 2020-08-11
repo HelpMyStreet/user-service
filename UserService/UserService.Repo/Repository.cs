@@ -55,7 +55,15 @@ namespace UserService.Repo
                 .Include(i => i.RegistrationHistory)
                 .Where(x => x.Id == userId).FirstOrDefault();
 
-            return MapEFUserToModelUser(user);
+            if(user!=null)
+            {
+                return MapEFUserToModelUser(user);
+            }
+            else
+            {
+                return null;
+            }
+            
         }
 
         public model.User GetUserByFirebaseUserID(string firebaseUID)
@@ -67,7 +75,14 @@ namespace UserService.Repo
                 .Include(i => i.RegistrationHistory)
                 .Where(x => x.FirebaseUid == firebaseUID).FirstOrDefault();
 
-            return MapEFUserToModelUser(user);
+            if (user != null)
+            {
+                return MapEFUserToModelUser(user);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public List<model.User> GetUsersForIDs(List<int> userId)
