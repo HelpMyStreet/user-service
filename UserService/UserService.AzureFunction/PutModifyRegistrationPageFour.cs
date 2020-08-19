@@ -5,10 +5,11 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using MediatR;
 using System;
-using UserService.Core.Domains.Entities;
 using System.Net;
 using AzureFunctions.Extensions.Swashbuckle.Attribute;
 using Microsoft.AspNetCore.Http;
+using HelpMyStreet.Contracts.UserService.Response;
+using HelpMyStreet.Contracts.UserService.Request;
 
 namespace UserService.AzureFunction
 {

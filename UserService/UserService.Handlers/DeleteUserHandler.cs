@@ -1,16 +1,10 @@
-﻿using UserService.Core.Domains.Entities;
-using UserService.Core.Interfaces.Repositories;
+﻿using UserService.Core.Interfaces.Repositories;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using HelpMyStreet.Contracts.UserService.Request;
 using HelpMyStreet.Contracts.UserService.Response;
 using UserService.Core.Interfaces.Services;
-using Google.Apis.Upload;
-using Polly.Caching;
 
 namespace UserService.Handlers
 {

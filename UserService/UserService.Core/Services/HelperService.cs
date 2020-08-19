@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using HelpMyStreet.Utils.Enums;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;

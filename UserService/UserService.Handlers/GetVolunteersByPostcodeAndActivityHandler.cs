@@ -1,20 +1,13 @@
-﻿using HelpMyStreet.Utils.Models;
-using HelpMyStreet.Utils.Utils;
+﻿using HelpMyStreet.Utils.Utils;
 using MediatR;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using HelpMyStreet.Contracts.AddressService.Request;
-using HelpMyStreet.Contracts.AddressService.Response;
-using UserService.Core;
-using UserService.Core.Domains.Entities;
-using UserService.Core.Dto;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
-using UserService.Core.Utils;
 using HelpMyStreet.Contracts.UserService.Request;
 using HelpMyStreet.Contracts.UserService.Response;
+using HelpMyStreet.Utils.Enums;
 
 namespace UserService.Handlers
 {

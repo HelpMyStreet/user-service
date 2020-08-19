@@ -1,4 +1,7 @@
 ﻿using HelpMyStreet.Cache;
+using HelpMyStreet.Contracts.UserService.Request;
+using HelpMyStreet.Contracts.UserService.Response;
+using HelpMyStreet.Utils.Enums;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -8,7 +11,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using UserService.Core;
 using UserService.Core.BusinessLogic;
-using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 using UserService.Core.Extensions;
 using UserService.Handlers;

@@ -10,7 +10,6 @@ using NewRelic.Api.Agent;
 using System;
 using System.Net;
 using System.Threading.Tasks;
-using UserService.Core.Domains.Entities;
 
 namespace UserService.AzureFunction
 {
