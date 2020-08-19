@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using HelpMyStreet.Contracts.UserService.Response;
 using HelpMyStreet.Contracts.UserService.Request;
+using HelpMyStreet.Contracts.Shared;
 
 namespace UserService.AzureFunction
 {
@@ -43,17 +44,13 @@ namespace UserService.AzureFunction
                 var eventAttributes = new Dictionary<string, object>() { { "result", "Success!" }, {"PostCode",req.PostCode },{ "Count", response.Count.ToString() } };
                 NewRelic.Api.Agent.NewRelic.RecordCustomEvent("GetChampionCountByPostcode response", eventAttributes);
 
-
-                return new OkObjectResult(response);
+                return new OkObjectResult(ResponseWrapper<GetChampionCountByPostcodeResponse, UserServiceErrorCode>.CreateSuccessfulResponse(response));
             }
             catch (Exception exc)
             {
                 LogError.Log(log, exc, req);
 
-                return new ObjectResult(exc)
-                {
-                    StatusCode = StatusCodes.Status500InternalServerError
-                };
+                return new ObjectResult(ResponseWrapper<GetChampionCountByPostcodeResponse, UserServiceErrorCode>.CreateUnsuccessfulResponse(UserServiceErrorCode.UnhandledError, "Internal Error")) { StatusCode = StatusCodes.Status500InternalServerError };
             }
         }
     }

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using NewRelic.Api.Agent;
 using HelpMyStreet.Contracts.UserService.Response;
 using HelpMyStreet.Contracts.UserService.Request;
+using HelpMyStreet.Contracts.Shared;
 
 namespace UserService.AzureFunction
 {
@@ -41,16 +42,14 @@ namespace UserService.AzureFunction
                 NewRelic.Api.Agent.NewRelic.RecordCustomEvent("GetUserByID request", eventAttributes);
 
                 GetUserByIDResponse response = await _mediator.Send(req);
-                return new OkObjectResult(response);
+
+                return new OkObjectResult(ResponseWrapper<GetUserByIDResponse, UserServiceErrorCode>.CreateSuccessfulResponse(response));
             }
             catch (Exception exc)
             {
                 LogError.Log(log, exc, req);
 
-                return new ObjectResult(exc)
-                {
-                    StatusCode = StatusCodes.Status500InternalServerError
-                };
+                return new ObjectResult(ResponseWrapper<GetUserByIDResponse, UserServiceErrorCode>.CreateUnsuccessfulResponse(UserServiceErrorCode.UnhandledError, "Internal Error")) { StatusCode = StatusCodes.Status500InternalServerError };
             }
         }
     }

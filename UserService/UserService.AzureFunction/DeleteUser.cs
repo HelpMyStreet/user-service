@@ -10,6 +10,7 @@ using AzureFunctions.Extensions.Swashbuckle.Attribute;
 using Microsoft.AspNetCore.Http;
 using HelpMyStreet.Contracts.UserService.Response;
 using HelpMyStreet.Contracts.UserService.Request;
+using HelpMyStreet.Contracts.Shared;
 
 namespace UserService.AzureFunction
 {
@@ -35,16 +36,14 @@ namespace UserService.AzureFunction
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
                 DeleteUserResponse response = await _mediator.Send(req);
-                return new OkObjectResult(response);
+
+                return new OkObjectResult(ResponseWrapper<DeleteUserResponse, UserServiceErrorCode>.CreateSuccessfulResponse(response));
             }
             catch (Exception exc)
             {
                 LogError.Log(log, exc, req);
 
-                return new ObjectResult(exc)
-                {
-                    StatusCode = StatusCodes.Status500InternalServerError
-                };
+                return new ObjectResult(ResponseWrapper<DeleteUserResponse, UserServiceErrorCode>.CreateUnsuccessfulResponse(UserServiceErrorCode.UnhandledError, "Internal Error")) { StatusCode = StatusCodes.Status500InternalServerError };
             }
         }
     }

@@ -11,6 +11,8 @@ using NewRelic.Api.Agent;
 using HelpMyStreet.Contracts.ReportService.Response;
 using Microsoft.AspNetCore.Http;
 using HelpMyStreet.Contracts.UserService.Request;
+using HelpMyStreet.Contracts.Shared;
+using HelpMyStreet.Contracts.UserService.Response;
 
 namespace UserService.AzureFunction
 {
@@ -38,16 +40,13 @@ namespace UserService.AzureFunction
 
                 GetReportResponse response = await _mediator.Send(req);
 
-                return new OkObjectResult(response);
+                return new OkObjectResult(ResponseWrapper<GetReportResponse, UserServiceErrorCode>.CreateSuccessfulResponse(response));
             }
             catch (Exception exc)
             {
                 LogError.Log(log, exc, req);
 
-                return new ObjectResult(exc)
-                {
-                    StatusCode = StatusCodes.Status500InternalServerError
-                };
+                return new ObjectResult(ResponseWrapper<GetReportResponse, UserServiceErrorCode>.CreateUnsuccessfulResponse(UserServiceErrorCode.UnhandledError, "Internal Error")) { StatusCode = StatusCodes.Status500InternalServerError };
             }
         }
     }
