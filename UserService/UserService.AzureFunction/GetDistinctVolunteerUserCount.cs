@@ -5,8 +5,6 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using MediatR;
 using System;
-using System.Net;
-using AzureFunctions.Extensions.Swashbuckle.Attribute;
 using Microsoft.AspNetCore.Http;
 using NewRelic.Api.Agent;
 using HelpMyStreet.Contracts.UserService.Response;
@@ -26,10 +24,9 @@ namespace UserService.AzureFunction
 
         [Transaction(Web = true)]
         [FunctionName("GetDistinctVolunteerUserCount")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetDistinctVolunteerUserCountResponse))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
-            [RequestBodyType(typeof(GetDistinctVolunteerUserCountRequest), "product request")] GetDistinctVolunteerUserCountRequest req,
+            GetDistinctVolunteerUserCountRequest req,
             ILogger log)
         {
             try

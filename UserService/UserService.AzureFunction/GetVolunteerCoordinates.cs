@@ -1,11 +1,9 @@
-﻿using AzureFunctions.Extensions.Swashbuckle.Attribute;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using HelpMyStreet.Contracts.UserService.Response;
@@ -24,10 +22,9 @@ namespace UserService.AzureFunction
         }
 
         [FunctionName("GetVolunteerCoordinates")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetVolunteerCoordinatesResponse))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
-            [RequestBodyType(typeof(GetVolunteerCoordinatesRequest), "product request")] GetVolunteerCoordinatesRequest req,
+            GetVolunteerCoordinatesRequest req,
             ILogger log)
         {
             try

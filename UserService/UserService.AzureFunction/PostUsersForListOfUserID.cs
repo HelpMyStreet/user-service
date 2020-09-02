@@ -5,8 +5,6 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using MediatR;
 using System;
-using System.Net;
-using AzureFunctions.Extensions.Swashbuckle.Attribute;
 using Microsoft.AspNetCore.Http;
 using HelpMyStreet.Contracts.UserService.Response;
 using HelpMyStreet.Contracts.UserService.Request;
@@ -24,10 +22,9 @@ namespace UserService.AzureFunction
         }
 
         [FunctionName("PostUsersForListOfUserID")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PostUsersForListOfUserIDResponse))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]
-            [RequestBodyType(typeof(PostUsersForListOfUserIDRequest), "product request")] PostUsersForListOfUserIDRequest req,
+            PostUsersForListOfUserIDRequest req,
             ILogger log)
         {
             try

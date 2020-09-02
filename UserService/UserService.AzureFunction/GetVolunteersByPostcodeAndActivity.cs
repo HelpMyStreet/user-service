@@ -1,5 +1,4 @@
-﻿using AzureFunctions.Extensions.Swashbuckle.Attribute;
-using HelpMyStreet.Contracts.Shared;
+﻿using HelpMyStreet.Contracts.Shared;
 using HelpMyStreet.Contracts.UserService.Request;
 using HelpMyStreet.Contracts.UserService.Response;
 using MediatR;
@@ -10,7 +9,6 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using NewRelic.Api.Agent;
 using System;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace UserService.AzureFunction
@@ -26,10 +24,9 @@ namespace UserService.AzureFunction
 
         [Transaction(Web = true)]
         [FunctionName("GetVolunteersByPostcodeAndActivity")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetVolunteersByPostcodeAndActivityResponse))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
-            [RequestBodyType(typeof(GetVolunteersByPostcodeAndActivityRequest), "product request")] GetVolunteersByPostcodeAndActivityRequest req,
+            GetVolunteersByPostcodeAndActivityRequest req,
             ILogger log)
         {
             try

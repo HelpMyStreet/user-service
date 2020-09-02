@@ -5,8 +5,6 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using MediatR;
 using System;
-using AzureFunctions.Extensions.Swashbuckle.Attribute;
-using System.Net;
 using Microsoft.AspNetCore.Http;
 using HelpMyStreet.Contracts.UserService.Response;
 using HelpMyStreet.Contracts.UserService.Request;
@@ -24,10 +22,9 @@ namespace UserService.AzureFunction
         }
 
         [FunctionName("PutModifyRegistrationPageTwo")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PutModifyRegistrationPageTwoResponse))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "put", Route = null)]
-            [RequestBodyType(typeof(PutModifyRegistrationPageTwoRequest), "product request")]PutModifyRegistrationPageTwoRequest req,
+            PutModifyRegistrationPageTwoRequest req,
             ILogger log)
         {
             try

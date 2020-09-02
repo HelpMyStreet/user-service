@@ -5,8 +5,6 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using MediatR;
 using System;
-using System.Net;
-using AzureFunctions.Extensions.Swashbuckle.Attribute;
 using Microsoft.AspNetCore.Http;
 using HelpMyStreet.Contracts.UserService.Response;
 using HelpMyStreet.Contracts.UserService.Request;
@@ -24,10 +22,9 @@ namespace UserService.AzureFunction
         }
 
         [FunctionName("PostCreateUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PostCreateUserResponse))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]
-            [RequestBodyType(typeof(PostCreateUserRequest), "product request")] PostCreateUserRequest req,
+            PostCreateUserRequest req,
             ILogger log)
         {
             try

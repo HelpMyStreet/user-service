@@ -5,8 +5,6 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using MediatR;
 using System;
-using System.Net;
-using AzureFunctions.Extensions.Swashbuckle.Attribute;
 using Microsoft.AspNetCore.Http;
 using HelpMyStreet.Contracts.UserService.Response;
 using HelpMyStreet.Contracts.UserService.Request;
@@ -24,10 +22,9 @@ namespace UserService.AzureFunction
         }
 
         [FunctionName("DeleteUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(DeleteUserResponse))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "delete", Route = null)]
-            [RequestBodyType(typeof(DeleteUserRequest), "product request")] DeleteUserRequest req,
+            DeleteUserRequest req,
             ILogger log)
         {
             try

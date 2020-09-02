@@ -6,8 +6,6 @@ using Microsoft.Extensions.Logging;
 using MediatR;
 using System;
 using System.Collections.Generic;
-using System.Net;
-using AzureFunctions.Extensions.Swashbuckle.Attribute;
 using Microsoft.AspNetCore.Http;
 using NewRelic.Api.Agent;
 using HelpMyStreet.Contracts.UserService.Response;
@@ -27,10 +25,9 @@ namespace UserService.AzureFunction
 
         [Transaction(Web = true)]
         [FunctionName("GetUserByID")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetUserByIDResponse))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
-            [RequestBodyType(typeof(GetUserByIDRequest), "product request")] GetUserByIDRequest req,
+            GetUserByIDRequest req,
             ILogger log)
         {
             try

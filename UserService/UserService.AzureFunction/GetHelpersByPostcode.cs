@@ -1,12 +1,10 @@
-﻿using AzureFunctions.Extensions.Swashbuckle.Attribute;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using NewRelic.Api.Agent;
 using System;
-using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using HelpMyStreet.Contracts.UserService.Response;
@@ -26,10 +24,9 @@ namespace UserService.AzureFunction
 
         [Transaction(Web = true)]
         [FunctionName("GetHelpersByPostcode")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetHelpersByPostcodeResponse))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
-            [RequestBodyType(typeof(GetHelpersByPostcodeRequest), "product request")] GetHelpersByPostcodeRequest req,
+            GetHelpersByPostcodeRequest req,
             ILogger log)
         {
             try

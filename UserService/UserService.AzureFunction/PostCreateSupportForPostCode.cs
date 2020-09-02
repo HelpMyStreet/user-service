@@ -5,8 +5,6 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using MediatR;
 using System;
-using System.Net;
-using AzureFunctions.Extensions.Swashbuckle.Attribute;
 using Microsoft.AspNetCore.Http;
 using HelpMyStreet.Contracts.UserService.Request;
 
@@ -22,10 +20,9 @@ namespace UserService.AzureFunction
         }
 
         [FunctionName("PostCreateSupportForPostCode")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]
-            [RequestBodyType(typeof(PostCreateSupportForPostCodeRequest), "product request")] PostCreateSupportForPostCodeRequest req,
+            PostCreateSupportForPostCodeRequest req,
             ILogger log)
         {
             try

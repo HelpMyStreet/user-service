@@ -5,8 +5,6 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using MediatR;
 using System;
-using System.Net;
-using AzureFunctions.Extensions.Swashbuckle.Attribute;
 using NewRelic.Api.Agent;
 using HelpMyStreet.Contracts.ReportService.Response;
 using Microsoft.AspNetCore.Http;
@@ -27,10 +25,9 @@ namespace UserService.AzureFunction
 
         [Transaction(Web = true)]
         [FunctionName("GetReport")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetReportResponse))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
-            [RequestBodyType(typeof(GetReportRequest), "report request")] GetReportRequest req,
+            GetReportRequest req,
             ILogger log)
         {
             try
