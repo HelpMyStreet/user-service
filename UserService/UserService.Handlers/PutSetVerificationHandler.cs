@@ -1,11 +1,12 @@
-﻿using UserService.Core.Domains.Entities;
-using UserService.Core.Interfaces.Repositories;
+﻿using UserService.Core.Interfaces.Repositories;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 using UserService.Core.Interfaces.Services;
 using HelpMyStreet.Contracts.RequestService.Response;
 using HelpMyStreet.Contracts.CommunicationService.Request;
+using HelpMyStreet.Contracts.UserService.Request;
+using HelpMyStreet.Contracts.UserService.Response;
 
 namespace UserService.Handlers
 {

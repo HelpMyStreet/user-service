@@ -2,13 +2,13 @@
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using UserService.Core.Config;
 using UserService.Core.Interfaces.Services;
-using UserService.Core.Interfaces.Utils;
 using HelpMyStreet.Contracts.CommunicationService.Response;
 using HelpMyStreet.Contracts.CommunicationService.Request;
 using System.Text;
 using Newtonsoft.Json;
+using HelpMyStreet.Utils.Utils;
+using HelpMyStreet.Utils.Enums;
 
 namespace UserService.Core.Services
 {

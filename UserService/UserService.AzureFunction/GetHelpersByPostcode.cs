@@ -1,15 +1,15 @@
-﻿using AzureFunctions.Extensions.Swashbuckle.Attribute;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using NewRelic.Api.Agent;
 using System;
-using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using UserService.Core.Domains.Entities;
+using HelpMyStreet.Contracts.UserService.Response;
+using HelpMyStreet.Contracts.UserService.Request;
+using HelpMyStreet.Contracts.Shared;
 
 namespace UserService.AzureFunction
 {
@@ -24,10 +24,9 @@ namespace UserService.AzureFunction
 
         [Transaction(Web = true)]
         [FunctionName("GetHelpersByPostcode")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetHelpersByPostcodeResponse))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
-            [RequestBodyType(typeof(GetHelpersByPostcodeRequest), "product request")] GetHelpersByPostcodeRequest req,
+            GetHelpersByPostcodeRequest req,
             ILogger log)
         {
             try
@@ -37,16 +36,13 @@ namespace UserService.AzureFunction
 
                 GetHelpersByPostcodeResponse response = await _mediator.Send(req);
 
-                return new OkObjectResult(response);
+                return new OkObjectResult(ResponseWrapper<GetHelpersByPostcodeResponse, UserServiceErrorCode>.CreateSuccessfulResponse(response));
             }
             catch (Exception exc)
             {
                 LogError.Log(log, exc, req);
 
-                return new ObjectResult(exc)
-                {
-                    StatusCode = StatusCodes.Status500InternalServerError
-                };
+                return new ObjectResult(ResponseWrapper<GetHelpersByPostcodeResponse, UserServiceErrorCode>.CreateUnsuccessfulResponse(UserServiceErrorCode.UnhandledError, "Internal Error")) { StatusCode = StatusCodes.Status500InternalServerError };
             }
         }
     }

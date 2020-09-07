@@ -6,41 +6,41 @@ using Microsoft.Extensions.Logging;
 using MediatR;
 using System;
 using Microsoft.AspNetCore.Http;
-using NewRelic.Api.Agent;
 using HelpMyStreet.Contracts.UserService.Response;
 using HelpMyStreet.Contracts.UserService.Request;
 using HelpMyStreet.Contracts.Shared;
 
 namespace UserService.AzureFunction
 {
-    public class GetUsers
+    public class DeleteUser
     {
         private readonly IMediator _mediator;
 
-        public GetUsers(IMediator mediator)
+        public DeleteUser(IMediator mediator)
         {
             _mediator = mediator;
         }
 
-        [Transaction(Web = true)]
-        [FunctionName("GetUsers")]
+        [FunctionName("DeleteUser")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
-            GetUsersRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "delete", Route = null)]
+            DeleteUserRequest req,
             ILogger log)
         {
             try
             {
-                NewRelic.Api.Agent.NewRelic.SetTransactionName("UserService", "GetUsersResponse");
+                NewRelic.Api.Agent.NewRelic.SetTransactionName("UserService", "DeleteUser");
                 log.LogInformation("C# HTTP trigger function processed a request.");
-                GetUsersResponse response = await _mediator.Send(req);
-                return new OkObjectResult(ResponseWrapper<GetUsersResponse, UserServiceErrorCode>.CreateSuccessfulResponse(response));
+
+                DeleteUserResponse response = await _mediator.Send(req);
+
+                return new OkObjectResult(ResponseWrapper<DeleteUserResponse, UserServiceErrorCode>.CreateSuccessfulResponse(response));
             }
             catch (Exception exc)
             {
                 LogError.Log(log, exc, req);
 
-                return new ObjectResult(ResponseWrapper<GetUsersResponse, UserServiceErrorCode>.CreateUnsuccessfulResponse(UserServiceErrorCode.UnhandledError, "Internal Error")) { StatusCode = StatusCodes.Status500InternalServerError };
+                return new ObjectResult(ResponseWrapper<DeleteUserResponse, UserServiceErrorCode>.CreateUnsuccessfulResponse(UserServiceErrorCode.UnhandledError, "Internal Error")) { StatusCode = StatusCodes.Status500InternalServerError };
             }
         }
     }

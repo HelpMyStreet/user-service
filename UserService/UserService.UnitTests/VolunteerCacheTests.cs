@@ -1,4 +1,5 @@
 ﻿using HelpMyStreet.Cache;
+using HelpMyStreet.Utils.Enums;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -8,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using UserService.Core;
 using UserService.Core.Cache;
-using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 
 namespace UserService.UnitTests

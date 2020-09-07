@@ -2,11 +2,9 @@
 using HelpMyStreet.PostcodeCoordinates.EF.Extensions;
 using UserService.Repo.EntityFramework.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using System.Data.SqlClient;
-using Microsoft.Azure.Services.AppAuthentication;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using UserService.Repo.Helpers;
+using Microsoft.Data.SqlClient;
+using UserService.Repo.Extensions;
 
 namespace UserService.Repo
 {
@@ -20,11 +18,7 @@ namespace UserService.Repo
             : base(options)
         {
             SqlConnection conn = (SqlConnection)Database.GetDbConnection();
-
-            if (conn.DataSource.Contains("database.windows.net"))
-            {
-                conn.AccessToken = new AzureServiceTokenProvider().GetAccessTokenAsync("https://database.windows.net/").Result;
-            }
+            conn.AddAzureToken();
         }
 
         public virtual DbSet<ChampionPostcode> ChampionPostcode { get; set; }
@@ -36,7 +30,7 @@ namespace UserService.Repo
 
         public virtual DbSet<PostcodeEntity> Postcode { get; set; }
 
-        public virtual DbQuery<DailyReport> DailyReport { get; set; }
+        public virtual DbSet<DailyReport> DailyReport { get; set; }
 
         public virtual DbSet<EnumSupportActivities> EnumSupportActivities { get; set; }
 
@@ -49,7 +43,7 @@ namespace UserService.Repo
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Query<DailyReport>().ToQuery(() => DailyReport.FromSql("TwoHourlyReport"));
+            modelBuilder.Entity<DailyReport>().HasNoKey().ToQuery(() => DailyReport.FromSqlRaw("TwoHourlyReport"));
 
             modelBuilder.Entity<EnumSupportActivities>(entity =>
             {

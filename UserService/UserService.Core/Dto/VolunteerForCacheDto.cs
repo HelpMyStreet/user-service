@@ -1,4 +1,4 @@
-﻿using UserService.Core.Domains.Entities;
+﻿using HelpMyStreet.Utils.Enums;
 
 namespace UserService.Core.Dto
 {

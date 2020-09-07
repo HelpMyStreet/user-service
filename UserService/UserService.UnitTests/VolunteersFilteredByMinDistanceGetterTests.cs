@@ -1,4 +1,6 @@
-﻿using Moq;
+﻿using HelpMyStreet.Contracts.UserService.Request;
+using HelpMyStreet.Utils.Enums;
+using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using UserService.Core;
 using UserService.Core.BusinessLogic;
-using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 
 namespace UserService.UnitTests

@@ -9,12 +9,11 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UserService.Core.Config;
-using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Repo.EntityFramework.Entities;
@@ -55,7 +54,15 @@ namespace UserService.Repo
                 .Include(i => i.RegistrationHistory)
                 .Where(x => x.Id == userId).FirstOrDefault();
 
-            return MapEFUserToModelUser(user);
+            if(user!=null)
+            {
+                return MapEFUserToModelUser(user);
+            }
+            else
+            {
+                return null;
+            }
+            
         }
 
         public model.User GetUserByFirebaseUserID(string firebaseUID)
@@ -67,7 +74,14 @@ namespace UserService.Repo
                 .Include(i => i.RegistrationHistory)
                 .Where(x => x.FirebaseUid == firebaseUID).FirstOrDefault();
 
-            return MapEFUserToModelUser(user);
+            if (user != null)
+            {
+                return MapEFUserToModelUser(user);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public List<model.User> GetUsersForIDs(List<int> userId)
@@ -663,6 +677,33 @@ u.[ID] <= @ToUser1Id
                    DateCompleted = g.Max(x=> x.DateCompleted)
                })
                .Where(a=> a.RegistrationStep!=5).ToList());
+        }
+
+        public async Task<bool> DeleteUserAsync(int userId, CancellationToken cancellationToken)
+        {
+            bool success = false;
+            var user = _context.User.FirstOrDefault(x => x.Id == userId);
+
+            if (user != null)
+            {
+                var championPostcodes = _context.ChampionPostcode.Where(x => x.UserId == userId);
+                _context.ChampionPostcode.RemoveRange(championPostcodes);
+
+                var supportActivities = _context.SupportActivity.Where(x => x.UserId == userId);
+                _context.SupportActivity.RemoveRange(supportActivities);
+
+                var registationHistories = _context.RegistrationHistory.Where(x => x.UserId == userId);
+                _context.RegistrationHistory.RemoveRange(registationHistories);
+
+                var personalDetails = _context.PersonalDetails.Where(x => x.UserId == userId);
+                _context.PersonalDetails.RemoveRange(personalDetails);
+
+                _context.User.Remove(user);
+
+                await _context.SaveChangesAsync(cancellationToken);
+                success = true;
+            }
+            return success;
         }
     }
 }
