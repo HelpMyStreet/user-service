@@ -354,7 +354,12 @@ namespace UserService.Repo
             if (user != null)
             {
                 user.IsVerified = isVerified;
-                _context.SaveChanges();
+
+                if (isVerified)
+                {
+                    AddRegistrationHistoryForUser(user, RegistrationSteps.StepFive);
+                }
+                _context.SaveChanges();               
                 return true;
             }
             else
