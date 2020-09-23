@@ -28,10 +28,10 @@ namespace UserService.Core.Services
             using (HttpResponseMessage response = await _httpClientWrapper.DeleteAsync(HttpClientConfigName.CommunicationService, path, jsonContent, cancellationToken).ConfigureAwait(false))
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
-                var emailSentResponse = JsonConvert.DeserializeObject<ResponseWrapper<bool, CommunicationServiceErrorCode>>(jsonResponse);
-                if (emailSentResponse.HasContent && emailSentResponse.IsSuccessful)
+                var deleteMarketingContactResponse = JsonConvert.DeserializeObject<ResponseWrapper<bool, CommunicationServiceErrorCode>>(jsonResponse);
+                if (deleteMarketingContactResponse.HasContent && deleteMarketingContactResponse.IsSuccessful)
                 {
-                    return emailSentResponse.Content;
+                    return deleteMarketingContactResponse.Content;
                 }
                 return false;
             }
@@ -44,10 +44,10 @@ namespace UserService.Core.Services
             using (HttpResponseMessage response = await _httpClientWrapper.PutAsync(HttpClientConfigName.CommunicationService, path, jsonContent, cancellationToken).ConfigureAwait(false))
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
-                var emailSentResponse = JsonConvert.DeserializeObject<ResponseWrapper<bool, CommunicationServiceErrorCode>>(jsonResponse);
-                if (emailSentResponse.HasContent && emailSentResponse.IsSuccessful)
+                var putNewMarketingContactResponse = JsonConvert.DeserializeObject<ResponseWrapper<bool, CommunicationServiceErrorCode>>(jsonResponse);
+                if (putNewMarketingContactResponse.HasContent && putNewMarketingContactResponse.IsSuccessful)
                 {
-                    return emailSentResponse.Content;
+                    return putNewMarketingContactResponse.Content;
                 }
                 return false;
             }

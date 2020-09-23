@@ -41,10 +41,15 @@ namespace UserService.Handlers
                     if(success)
                     {
                         success = await _repository.DeleteUserAsync(request.UserID, cancellationToken);
-                        await _communicationService.DeleteMarketingContactAsync(new DeleteMarketingContactRequest()
+                        bool deletedMarketingContact = await _communicationService.DeleteMarketingContactAsync(new DeleteMarketingContactRequest()
                         {
                             EmailAddress = result.UserPersonalDetails.EmailAddress
                         },cancellationToken);
+
+                        if(!deletedMarketingContact)
+                        {
+                            throw new Exception("Unable to delete email address from marketing list");
+                        }
                     }
                 }
             }
