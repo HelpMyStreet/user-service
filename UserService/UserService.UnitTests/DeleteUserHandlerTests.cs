@@ -63,15 +63,20 @@ namespace UserService.UnitTests
         {
             _user = new User()
             {
-                PostalCode = "POSTCODE"
+                PostalCode = "POSTCODE",
+                UserPersonalDetails = new UserPersonalDetails()
+                {
+                    EmailAddress = "EMAILADDRESS"
+                }
             };
             _authSuccess = true;
             _success = true;
+            _deleteContact = true;
 
             var result = _classUnderTest.Handle(new HelpMyStreet.Contracts.UserService.Request.DeleteUserRequest()
             {
                 Postcode = "POSTCODE",
-                UserID = 1
+                UserID = 1,
             }, CancellationToken.None).Result;
 
             Assert.AreEqual(result.Success, _success);

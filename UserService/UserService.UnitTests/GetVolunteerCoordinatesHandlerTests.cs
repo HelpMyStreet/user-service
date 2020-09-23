@@ -99,7 +99,14 @@ namespace UserService.UnitTests
 
             _memDistCache = new Mock<IMemDistCache<IEnumerable<CachedVolunteerDto>>>();
 
-            _memDistCache.Setup(x => x.GetCachedDataAsync(It.IsAny<Func<CancellationToken, Task<IEnumerable<CachedVolunteerDto>>>>(), It.IsAny<string>(), It.IsAny<RefreshBehaviour>(), It.IsAny<CancellationToken>(), It.IsAny<NotInCacheBehaviour>())).Returns((Func<CancellationToken, Task<IEnumerable<CachedVolunteerDto>>> func, string key, RefreshBehaviour refreshBehaviour, CancellationToken token) =>
+            _memDistCache.Setup(x => x.GetCachedDataAsync(
+                It.IsAny<Func<CancellationToken, 
+                Task<IEnumerable<CachedVolunteerDto>>>>(), 
+                It.IsAny<string>(), 
+                It.IsAny<RefreshBehaviour>(), 
+                It.IsAny<CancellationToken>(), 
+                It.IsAny<NotInCacheBehaviour>())
+            ).Returns((Func<CancellationToken, Task<IEnumerable<CachedVolunteerDto>>> func, string key, RefreshBehaviour refreshBehaviour, CancellationToken token, NotInCacheBehaviour notInCacheBehaviour) =>
             {
                 return _volunteersFilteredByMinDistanceGetter.Object.GetVolunteersFilteredByMinDistanceAsync(It.Is<GetVolunteerCoordinatesRequest>(y => y.MinDistanceBetweenInMetres == 2000), It.IsAny<CancellationToken>());
             });
