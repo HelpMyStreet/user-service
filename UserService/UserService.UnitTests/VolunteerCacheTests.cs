@@ -61,7 +61,14 @@ namespace UserService.UnitTests
             _volunteersForCacheGetter.SetupAllProperties();
 
             _memDistCache = new Mock<IMemDistCache<IEnumerable<CachedVolunteerDto>>>();
-            _memDistCache.Setup(x => x.GetCachedDataAsync(It.IsAny<Func<CancellationToken, Task<IEnumerable<CachedVolunteerDto>>>>(), It.Is<string>(y => y == "AllCachedVolunteerDtos"), It.Is<RefreshBehaviour>(y => y == RefreshBehaviour.DontRefreshData), It.IsAny<CancellationToken>())).ReturnsAsync(_cachedVolunteerDtos);
+            _memDistCache.Setup(x => x.GetCachedDataAsync(
+                It.IsAny<Func<CancellationToken, 
+                Task<IEnumerable<CachedVolunteerDto>>>>(), 
+                It.Is<string>(y => y == "AllCachedVolunteerDtos"), 
+                It.Is<RefreshBehaviour>(y => y == RefreshBehaviour.DontRefreshData), 
+                It.IsAny<CancellationToken>(),
+                It.IsAny<NotInCacheBehaviour>())
+                ).ReturnsAsync(_cachedVolunteerDtos);
         }
 
         [Test]
