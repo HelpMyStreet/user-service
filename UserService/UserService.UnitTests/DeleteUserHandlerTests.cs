@@ -1,4 +1,5 @@
-﻿using HelpMyStreet.Utils.Models;
+﻿using HelpMyStreet.Contracts.CommunicationService.Request;
+using HelpMyStreet.Utils.Models;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -16,16 +17,20 @@ namespace UserService.UnitTests
         private DeleteUserHandler _classUnderTest;
         private Mock<IRepository> _repository;
         private Mock<IAuthService> _authService;
+        private Mock<ICommunicationService> _communicationService;
+
         private User _user;
         private bool _authSuccess;
         private bool _success;
+        private bool _deleteContact;
 
         [SetUp]
         public void SetUp()
         {
             SetupRepository();
             SetupAuthService();
-            _classUnderTest = new DeleteUserHandler(_repository.Object, _authService.Object);
+            SetupCommunicationService();
+            _classUnderTest = new DeleteUserHandler(_repository.Object, _authService.Object, _communicationService.Object);
         }
 
         private void SetupRepository()
@@ -46,20 +51,32 @@ namespace UserService.UnitTests
                 .ReturnsAsync(() => _authSuccess);
         }
 
+        private void SetupCommunicationService()
+        {
+            _communicationService = new Mock<ICommunicationService>();
+            _communicationService.Setup(x => x.DeleteMarketingContactAsync(It.IsAny<DeleteMarketingContactRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => _deleteContact);
+        }
+
         [Test]
         public void Success()
         {
             _user = new User()
             {
-                PostalCode = "POSTCODE"
+                PostalCode = "POSTCODE",
+                UserPersonalDetails = new UserPersonalDetails()
+                {
+                    EmailAddress = "EMAILADDRESS"
+                }
             };
             _authSuccess = true;
             _success = true;
+            _deleteContact = true;
 
             var result = _classUnderTest.Handle(new HelpMyStreet.Contracts.UserService.Request.DeleteUserRequest()
             {
                 Postcode = "POSTCODE",
-                UserID = 1
+                UserID = 1,
             }, CancellationToken.None).Result;
 
             Assert.AreEqual(result.Success, _success);

@@ -11,6 +11,7 @@ using HelpMyStreet.Contracts.UserService.Response;
 using UserService.Core.Interfaces.Services;
 using Google.Apis.Upload;
 using Polly.Caching;
+using HelpMyStreet.Contracts.CommunicationService.Request;
 
 namespace UserService.Handlers
 {
@@ -18,11 +19,13 @@ namespace UserService.Handlers
     {
         private readonly IRepository _repository;
         private readonly IAuthService _authService;
+        private readonly ICommunicationService _communicationService;
 
-        public DeleteUserHandler(IRepository repository, IAuthService authService)
+        public DeleteUserHandler(IRepository repository, IAuthService authService, ICommunicationService communicationService)
         {
             _repository = repository;
             _authService = authService;
+            _communicationService = communicationService;
         }
 
         public async Task<DeleteUserResponse> Handle(DeleteUserRequest request, CancellationToken cancellationToken)
@@ -38,6 +41,15 @@ namespace UserService.Handlers
                     if(success)
                     {
                         success = await _repository.DeleteUserAsync(request.UserID, cancellationToken);
+                        bool deletedMarketingContact = await _communicationService.DeleteMarketingContactAsync(new DeleteMarketingContactRequest()
+                        {
+                            EmailAddress = result.UserPersonalDetails.EmailAddress
+                        },cancellationToken);
+
+                        if(!deletedMarketingContact)
+                        {
+                            throw new Exception("Unable to delete email address from marketing list");
+                        }
                     }
                 }
             }
