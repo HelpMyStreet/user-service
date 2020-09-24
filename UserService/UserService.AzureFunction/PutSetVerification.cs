@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Http;
 using HelpMyStreet.Contracts.UserService.Response;
 using HelpMyStreet.Contracts.UserService.Request;
 using HelpMyStreet.Contracts.Shared;
+using System.Net;
+using AzureFunctions.Extensions.Swashbuckle.Attribute;
 
 namespace UserService.AzureFunction
 {
@@ -22,9 +24,10 @@ namespace UserService.AzureFunction
         }
 
         [FunctionName("PutSetVerification")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PutSetVerificationResponse))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "put", Route = null)]
-            PutSetVerificationRequest req,
+            [RequestBodyType(typeof(PutSetVerificationRequest), "Put Set Verification")]  PutSetVerificationRequest req,
             ILogger log)
         {
             try

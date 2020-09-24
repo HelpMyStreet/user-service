@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Http;
 using HelpMyStreet.Contracts.UserService.Response;
 using HelpMyStreet.Contracts.UserService.Request;
 using HelpMyStreet.Contracts.Shared;
+using System.Net;
+using AzureFunctions.Extensions.Swashbuckle.Attribute;
 
 namespace UserService.AzureFunction
 {
@@ -22,9 +24,10 @@ namespace UserService.AzureFunction
         }
 
         [FunctionName("PutModifyRegistrationPageTwo")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PutModifyRegistrationPageTwoResponse))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "put", Route = null)]
-            PutModifyRegistrationPageTwoRequest req,
+            [RequestBodyType(typeof(PutModifyRegistrationPageTwoRequest), "Put Modify Registration Page Two")] PutModifyRegistrationPageTwoRequest req,
             ILogger log)
         {
             try

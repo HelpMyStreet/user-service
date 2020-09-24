@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Http;
 using HelpMyStreet.Contracts.UserService.Response;
 using HelpMyStreet.Contracts.UserService.Request;
 using HelpMyStreet.Contracts.Shared;
+using System.Net;
+using AzureFunctions.Extensions.Swashbuckle.Attribute;
 
 namespace UserService.AzureFunction
 {
@@ -24,9 +26,10 @@ namespace UserService.AzureFunction
 
         [Transaction(Web = true)]
         [FunctionName("GetHelpersByPostcode")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetHelpersByPostcodeResponse))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
-            GetHelpersByPostcodeRequest req,
+            [RequestBodyType(typeof(GetHelpersByPostcodeRequest), "Get Helpers By Postcode")] GetHelpersByPostcodeRequest req,
             ILogger log)
         {
             try

@@ -7,6 +7,8 @@ using MediatR;
 using System;
 using Microsoft.AspNetCore.Http;
 using HelpMyStreet.Contracts.UserService.Request;
+using System.Net;
+using AzureFunctions.Extensions.Swashbuckle.Attribute;
 
 namespace UserService.AzureFunction
 {
@@ -20,9 +22,10 @@ namespace UserService.AzureFunction
         }
 
         [FunctionName("PostCreateSupportForPostCode")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]
-            PostCreateSupportForPostCodeRequest req,
+            [RequestBodyType(typeof(PostCreateSupportForPostCodeRequest), "Post Create Support For PostCode")] PostCreateSupportForPostCodeRequest req,
             ILogger log)
         {
             try
