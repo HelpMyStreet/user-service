@@ -27,7 +27,7 @@ namespace UserService.AzureFunction
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetVolunteerCoordinatesResponse))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
-            [RequestBodyType(typeof(GetVolunteerCoordinatesRequest), "product request")] GetVolunteerCoordinatesRequest req,
+            [RequestBodyType(typeof(GetVolunteerCoordinatesRequest), "Get Volunteer Coordinates")] GetVolunteerCoordinatesRequest req,
             ILogger log)
         {
             try
