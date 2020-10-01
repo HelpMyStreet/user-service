@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using HelpMyStreet.Contracts.UserService.Request;
 using HelpMyStreet.Contracts.UserService.Response;
 using UserService.Core.Interfaces.Services;
+using System;
+using HelpMyStreet.Contracts.CommunicationService.Request;
 
 namespace UserService.Handlers
 {
