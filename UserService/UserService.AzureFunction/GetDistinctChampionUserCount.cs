@@ -10,6 +10,8 @@ using NewRelic.Api.Agent;
 using HelpMyStreet.Contracts.UserService.Response;
 using HelpMyStreet.Contracts.UserService.Request;
 using HelpMyStreet.Contracts.Shared;
+using System.Net;
+using AzureFunctions.Extensions.Swashbuckle.Attribute;
 
 namespace UserService.AzureFunction
 {
@@ -24,9 +26,10 @@ namespace UserService.AzureFunction
 
         [Transaction(Web = true)]
         [FunctionName("GetDistinctChampionUserCount")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetDistinctChampionUserCountResponse))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
-            GetDistinctChampionUserCountRequest req,
+            [RequestBodyType(typeof(GetDistinctChampionUserCountRequest), "Get Distinct Champion User Count")] GetDistinctChampionUserCountRequest req,
             ILogger log)
         {
             try

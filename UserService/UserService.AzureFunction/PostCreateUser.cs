@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Http;
 using HelpMyStreet.Contracts.UserService.Response;
 using HelpMyStreet.Contracts.UserService.Request;
 using HelpMyStreet.Contracts.Shared;
+using System.Net;
+using AzureFunctions.Extensions.Swashbuckle.Attribute;
 
 namespace UserService.AzureFunction
 {
@@ -22,9 +24,10 @@ namespace UserService.AzureFunction
         }
 
         [FunctionName("PostCreateUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PostCreateUserResponse))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]
-            PostCreateUserRequest req,
+            [RequestBodyType(typeof(PostCreateUserRequest), "Post Create User")] PostCreateUserRequest req,
             ILogger log)
         {
             try

@@ -7,6 +7,8 @@ using MediatR;
 using System;
 using Microsoft.AspNetCore.Http;
 using HelpMyStreet.Contracts.UserService.Request;
+using System.Net;
+using AzureFunctions.Extensions.Swashbuckle.Attribute;
 
 namespace UserService.AzureFunction
 {
@@ -20,9 +22,10 @@ namespace UserService.AzureFunction
         }
 
         [FunctionName("PostCreateChampionForPostCode")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]
-            PostCreateChampionForPostCodeRequest req,
+            [RequestBodyType(typeof(PostCreateChampionForPostCodeRequest), "Post Create Champion For PostCode")] PostCreateChampionForPostCodeRequest req,
             ILogger log)
         {
             try

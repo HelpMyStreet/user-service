@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Http;
 using HelpMyStreet.Contracts.UserService.Response;
 using HelpMyStreet.Contracts.UserService.Request;
 using HelpMyStreet.Contracts.Shared;
+using System.Net;
+using AzureFunctions.Extensions.Swashbuckle.Attribute;
 
 namespace UserService.AzureFunction
 {
@@ -22,9 +24,10 @@ namespace UserService.AzureFunction
         }
 
         [FunctionName("DeleteUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(DeleteUserResponse))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "delete", Route = null)]
-            DeleteUserRequest req,
+            [RequestBodyType(typeof(DeleteUserRequest), "Delete User")] DeleteUserRequest req,
             ILogger log)
         {
             try

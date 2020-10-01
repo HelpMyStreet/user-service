@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Http;
 using HelpMyStreet.Contracts.UserService.Response;
 using HelpMyStreet.Contracts.UserService.Request;
 using HelpMyStreet.Contracts.Shared;
+using System.Net;
+using AzureFunctions.Extensions.Swashbuckle.Attribute;
 
 namespace UserService.AzureFunction
 {
@@ -22,9 +24,10 @@ namespace UserService.AzureFunction
         }
 
         [FunctionName("PostUsersForListOfUserID")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PostUsersForListOfUserIDResponse))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]
-            PostUsersForListOfUserIDRequest req,
+            [RequestBodyType(typeof(PostUsersForListOfUserIDRequest), "Post Users For List Of UserID")]  PostUsersForListOfUserIDRequest req,
             ILogger log)
         {
             try

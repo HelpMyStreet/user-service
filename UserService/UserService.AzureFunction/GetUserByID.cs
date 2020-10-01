@@ -11,6 +11,8 @@ using NewRelic.Api.Agent;
 using HelpMyStreet.Contracts.UserService.Response;
 using HelpMyStreet.Contracts.UserService.Request;
 using HelpMyStreet.Contracts.Shared;
+using System.Net;
+using AzureFunctions.Extensions.Swashbuckle.Attribute;
 
 namespace UserService.AzureFunction
 {
@@ -25,9 +27,10 @@ namespace UserService.AzureFunction
 
         [Transaction(Web = true)]
         [FunctionName("GetUserByID")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetUserByIDResponse))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
-            GetUserByIDRequest req,
+            [RequestBodyType(typeof(GetUserByIDRequest), "Get User By ID")] GetUserByIDRequest req,
             ILogger log)
         {
             try

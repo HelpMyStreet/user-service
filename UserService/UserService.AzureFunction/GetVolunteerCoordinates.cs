@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Http;
 using HelpMyStreet.Contracts.UserService.Response;
 using HelpMyStreet.Contracts.UserService.Request;
 using HelpMyStreet.Contracts.Shared;
+using System.Net;
+using AzureFunctions.Extensions.Swashbuckle.Attribute;
 
 namespace UserService.AzureFunction
 {
@@ -22,9 +24,10 @@ namespace UserService.AzureFunction
         }
 
         [FunctionName("GetVolunteerCoordinates")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetVolunteerCoordinatesResponse))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
-            GetVolunteerCoordinatesRequest req,
+            [RequestBodyType(typeof(GetVolunteerCoordinatesRequest), "Get Volunteer Coordinates")] GetVolunteerCoordinatesRequest req,
             ILogger log)
         {
             try
