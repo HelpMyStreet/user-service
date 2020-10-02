@@ -1,4 +1,5 @@
 ﻿using HelpMyStreet.Cache;
+using HelpMyStreet.Utils.Enums;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -8,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using UserService.Core;
 using UserService.Core.Cache;
-using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 
 namespace UserService.UnitTests
@@ -61,14 +61,7 @@ namespace UserService.UnitTests
             _volunteersForCacheGetter.SetupAllProperties();
 
             _memDistCache = new Mock<IMemDistCache<IEnumerable<CachedVolunteerDto>>>();
-            _memDistCache.Setup(x => x.GetCachedDataAsync(
-                It.IsAny<Func<CancellationToken, 
-                Task<IEnumerable<CachedVolunteerDto>>>>(), 
-                It.Is<string>(y => y == "AllCachedVolunteerDtos"), 
-                It.Is<RefreshBehaviour>(y => y == RefreshBehaviour.DontRefreshData), 
-                It.IsAny<CancellationToken>(),
-                It.IsAny<NotInCacheBehaviour>())
-                ).ReturnsAsync(_cachedVolunteerDtos);
+            _memDistCache.Setup(x => x.GetCachedDataAsync(It.IsAny<Func<CancellationToken, Task<IEnumerable<CachedVolunteerDto>>>>(), It.Is<string>(y => y == "AllCachedVolunteerDtos"), It.Is<RefreshBehaviour>(y => y == RefreshBehaviour.DontRefreshData), It.IsAny<CancellationToken>(), It.IsAny<NotInCacheBehaviour>())).ReturnsAsync(_cachedVolunteerDtos);
         }
 
         [Test]

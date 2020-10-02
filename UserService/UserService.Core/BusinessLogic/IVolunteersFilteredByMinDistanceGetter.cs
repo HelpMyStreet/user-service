@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using HelpMyStreet.Contracts.UserService.Request;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 
 namespace UserService.Core.BusinessLogic

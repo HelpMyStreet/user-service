@@ -1,4 +1,7 @@
 ﻿using HelpMyStreet.Cache;
+using HelpMyStreet.Contracts.UserService.Request;
+using HelpMyStreet.Contracts.UserService.Response;
+using HelpMyStreet.Utils.Enums;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -8,7 +11,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using UserService.Core;
 using UserService.Core.BusinessLogic;
-using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 using UserService.Core.Extensions;
 using UserService.Handlers;
@@ -99,14 +101,7 @@ namespace UserService.UnitTests
 
             _memDistCache = new Mock<IMemDistCache<IEnumerable<CachedVolunteerDto>>>();
 
-            _memDistCache.Setup(x => x.GetCachedDataAsync(
-                It.IsAny<Func<CancellationToken, 
-                Task<IEnumerable<CachedVolunteerDto>>>>(), 
-                It.IsAny<string>(), 
-                It.IsAny<RefreshBehaviour>(), 
-                It.IsAny<CancellationToken>(), 
-                It.IsAny<NotInCacheBehaviour>())
-            ).Returns((Func<CancellationToken, Task<IEnumerable<CachedVolunteerDto>>> func, string key, RefreshBehaviour refreshBehaviour, CancellationToken token, NotInCacheBehaviour notInCacheBehaviour) =>
+            _memDistCache.Setup(x => x.GetCachedDataAsync(It.IsAny<Func<CancellationToken, Task<IEnumerable<CachedVolunteerDto>>>>(), It.IsAny<string>(), It.IsAny<RefreshBehaviour>(), It.IsAny<CancellationToken>(),It.IsAny<NotInCacheBehaviour>())).Returns((Func<CancellationToken, Task<IEnumerable<CachedVolunteerDto>>> func, string key, RefreshBehaviour refreshBehaviour, CancellationToken token, NotInCacheBehaviour notInCacheBehaviour) =>
             {
                 return _volunteersFilteredByMinDistanceGetter.Object.GetVolunteersFilteredByMinDistanceAsync(It.Is<GetVolunteerCoordinatesRequest>(y => y.MinDistanceBetweenInMetres == 2000), It.IsAny<CancellationToken>());
             });

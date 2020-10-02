@@ -1,10 +1,10 @@
 ﻿using EnumsNET;
 using HelpMyStreet.Cache;
+using HelpMyStreet.Utils.Enums;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 
 namespace UserService.Core.Cache

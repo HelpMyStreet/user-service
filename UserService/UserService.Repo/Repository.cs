@@ -9,12 +9,11 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UserService.Core.Config;
-using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Repo.EntityFramework.Entities;
@@ -360,7 +359,7 @@ namespace UserService.Repo
                 {
                     AddRegistrationHistoryForUser(user, RegistrationSteps.StepFive);
                 }
-                _context.SaveChanges();
+                _context.SaveChanges();               
                 return true;
             }
             else

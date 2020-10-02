@@ -5,10 +5,10 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using MediatR;
 using System;
-using UserService.Core.Domains.Entities;
+using Microsoft.AspNetCore.Http;
+using HelpMyStreet.Contracts.UserService.Request;
 using System.Net;
 using AzureFunctions.Extensions.Swashbuckle.Attribute;
-using Microsoft.AspNetCore.Http;
 
 namespace UserService.AzureFunction
 {
@@ -25,7 +25,7 @@ namespace UserService.AzureFunction
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]
-            [RequestBodyType(typeof(PostCreateChampionForPostCodeRequest), "product request")] PostCreateChampionForPostCodeRequest req,
+            [RequestBodyType(typeof(PostCreateChampionForPostCodeRequest), "Post Create Champion For PostCode")] PostCreateChampionForPostCodeRequest req,
             ILogger log)
         {
             try

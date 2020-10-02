@@ -5,10 +5,12 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using MediatR;
 using System;
-using UserService.Core.Domains.Entities;
-using AzureFunctions.Extensions.Swashbuckle.Attribute;
-using System.Net;
 using Microsoft.AspNetCore.Http;
+using HelpMyStreet.Contracts.UserService.Response;
+using HelpMyStreet.Contracts.UserService.Request;
+using HelpMyStreet.Contracts.Shared;
+using System.Net;
+using AzureFunctions.Extensions.Swashbuckle.Attribute;
 
 namespace UserService.AzureFunction
 {
@@ -25,7 +27,7 @@ namespace UserService.AzureFunction
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PutModifyRegistrationPageTwoResponse))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "put", Route = null)]
-            [RequestBodyType(typeof(PutModifyRegistrationPageTwoRequest), "product request")]PutModifyRegistrationPageTwoRequest req,
+            [RequestBodyType(typeof(PutModifyRegistrationPageTwoRequest), "Put Modify Registration Page Two")] PutModifyRegistrationPageTwoRequest req,
             ILogger log)
         {
             try
@@ -34,16 +36,13 @@ namespace UserService.AzureFunction
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
                 PutModifyRegistrationPageTwoResponse response = await _mediator.Send(req);
-                return new OkObjectResult(response);
+                return new OkObjectResult(ResponseWrapper<PutModifyRegistrationPageTwoResponse, UserServiceErrorCode>.CreateSuccessfulResponse(response));
             }
             catch (Exception exc)
             {
                 LogError.Log(log, exc, req);
 
-                return new ObjectResult(exc)
-                {
-                    StatusCode = StatusCodes.Status500InternalServerError
-                };
+                return new ObjectResult(ResponseWrapper<PutModifyRegistrationPageTwoResponse, UserServiceErrorCode>.CreateUnsuccessfulResponse(UserServiceErrorCode.UnhandledError, "Internal Error")) { StatusCode = StatusCodes.Status500InternalServerError };
             }
         }
     }

@@ -1,5 +1,4 @@
-﻿using HelpMyStreet.Utils.CoordinatedResetCache;
-using MediatR;
+﻿using MediatR;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -7,9 +6,12 @@ using System.Threading.Tasks;
 using HelpMyStreet.Cache;
 using UserService.Core;
 using UserService.Core.BusinessLogic;
-using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 using UserService.Core.Extensions;
+using HelpMyStreet.Contracts.UserService.Request;
+using HelpMyStreet.Contracts.UserService.Response;
+using HelpMyStreet.Utils.Models;
+using HelpMyStreet.Utils.Enums;
 
 namespace UserService.Handlers
 {

@@ -5,12 +5,14 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using MediatR;
 using System;
-using UserService.Core.Domains.Entities;
-using System.Net;
-using AzureFunctions.Extensions.Swashbuckle.Attribute;
 using NewRelic.Api.Agent;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
+using HelpMyStreet.Contracts.UserService.Response;
+using HelpMyStreet.Contracts.UserService.Request;
+using HelpMyStreet.Contracts.Shared;
+using System.Net;
+using AzureFunctions.Extensions.Swashbuckle.Attribute;
 
 namespace UserService.AzureFunction
 {
@@ -28,7 +30,7 @@ namespace UserService.AzureFunction
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetChampionCountByPostcodeResponse))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
-            [RequestBodyType(typeof(PutModifyRegistrationPageTwoRequest), "product request")]GetChampionCountByPostcodeRequest req,
+            [RequestBodyType(typeof(GetChampionCountByPostcodeRequest), "Get Champion Count By Postcode")] GetChampionCountByPostcodeRequest req,
             ILogger log)
         {
             try
@@ -42,17 +44,13 @@ namespace UserService.AzureFunction
                 var eventAttributes = new Dictionary<string, object>() { { "result", "Success!" }, {"PostCode",req.PostCode },{ "Count", response.Count.ToString() } };
                 NewRelic.Api.Agent.NewRelic.RecordCustomEvent("GetChampionCountByPostcode response", eventAttributes);
 
-
-                return new OkObjectResult(response);
+                return new OkObjectResult(ResponseWrapper<GetChampionCountByPostcodeResponse, UserServiceErrorCode>.CreateSuccessfulResponse(response));
             }
             catch (Exception exc)
             {
                 LogError.Log(log, exc, req);
 
-                return new ObjectResult(exc)
-                {
-                    StatusCode = StatusCodes.Status500InternalServerError
-                };
+                return new ObjectResult(ResponseWrapper<GetChampionCountByPostcodeResponse, UserServiceErrorCode>.CreateUnsuccessfulResponse(UserServiceErrorCode.UnhandledError, "Internal Error")) { StatusCode = StatusCodes.Status500InternalServerError };
             }
         }
     }

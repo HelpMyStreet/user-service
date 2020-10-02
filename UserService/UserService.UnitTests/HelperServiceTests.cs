@@ -1,5 +1,4 @@
-﻿using HelpMyStreet.Contracts.AddressService.Request;
-using HelpMyStreet.Contracts.AddressService.Response;
+﻿using HelpMyStreet.Utils.Enums;
 using HelpMyStreet.Utils.Models;
 using Moq;
 using NUnit.Framework;
@@ -8,8 +7,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UserService.Core;
-using UserService.Core.BusinessLogic;
-using UserService.Core.Domains.Entities;
 using UserService.Core.Dto;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Core.Interfaces.Services;
@@ -64,7 +61,7 @@ namespace UserService.UnitTests
                         EmailAddress = "test@test.com"
                     },
                     IsVerified = true,
-                    SupportActivities = new List<HelpMyStreet.Utils.Enums.SupportActivities>{HelpMyStreet.Utils.Enums.SupportActivities.Shopping},
+                    SupportActivities = new List<SupportActivities>{ SupportActivities.Shopping},
                     ChampionPostcodes= new List<string>{ "NG1 1AE" }
                 },
                              new User()
@@ -76,7 +73,7 @@ namespace UserService.UnitTests
                         EmailAddress = "test@test.com"
                     },
                     IsVerified = false,
-                    SupportActivities = new List<HelpMyStreet.Utils.Enums.SupportActivities>{HelpMyStreet.Utils.Enums.SupportActivities.Shopping},
+                    SupportActivities = new List<SupportActivities>{ SupportActivities.Shopping},
                     ChampionPostcodes= new List<string>{ "NG1 1AB" }
 
                 }
