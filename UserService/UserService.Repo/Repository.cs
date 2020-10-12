@@ -472,36 +472,6 @@ namespace UserService.Repo
             return registrationStepThree.UserID;
         }
 
-        public int ModifyUserRegistrationPageFour(model.RegistrationStepFour registrationStepFour)
-        {
-            User EFUser = _context.User
-                .Include(i => i.ChampionPostcode)
-                .Include(i => i.RegistrationHistory)
-                .Where(a => a.Id == registrationStepFour.UserID).FirstOrDefault();
-
-            if (EFUser != null)
-            {
-                _context.ChampionPostcode.RemoveRange(EFUser.ChampionPostcode);
-
-                EFUser.StreetChampionRoleUnderstood = registrationStepFour.StreetChampionRoleUnderstood;
-
-                if (EFUser.StreetChampionRoleUnderstood.HasValue && EFUser.StreetChampionRoleUnderstood.Value == true)
-                {
-                    foreach (string cp in registrationStepFour.ChampionPostcodes)
-                    {
-                        _context.ChampionPostcode.Add(new ChampionPostcode()
-                        {
-                            User = EFUser,
-                            PostalCode = cp
-                        });
-                    }
-                }
-                AddRegistrationHistoryForUser(EFUser, RegistrationSteps.StepFour);
-                _context.SaveChanges();
-            }
-            return registrationStepFour.UserID;
-        }
-
         public int ModifyUserRegistrationPageFive(model.RegistrationStepFive registrationStepFive)
         {
             User EFUser = _context.User
@@ -681,7 +651,7 @@ u.[ID] <= @ToUser1Id
                    UserId = g.Key,
                    DateCompleted = g.Max(x=> x.DateCompleted)
                })
-               .Where(a=> a.RegistrationStep!=5).ToList());
+               .Where(a=> a.RegistrationStep<4).ToList());
         }
 
         public async Task<bool> DeleteUserAsync(int userId, CancellationToken cancellationToken)

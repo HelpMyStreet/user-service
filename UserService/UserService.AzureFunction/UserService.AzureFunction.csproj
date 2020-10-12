@@ -21,13 +21,10 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference ReplaceParameters="true" Include="..\UserService.Handlers\UserService.Handlers.csproj">
-			<Name>UserService.Handlers</Name>
 		</ProjectReference>
 		<ProjectReference ReplaceParameters="true" Include="..\UserService.Mappers\UserService.Mappers.csproj">
-			<Name>UserService.Mappers</Name>
 		</ProjectReference>
 		<ProjectReference ReplaceParameters="true" Include="..\UserService.Repo\UserService.Repo.csproj">
-			<Name>UserService.Repo</Name>
 		</ProjectReference>
 	</ItemGroup>
 	<ItemGroup>
