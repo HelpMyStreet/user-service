@@ -651,7 +651,7 @@ u.[ID] <= @ToUser1Id
                    UserId = g.Key,
                    DateCompleted = g.Max(x=> x.DateCompleted)
                })
-               .Where(a=> a.RegistrationStep<4).ToList());
+               .Where(a=> a.RegistrationStep!=5).ToList());
         }
 
         public async Task<bool> DeleteUserAsync(int userId, CancellationToken cancellationToken)
