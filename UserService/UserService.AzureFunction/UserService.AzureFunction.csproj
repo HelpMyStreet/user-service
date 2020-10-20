@@ -17,7 +17,7 @@
 		<PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.9" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.7" />
     <PackageReference Include="NewRelic.Agent" Version="8.31.0" />
-    <PackageReference Include="NewRelic.Agent.Api" Version="8.31.0" />
+    <PackageReference Include="NewRelic.Agent.Api" Version="8.33.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference ReplaceParameters="true" Include="..\UserService.Handlers\UserService.Handlers.csproj">
