@@ -9,7 +9,7 @@
 	  <PackageReference Include="HelpMyStreet.CoreV3.Contracts" Version="1.1.416" />
 	  <PackageReference Include="HelpMyStreet.CoreV3.Utils" Version="1.1.416" />
     <PackageReference Include="Enums.NET" Version="3.0.3" />
-    <PackageReference Include="MediatR" Version="8.1.0" />
+    <PackageReference Include="MediatR" Version="9.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Polly.Caching.Memory" Version="3.0.2" />
     <PackageReference Include="Polly.Contrib.DuplicateRequestCollapser" Version="0.2.1" />
