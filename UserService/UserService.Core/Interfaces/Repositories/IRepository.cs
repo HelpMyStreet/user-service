@@ -52,8 +52,6 @@ namespace UserService.Core.Interfaces.Repositories
 
         int ModifyUserRegistrationPageThree(RegistrationStepThree registrationStepThree);
 
-        int ModifyUserRegistrationPageFour(RegistrationStepFour registrationStepFour);
-
         int ModifyUserRegistrationPageFive(RegistrationStepFive registrationStepFive);
 
         bool SetUserVerfication(int userId, bool isVerified);
