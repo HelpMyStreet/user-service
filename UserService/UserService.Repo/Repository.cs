@@ -54,7 +54,7 @@ namespace UserService.Repo
                 .Include(i => i.RegistrationHistory)
                 .Where(x => x.Id == userId).FirstOrDefault();
 
-            if(user!=null)
+            if (user != null)
             {
                 return MapEFUserToModelUser(user);
             }
@@ -62,8 +62,10 @@ namespace UserService.Repo
             {
                 return null;
             }
-            
+
         }
+
+
 
         public model.User GetUserByFirebaseUserID(string firebaseUID)
         {
@@ -171,6 +173,12 @@ namespace UserService.Repo
         {
             return _context.ChampionPostcode
                 .Count(x => x.PostalCode == postCode && x.User.IsVerified.Value == true);
+        }
+
+        public DateTime GetDateOfSignUpForUserId(int id)
+        {
+            var user = _context.User.Where(x => x.Id == id).First();
+            return user.DateCreated.Value;
         }
 
         public int PostCreateUser(string firebaseUserId, string emailAddress, DateTime? dateCreated, int? referringGroupID, string source)
@@ -529,7 +537,8 @@ WHERE [StreetChampionRoleUnderstood] = 1
 GROUP BY [ID]
 )
 
-SELECT u.[ID] AS [UserId], 
+SELECT u.[ID] AS [UserId],
+[CreationDate] AS [CreationDate],
 [PostalCode] AS [Postcode], 
 pc.Longitude,
 pc.Latitude,
