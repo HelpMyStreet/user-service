@@ -538,7 +538,7 @@ GROUP BY [ID]
 )
 
 SELECT u.[ID] AS [UserId],
-[CreationDate] AS [CreationDate],
+[DateCreated] AS [CreationDate],
 [PostalCode] AS [Postcode], 
 pc.Longitude,
 pc.Latitude,
