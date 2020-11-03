@@ -622,9 +622,7 @@ u.[ID] <= @ToUser1Id
                 .Select(u => new UserDetails
             {
                 UserID = u.Id,
-                IsVerified = u.IsVerified.Value,
                 IsVolunteer = u.IsVolunteer.Value,
-                IsStreetChampion = u.StreetChampionRoleUnderstood.Value,
                 FirstName = u.PersonalDetails.FirstName,
                 LastName = u.PersonalDetails.LastName,
                 EmailAddress = u.PersonalDetails.EmailAddress,

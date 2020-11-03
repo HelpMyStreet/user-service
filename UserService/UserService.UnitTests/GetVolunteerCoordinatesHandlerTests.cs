@@ -124,7 +124,7 @@ namespace UserService.UnitTests
             };
 
 
-            string key = $"{nameof(CachedVolunteerDto)}_MinDistance_{request.MinDistanceBetweenInMetres.RoundUpToNearest(2000)}_{request.VolunteerType}_{request.IsVerifiedType}";
+            string key = $"{nameof(CachedVolunteerDto)}_MinDistance_{request.MinDistanceBetweenInMetres}_{request.VolunteerType}_{request.IsVerifiedType}_WithCreationDate";
 
             GetVolunteerCoordinatesHandler getVolunteerCoordinatesHandler = new GetVolunteerCoordinatesHandler(_memDistCache.Object, _volunteerCache.Object, _volunteersFilteredByMinDistanceGetter.Object);
 
@@ -162,7 +162,7 @@ namespace UserService.UnitTests
                 NELongitude = 4
             };
 
-            string key = $"{nameof(CachedVolunteerDto)}_MinDistance_{request.MinDistanceBetweenInMetres.RoundUpToNearest(2000)}_{request.VolunteerType}_{request.IsVerifiedType}";
+            string key = $"{nameof(CachedVolunteerDto)}_MinDistance_{request.MinDistanceBetweenInMetres.RoundUpToNearest(2000)}_{request.VolunteerType}_{request.IsVerifiedType}_WithCreationDate";
 
             GetVolunteerCoordinatesHandler getVolunteerCoordinatesHandler = new GetVolunteerCoordinatesHandler(_memDistCache.Object, _volunteerCache.Object, _volunteersFilteredByMinDistanceGetter.Object);
 
