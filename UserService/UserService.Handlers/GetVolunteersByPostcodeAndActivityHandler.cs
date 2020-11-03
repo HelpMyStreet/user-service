@@ -34,8 +34,6 @@ namespace UserService.Handlers
                 .Select(x => new VolunteerSummary
                 {
                     UserID = x.User.ID,
-                    IsVerified = x.User.IsVerified.HasValue && x.User.IsVerified.Value,
-                    IsStreetChampionForGivenPostCode = x.User.ChampionPostcodes.Contains(request.VolunteerFilter.Postcode),
                     DistanceInMiles = x.Distance
                 }).ToList()
             };
