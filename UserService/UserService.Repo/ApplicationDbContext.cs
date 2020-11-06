@@ -82,6 +82,10 @@ namespace UserService.Repo
 
                 entity.ToTable("PersonalDetails", "UserPersonal");
 
+                entity.HasIndex(e => e.EmailAddress)
+                    .HasName("UC_EmailAddress")
+                    .IsUnique();
+
                 entity.Property(e => e.UserId)
                     .HasColumnName("UserID")
                     .ValueGeneratedNever();
@@ -200,7 +204,8 @@ namespace UserService.Repo
                 entity.ToTable("User", "User");
 
                 entity.HasIndex(e => e.FirebaseUid)
-                    .HasName("ix_FirebaseUID");
+                    .HasName("UC_FirebaseUID")
+                    .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
