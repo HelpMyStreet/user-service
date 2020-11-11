@@ -39,7 +39,7 @@ namespace UserService.Handlers
             {
                 // round up to nearest 2000 metres to prevent repeated calculation of indistinguishable minimum distances and cache taking too much memory
                 request.MinDistanceBetweenInMetres = request.MinDistanceBetweenInMetres.RoundUpToNearest(2000);
-                string key = $"{nameof(CachedVolunteerDto)}_MinDistance_{request.MinDistanceBetweenInMetres}_{request.VolunteerType}_{request.IsVerifiedType}";
+                string key = $"{nameof(CachedVolunteerDto)}_MinDistance_{request.MinDistanceBetweenInMetres}_{request.VolunteerType}_{request.IsVerifiedType}_WithCreationDate";
 
                 cachedVolunteerDtos = await _memDistCache.GetCachedDataAsync(async (token) => await _volunteersFilteredByMinDistanceGetter.GetVolunteersFilteredByMinDistanceAsync(request, token), key, RefreshBehaviour.DontWaitForFreshData, cancellationToken);
 
@@ -49,10 +49,13 @@ namespace UserService.Handlers
                         Latitude = x.Latitude,
                         Longitude = x.Longitude,
                         Postcode = x.Postcode,
+                        CreatedDate = null,
                         // fields are temporarily null until the grid aggregation functionality is implemented
                         NumberOfHelpers = null,
                         NumberOfStreetChampions = null
-                    }).ToList();
+                    })
+                    .OrderBy(x => x.CreatedDate)
+                    .ToList();
             }
             else
             {
@@ -65,6 +68,7 @@ namespace UserService.Handlers
                        Latitude = x.Key.Latitude,
                        Longitude = x.Key.Longitude,
                        Postcode = x.Key.Postcode,
+                       CreatedDate = x.Min(dm => dm.CreationDate),
                        NumberOfHelpers = x.Count(y => y.VolunteerType == VolunteerType.Helper),
                        NumberOfStreetChampions = x.Count(y => y.VolunteerType == VolunteerType.StreetChampion),
                    }).ToList();
@@ -73,6 +77,8 @@ namespace UserService.Handlers
 
             int numberOfStreetChampions = cachedVolunteerDtosWithinBoundary.Sum(x => x.NumberOfStreetChampions) ?? 0;
             int numberOfHelpers = cachedVolunteerDtosWithinBoundary.Sum(x => x.NumberOfHelpers) ?? 0;
+
+
 
             GetVolunteerCoordinatesResponse getVolunteerCoordinatesResponse = new GetVolunteerCoordinatesResponse()
             {

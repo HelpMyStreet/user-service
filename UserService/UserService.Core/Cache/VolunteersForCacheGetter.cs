@@ -75,6 +75,7 @@ namespace UserService.Core
                  select new CachedVolunteerDto
                  {
                      UserId = volunteerForCacheDto.UserId,
+                     CreationDate = volunteerForCacheDto.CreationDate,
                      Postcode = volunteerForCacheDto.Postcode,
                      IsVerifiedType = volunteerForCacheDto.IsVerifiedType,
                      SupportRadiusMiles = volunteerForCacheDto.SupportRadiusMiles,
