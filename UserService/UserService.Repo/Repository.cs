@@ -200,17 +200,6 @@ namespace UserService.Repo
             return user.Id;
         }
 
-        private List<SupportActivities> GetSupportActivities(ICollection<SupportActivity> activities)
-        {
-            var response = new List<SupportActivities>();
-            foreach (SupportActivity supportActivity in activities)
-            {
-                response.Add((SupportActivities)supportActivity.ActivityId);
-            }
-
-            return response;
-        }
-
         private List<string> GetChampionPostCodes(ICollection<ChampionPostcode> postcodes)
         {
             var response = new List<string>();
@@ -251,7 +240,7 @@ namespace UserService.Repo
                 SupportRadiusMiles = (float?)user.SupportRadiusMiles,
                 StreetChampionRoleUnderstood = user.StreetChampionRoleUnderstood,
                 SupportVolunteersByPhone = user.SupportVolunteersByPhone,
-                SupportActivities = GetSupportActivities(user.SupportActivity),
+                SupportActivities = user.SupportActivity.Select(p => (SupportActivities)p.ActivityId).ToList(),
                 ChampionPostcodes = GetChampionPostCodes(user.ChampionPostcode),
                 RegistrationHistory = GetRegistrationHistories(user.RegistrationHistory),
                 UserPersonalDetails = MapEFPersonalDetailsToModelPersonalDetails(user.PersonalDetails),
@@ -367,7 +356,7 @@ namespace UserService.Repo
                 {
                     AddRegistrationHistoryForUser(user, RegistrationSteps.StepFive);
                 }
-                _context.SaveChanges();               
+                _context.SaveChanges();
                 return true;
             }
             else
@@ -572,9 +561,9 @@ u.[ID] <= @ToUser1Id
         }
 
         public async Task<IEnumerable<model.User>> GetVolunteersByIdsAsync(IEnumerable<int> userIds)
-        {            
+        {
             var users = await _context.User
-                .Where(x => x.IsVolunteer == true         
+                .Where(x => x.IsVolunteer == true
                             && userIds.Contains(x.Id))
                 .Include(x => x.ChampionPostcode)
                 .Include(x => x.SupportActivity)
@@ -607,34 +596,34 @@ u.[ID] <= @ToUser1Id
                         Last2Hours = dailyReport.Last2Hours,
                         Today = dailyReport.Today,
                         SinceLaunch = dailyReport.SinceLaunch
-                    }) ;
+                    });
                 }
             }
 
             return response;
         }
 
-        public async  Task<List<UserDetails>> GetUserDetailsAsync(CancellationToken cancellationToken)
+        public async Task<List<UserDetails>> GetUserDetailsAsync(CancellationToken cancellationToken)
         {
             return await _context.User
                 .Include(i => i.PersonalDetails)
                 .Include(i => i.SupportActivity)
                 .Select(u => new UserDetails
-            {
-                UserID = u.Id,
-                IsVolunteer = u.IsVolunteer.Value,
-                FirstName = u.PersonalDetails.FirstName,
-                LastName = u.PersonalDetails.LastName,
-                EmailAddress = u.PersonalDetails.EmailAddress,
-                PostCode = u.PostalCode,
-                SupportActivities = GetSupportActivities(u.SupportActivity),
-                SupportRadiusMiles = u.SupportRadiusMiles
+                {
+                    UserID = u.Id,
+                    IsVolunteer = u.IsVolunteer.Value,
+                    FirstName = u.PersonalDetails.FirstName,
+                    LastName = u.PersonalDetails.LastName,
+                    EmailAddress = u.PersonalDetails.EmailAddress,
+                    PostCode = u.PostalCode,
+                    SupportActivities = u.SupportActivity.Select(p => (SupportActivities)p.ActivityId).ToList(),
+                    SupportRadiusMiles = u.SupportRadiusMiles
                 }).ToListAsync(cancellationToken);
         }
 
         public LatitudeAndLongitudeDTO GetLatitudeAndLongitude(string postCode)
         {
-            var postcodeDetails =  _context.Postcode.Where(x => x.Postcode == postCode).FirstOrDefault();
+            var postcodeDetails = _context.Postcode.Where(x => x.Postcode == postCode).FirstOrDefault();
             if (postcodeDetails != null)
             {
                 return new LatitudeAndLongitudeDTO()
@@ -651,14 +640,14 @@ u.[ID] <= @ToUser1Id
 
         public Task<List<UserRegistrationStep>> GetIncompleteRegistrationStatusAsync(CancellationToken cancellationToken)
         {
-              return Task.FromResult(_context.RegistrationHistory.GroupBy(a => a.UserId)
-               .Select(g => new UserRegistrationStep
-               {
-                   RegistrationStep = g.Max(x => x.RegistrationStep),
-                   UserId = g.Key,
-                   DateCompleted = g.Max(x=> x.DateCompleted)
-               })
-               .Where(a=> a.RegistrationStep<3).ToList());
+            return Task.FromResult(_context.RegistrationHistory.GroupBy(a => a.UserId)
+             .Select(g => new UserRegistrationStep
+             {
+                 RegistrationStep = g.Max(x => x.RegistrationStep),
+                 UserId = g.Key,
+                 DateCompleted = g.Max(x => x.DateCompleted)
+             })
+             .Where(a => a.RegistrationStep < 3).ToList());
         }
 
         public async Task<bool> DeleteUserAsync(int userId, CancellationToken cancellationToken)
