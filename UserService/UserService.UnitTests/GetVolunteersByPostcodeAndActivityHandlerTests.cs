@@ -46,31 +46,8 @@ namespace UserService.UnitTests
                 }
             };
             _helperService = new Mock<IHelperService>();
-            _helperService.Setup(x => x.GetHelpersWithinRadius(It.IsAny<string>(), It.IsAny<IsVerifiedType>(), It.IsAny<CancellationToken>())).ReturnsAsync(() => _helpers);
+            _helperService.Setup(x => x.GetHelpersWithinRadius(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(() => _helpers);
         }
-
-        [Test]
-        public async Task WhenIGetStreetChampion_WithNoLinkedActivity_StreetChampionIsReturned()
-        {
-
-            GetVolunteersByPostcodeAndActivityRequest request = new GetVolunteersByPostcodeAndActivityRequest
-            {
-                VolunteerFilter = new VolunteerFilter
-                {
-                    Postcode = "NG1 1AE",
-                    Activities = new List<SupportActivities> { SupportActivities.CheckingIn }
-                }
-            };
-
-            GetVolunteersByPostcodeAndActivityHandler getVolunteersByPostcodeAndActivityHandler = new GetVolunteersByPostcodeAndActivityHandler(_helperService.Object, _repository.Object);
-
-            GetVolunteersByPostcodeAndActivityResponse result = await getVolunteersByPostcodeAndActivityHandler.Handle(request, CancellationToken.None);
-
-            Assert.AreEqual(1, result.Volunteers.Count());
-            //Assert.AreEqual(true, result.Volunteers.First().IsStreetChampionForGivenPostCode);
-            _helperService.Verify(X => X.GetHelpersWithinRadius("NG1 1AE", IsVerifiedType.All, It.IsAny<CancellationToken>()));
-        }
-
 
         [Test]
         public async Task WhenIGetHelper_WithNoStreetChampionOrNoLinkedActivity_NoUserIsReturned()
@@ -89,7 +66,7 @@ namespace UserService.UnitTests
 
             GetVolunteersByPostcodeAndActivityResponse result = await getVolunteersByPostcodeAndActivityHandler.Handle(request, CancellationToken.None);
             Assert.AreEqual(0, result.Volunteers.Count());
-            _helperService.Verify(X => X.GetHelpersWithinRadius("NG1 1AA", IsVerifiedType.All, It.IsAny<CancellationToken>()));
+            _helperService.Verify(X => X.GetHelpersWithinRadius("NG1 1AA", It.IsAny<CancellationToken>()));
         }
 
 
@@ -111,7 +88,7 @@ namespace UserService.UnitTests
             GetVolunteersByPostcodeAndActivityResponse result = await getVolunteersByPostcodeAndActivityHandler.Handle(request, CancellationToken.None);
 
             Assert.AreEqual(1, result.Volunteers.Count());
-            _helperService.Verify(X => X.GetHelpersWithinRadius("NG1 1AA", IsVerifiedType.All, It.IsAny<CancellationToken>()));
+            _helperService.Verify(X => X.GetHelpersWithinRadius("NG1 1AA", It.IsAny<CancellationToken>()));
         }
     }
 }

@@ -26,7 +26,7 @@ namespace UserService.Handlers
         {
             request.VolunteerFilter.Postcode = PostcodeFormatter.FormatPostcode(request.VolunteerFilter.Postcode);
 
-            var users = await _helperService.GetHelpersWithinRadius(request.VolunteerFilter.Postcode, IsVerifiedType.All,  cancellationToken);
+            var users = await _helperService.GetHelpersWithinRadius(request.VolunteerFilter.Postcode,  cancellationToken);
             
             GetVolunteersByPostcodeAndActivityResponse response = new GetVolunteersByPostcodeAndActivityResponse
             {

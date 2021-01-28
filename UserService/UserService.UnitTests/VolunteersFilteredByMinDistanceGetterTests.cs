@@ -56,7 +56,7 @@ namespace UserService.UnitTests
             Assert.AreEqual(1, result.Count());
             Assert.AreEqual(1, result.FirstOrDefault().UserId);
 
-            _volunteerCache.Verify(x => x.GetCachedVolunteersAsync(It.Is<VolunteerType>(y => (int)y == 3), It.Is<IsVerifiedType>(y => (int)y == 3), It.IsAny<CancellationToken>()));
+            _volunteerCache.Verify(x => x.GetCachedVolunteersAsync(It.Is<VolunteerType>(y => (int)y == 3), It.IsAny<CancellationToken>()));
 
             _minDistanceFilter.Verify(x => x.FilterByMinDistance(It.IsAny<IEnumerable<CachedVolunteerDto>>(), It.Is<int>(y => y == 100)));
 
