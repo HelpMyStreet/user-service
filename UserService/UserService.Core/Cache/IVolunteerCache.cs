@@ -8,6 +8,6 @@ namespace UserService.Core
 {
     public interface IVolunteerCache
     {
-        Task<IEnumerable<CachedVolunteerDto>> GetCachedVolunteersAsync(VolunteerType volunteerType, IsVerifiedType isVerifiedType, CancellationToken cancellationToken);
+        Task<IEnumerable<CachedVolunteerDto>> GetCachedVolunteersAsync(VolunteerType volunteerType, CancellationToken cancellationToken);
     }
 }

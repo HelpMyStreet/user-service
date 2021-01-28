@@ -60,9 +60,7 @@ namespace UserService.UnitTests
                         DisplayName = "Test",
                         EmailAddress = "test@test.com"
                     },
-                    IsVerified = true,
-                    SupportActivities = new List<SupportActivities>{ SupportActivities.Shopping},
-                    ChampionPostcodes= new List<string>{ "NG1 1AE" }
+                    SupportActivities = new List<SupportActivities>{ SupportActivities.Shopping},                    
                 },
                              new User()
                 {
@@ -72,10 +70,7 @@ namespace UserService.UnitTests
                         DisplayName = "Test",
                         EmailAddress = "test@test.com"
                     },
-                    IsVerified = false,
                     SupportActivities = new List<SupportActivities>{ SupportActivities.Shopping},
-                    ChampionPostcodes= new List<string>{ "NG1 1AB" }
-
                 }
             };
 
@@ -88,7 +83,7 @@ namespace UserService.UnitTests
             });
 
             _volunteerCache = new Mock<IVolunteerCache>();
-            _volunteerCache.Setup(x => x.GetCachedVolunteersAsync(It.IsAny<VolunteerType>(), It.IsAny<IsVerifiedType>(), It.IsAny<CancellationToken>())).ReturnsAsync(_cachedVolunteerDtos);
+            _volunteerCache.Setup(x => x.GetCachedVolunteersAsync(It.IsAny<VolunteerType>(), It.IsAny<CancellationToken>())).ReturnsAsync(_cachedVolunteerDtos);
 
             _distanceCalculator = new Mock<IDistanceCalculator>();
             _distanceInMiles = 1;
@@ -100,9 +95,9 @@ namespace UserService.UnitTests
         [Test]
         public async Task WhenICall_WithHappyPath_ICallRequiredFunctions()
         {
-            var users = await _helperService.GetHelpersWithinRadius("T35T 3TY", IsVerifiedType.All, new CancellationToken());
+            var users = await _helperService.GetHelpersWithinRadius("T35T 3TY", It.IsAny<double?>(), new CancellationToken());
             _repository.Verify(x => x.GetLatitudeAndLongitude("T35T 3TY"), Times.Once);
-            _volunteerCache.Verify(x => x.GetCachedVolunteersAsync(VolunteerType.Helper | VolunteerType.StreetChampion, IsVerifiedType.All, It.IsAny<CancellationToken>()), Times.Once);
+            _volunteerCache.Verify(x => x.GetCachedVolunteersAsync(VolunteerType.Helper | VolunteerType.StreetChampion, It.IsAny<CancellationToken>()), Times.Once);
             _distanceCalculator.Verify(x => x.GetDistanceInMiles(1, 2, 1, 2), Times.Once);
             _distanceCalculator.Verify(x => x.GetDistanceInMiles(1, 2, 3, 4), Times.Once);
             _repository.Verify(x => x.GetVolunteersByIdsAsync(new List<int> { 1, 2 }), Times.Once);
@@ -114,7 +109,7 @@ namespace UserService.UnitTests
             _distanceInMiles = 5;
             _users = new List<User>();
 
-            var users = await _helperService.GetHelpersWithinRadius("T35T 3TY", IsVerifiedType.All, new CancellationToken());
+            var users = await _helperService.GetHelpersWithinRadius("T35T 3TY", It.IsAny<double?>(), new CancellationToken());
             Assert.AreEqual(0, users.Count());
         }
 
@@ -122,26 +117,8 @@ namespace UserService.UnitTests
         public async Task WhenICall_WithHelpers_InsideSupportRadius_IGetUsers()
         {
  
-            var users = await _helperService.GetHelpersWithinRadius("T35T 3TY", IsVerifiedType.All, new CancellationToken());
+            var users = await _helperService.GetHelpersWithinRadius("T35T 3TY", It.IsAny<double?>(), new CancellationToken());
             Assert.AreEqual(2, users.Count());
-        }
-
-        [Test]
-        public async Task WhenICall_WithIsVerifiedType_EqualsFalse_IGetUnverifiedUsers()
-        {
-            var users =  await _helperService.GetHelpersWithinRadius("T35T 3TY", IsVerifiedType.IsNotVerified, new CancellationToken());
-            _volunteerCache.Verify(x => x.GetCachedVolunteersAsync(VolunteerType.Helper | VolunteerType.StreetChampion, IsVerifiedType.IsNotVerified, It.IsAny<CancellationToken>()), Times.Once);
-            Assert.AreEqual(1, users.Count());
-            Assert.AreEqual(false, users.First().User.IsVerified);
-
-        }
-        [Test]
-        public async Task WhenICall_WithIsVerifiedType_EqualsTrue_IGetVerifiedUsers()
-        {
-            var users = await _helperService.GetHelpersWithinRadius("T35T 3TY", IsVerifiedType.IsVerified, new CancellationToken());
-            _volunteerCache.Verify(x => x.GetCachedVolunteersAsync(VolunteerType.Helper | VolunteerType.StreetChampion, IsVerifiedType.IsVerified, It.IsAny<CancellationToken>()), Times.Once);
-            Assert.AreEqual(1, users.Count());
-            Assert.AreEqual(true, users.First().User.IsVerified);
         }
     }
 }

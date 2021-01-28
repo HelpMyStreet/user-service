@@ -93,7 +93,7 @@ namespace UserService.UnitTests
             };
 
             _volunteerCache = new Mock<IVolunteerCache>();
-            _volunteerCache.Setup(x => x.GetCachedVolunteersAsync(It.IsAny<VolunteerType>(), It.IsAny<IsVerifiedType>(), It.IsAny<CancellationToken>())).ReturnsAsync(_cachedVolunteerDtos);
+            _volunteerCache.Setup(x => x.GetCachedVolunteersAsync(It.IsAny<VolunteerType>(), It.IsAny<CancellationToken>())).ReturnsAsync(_cachedVolunteerDtos);
 
             _volunteersFilteredByMinDistanceGetter = new Mock<IVolunteersFilteredByMinDistanceGetter>();
 
@@ -140,7 +140,7 @@ namespace UserService.UnitTests
             Assert.AreEqual(3, result.NumberOfStreetChampions);
             Assert.AreEqual(5, result.TotalNumberOfVolunteers);
 
-            _volunteerCache.Verify(x => x.GetCachedVolunteersAsync(It.IsAny<VolunteerType>(), It.IsAny<IsVerifiedType>(), It.IsAny<CancellationToken>()), Times.Once);
+            _volunteerCache.Verify(x => x.GetCachedVolunteersAsync(It.IsAny<VolunteerType>(), It.IsAny<CancellationToken>()), Times.Once);
 
 
             _memDistCache.Verify(x => x.GetCachedData(It.IsAny<Func<CancellationToken, IEnumerable<CachedVolunteerDto>>>(), It.Is<string>(y => y == key), It.Is<RefreshBehaviour>(y => y == RefreshBehaviour.DontWaitForFreshData), It.IsAny<CancellationToken>(), It.IsAny<NotInCacheBehaviour>()), Times.Never);
@@ -179,7 +179,7 @@ namespace UserService.UnitTests
             Assert.AreEqual(0, result.NumberOfStreetChampions);
             Assert.AreEqual(0, result.TotalNumberOfVolunteers);
 
-            _volunteerCache.Verify(x => x.GetCachedVolunteersAsync(It.IsAny<VolunteerType>(), It.IsAny<IsVerifiedType>(), It.IsAny<CancellationToken>()), Times.Never);
+            _volunteerCache.Verify(x => x.GetCachedVolunteersAsync(It.IsAny<VolunteerType>(), It.IsAny<CancellationToken>()), Times.Never);
 
             _memDistCache.Verify(x => x.GetCachedDataAsync(It.IsAny<Func<CancellationToken, Task<IEnumerable<CachedVolunteerDto>>>>(), It.Is<string>(y => y == key), It.Is<RefreshBehaviour>(y => y == RefreshBehaviour.DontWaitForFreshData), It.IsAny<CancellationToken>(), It.IsAny<NotInCacheBehaviour>()), Times.Once);
 

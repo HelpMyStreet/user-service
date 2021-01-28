@@ -26,11 +26,11 @@ namespace UserService.Handlers
         {
             request.VolunteerFilter.Postcode = PostcodeFormatter.FormatPostcode(request.VolunteerFilter.Postcode);
 
-            var users = await _helperService.GetHelpersWithinRadius(request.VolunteerFilter.Postcode, IsVerifiedType.All,  cancellationToken);
+            var users = await _helperService.GetHelpersWithinRadius(request.VolunteerFilter.Postcode, request.VolunteerFilter.OverrideVolunteerRadius,  cancellationToken);
             
             GetVolunteersByPostcodeAndActivityResponse response = new GetVolunteersByPostcodeAndActivityResponse
             {
-                Volunteers = users.Where(x => x.User.ChampionPostcodes.Contains(request.VolunteerFilter.Postcode) || x.User.SupportActivities.Any(sa => request.VolunteerFilter.Activities.Any(ra => sa == ra)))
+                Volunteers = users.Where(x => x.User.SupportActivities.Any(sa => request.VolunteerFilter.Activities.Any(ra => sa == ra)))
                 .Select(x => new VolunteerSummary
                 {
                     UserID = x.User.ID,

@@ -19,7 +19,7 @@ namespace UserService.Core.BusinessLogic
 
         public async Task<IEnumerable<CachedVolunteerDto>> GetVolunteersFilteredByMinDistanceAsync(GetVolunteerCoordinatesRequest request, CancellationToken cancellationToken)
         {
-            IEnumerable<CachedVolunteerDto> cachedVolunteerDtos = await _volunteerCache.GetCachedVolunteersAsync(request.VolunteerTypeEnum, request.IsVerifiedTypeEnum, cancellationToken);
+            IEnumerable<CachedVolunteerDto> cachedVolunteerDtos = await _volunteerCache.GetCachedVolunteersAsync(request.VolunteerTypeEnum, cancellationToken);
 
             IEnumerable<CachedVolunteerDto> cachedVolunteerDtosFilteredByMinDistance = _minDistanceFilter.FilterByMinDistance(cachedVolunteerDtos, request.MinDistanceBetweenInMetres);
 
