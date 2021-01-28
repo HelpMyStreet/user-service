@@ -46,7 +46,7 @@ namespace UserService.UnitTests
                 }
             };
             _helperService = new Mock<IHelperService>();
-            _helperService.Setup(x => x.GetHelpersWithinRadius(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(() => _helpers);
+            _helperService.Setup(x => x.GetHelpersWithinRadius(It.IsAny<string>(), It.IsAny<double?>(),It.IsAny<CancellationToken>())).ReturnsAsync(() => _helpers);
         }
 
         [Test]
@@ -66,7 +66,7 @@ namespace UserService.UnitTests
 
             GetVolunteersByPostcodeAndActivityResponse result = await getVolunteersByPostcodeAndActivityHandler.Handle(request, CancellationToken.None);
             Assert.AreEqual(0, result.Volunteers.Count());
-            _helperService.Verify(X => X.GetHelpersWithinRadius("NG1 1AA", It.IsAny<CancellationToken>()));
+            _helperService.Verify(X => X.GetHelpersWithinRadius("NG1 1AA", It.IsAny<double?>(), It.IsAny<CancellationToken>()));
         }
 
 
@@ -88,7 +88,7 @@ namespace UserService.UnitTests
             GetVolunteersByPostcodeAndActivityResponse result = await getVolunteersByPostcodeAndActivityHandler.Handle(request, CancellationToken.None);
 
             Assert.AreEqual(1, result.Volunteers.Count());
-            _helperService.Verify(X => X.GetHelpersWithinRadius("NG1 1AA", It.IsAny<CancellationToken>()));
+            _helperService.Verify(X => X.GetHelpersWithinRadius("NG1 1AA", It.IsAny<double?>(), It.IsAny<CancellationToken>()));
         }
     }
 }

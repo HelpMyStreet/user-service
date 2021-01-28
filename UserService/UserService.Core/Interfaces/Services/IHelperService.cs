@@ -8,6 +8,6 @@ namespace UserService.Core.Interfaces.Services
 {
     public interface IHelperService
     {
-        Task<IEnumerable<HelperWithinRadiusDTO>> GetHelpersWithinRadius(string postcode, CancellationToken token);
+        Task<IEnumerable<HelperWithinRadiusDTO>> GetHelpersWithinRadius(string postcode, double? overrideVolunteerRadius, CancellationToken token);
     }
 }

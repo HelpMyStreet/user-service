@@ -95,7 +95,7 @@ namespace UserService.UnitTests
         [Test]
         public async Task WhenICall_WithHappyPath_ICallRequiredFunctions()
         {
-            var users = await _helperService.GetHelpersWithinRadius("T35T 3TY", new CancellationToken());
+            var users = await _helperService.GetHelpersWithinRadius("T35T 3TY", It.IsAny<double?>(), new CancellationToken());
             _repository.Verify(x => x.GetLatitudeAndLongitude("T35T 3TY"), Times.Once);
             _volunteerCache.Verify(x => x.GetCachedVolunteersAsync(VolunteerType.Helper | VolunteerType.StreetChampion, It.IsAny<CancellationToken>()), Times.Once);
             _distanceCalculator.Verify(x => x.GetDistanceInMiles(1, 2, 1, 2), Times.Once);
@@ -109,7 +109,7 @@ namespace UserService.UnitTests
             _distanceInMiles = 5;
             _users = new List<User>();
 
-            var users = await _helperService.GetHelpersWithinRadius("T35T 3TY", new CancellationToken());
+            var users = await _helperService.GetHelpersWithinRadius("T35T 3TY", It.IsAny<double?>(), new CancellationToken());
             Assert.AreEqual(0, users.Count());
         }
 
@@ -117,7 +117,7 @@ namespace UserService.UnitTests
         public async Task WhenICall_WithHelpers_InsideSupportRadius_IGetUsers()
         {
  
-            var users = await _helperService.GetHelpersWithinRadius("T35T 3TY", new CancellationToken());
+            var users = await _helperService.GetHelpersWithinRadius("T35T 3TY", It.IsAny<double?>(), new CancellationToken());
             Assert.AreEqual(2, users.Count());
         }
     }

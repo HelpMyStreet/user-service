@@ -23,7 +23,7 @@ namespace UserService.Core.Services
         }
 
 
-        public async Task<IEnumerable<HelperWithinRadiusDTO>> GetHelpersWithinRadius(string postcode, CancellationToken token)
+        public async Task<IEnumerable<HelperWithinRadiusDTO>> GetHelpersWithinRadius(string postcode, double? overrideVolunteerRadius, CancellationToken token)
         {
             var helpers = new List<HelperWithinRadiusDTO>();
             LatitudeAndLongitudeDTO comparePostcode = _repository.GetLatitudeAndLongitude(postcode);
@@ -40,7 +40,7 @@ namespace UserService.Core.Services
             {
                 double distance = _distanceCalculator.GetDistanceInMiles(comparePostcode.Latitude, comparePostcode.Longitude, cachedVolunteerDto.Latitude, cachedVolunteerDto.Longitude);
 
-                bool isWithinSupportRadius = distance <= cachedVolunteerDto.SupportRadiusMiles;
+                bool isWithinSupportRadius = distance <= (overrideVolunteerRadius.HasValue? overrideVolunteerRadius.Value : cachedVolunteerDto.SupportRadiusMiles);
 
                 if (isWithinSupportRadius)
                 {
