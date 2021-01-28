@@ -38,8 +38,6 @@ namespace UserService.UnitTests
                         EmailAddress = "test@test.com"
                     },
                     SupportActivities = new List<SupportActivities>{ SupportActivities.Shopping},
-                    ChampionPostcodes= new List<string>{ "NG1 1AE" }
-
                 },
                     Distance = 1,
                 }

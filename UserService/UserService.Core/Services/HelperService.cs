@@ -54,10 +54,6 @@ namespace UserService.Core.Services
 
             if (users.Any())
             {
-                if (isVerifiedType != IsVerifiedType.All)
-                {
-                    users = users.Where(x => x.IsVerified == (verifiedType == IsVerifiedType.IsVerified) ? true : false);
-                }
                 helpers = users.Select(x => new HelperWithinRadiusDTO { User = x, Distance = idsOfHelpersWithinRadius[x.ID] }).ToList();
             }
             return helpers;

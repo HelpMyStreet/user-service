@@ -30,7 +30,7 @@ namespace UserService.Handlers
             
             GetVolunteersByPostcodeAndActivityResponse response = new GetVolunteersByPostcodeAndActivityResponse
             {
-                Volunteers = users.Where(x => x.User.ChampionPostcodes.Contains(request.VolunteerFilter.Postcode) || x.User.SupportActivities.Any(sa => request.VolunteerFilter.Activities.Any(ra => sa == ra)))
+                Volunteers = users.Where(x => x.User.SupportActivities.Any(sa => request.VolunteerFilter.Activities.Any(ra => sa == ra)))
                 .Select(x => new VolunteerSummary
                 {
                     UserID = x.User.ID,

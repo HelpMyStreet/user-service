@@ -232,16 +232,13 @@ namespace UserService.Repo
                 FirebaseUID = user.FirebaseUid,
                 EmailSharingConsent = user.EmailSharingConsent,
                 HMSContactConsent = user.HmscontactConsent,
-                IsVerified = user.IsVerified,
                 IsVolunteer = user.IsVolunteer,
                 MobileSharingConsent = user.MobileSharingConsent,
                 OtherPhoneSharingConsent = user.OtherPhoneSharingConsent,
                 PostalCode = user.PostalCode,
                 SupportRadiusMiles = (float?)user.SupportRadiusMiles,
-                StreetChampionRoleUnderstood = user.StreetChampionRoleUnderstood,
                 SupportVolunteersByPhone = user.SupportVolunteersByPhone,
                 SupportActivities = user.SupportActivity.Select(p => (SupportActivities)p.ActivityId).ToList(),
-                ChampionPostcodes = GetChampionPostCodes(user.ChampionPostcode),
                 RegistrationHistory = GetRegistrationHistories(user.RegistrationHistory),
                 UserPersonalDetails = MapEFPersonalDetailsToModelPersonalDetails(user.PersonalDetails),
                 ReferringGroupId = user.ReferringGroupId,
@@ -292,13 +289,11 @@ namespace UserService.Repo
         {
             EFUser.FirebaseUid = user.FirebaseUID;
             EFUser.EmailSharingConsent = user.EmailSharingConsent;
-            EFUser.HmscontactConsent = user.HMSContactConsent;
-            EFUser.IsVerified = user.IsVerified;
+            EFUser.HmscontactConsent = user.HMSContactConsent;            
             EFUser.IsVolunteer = user.IsVolunteer;
             EFUser.MobileSharingConsent = user.MobileSharingConsent;
             EFUser.OtherPhoneSharingConsent = user.OtherPhoneSharingConsent;
             EFUser.PostalCode = user.PostalCode;
-            EFUser.StreetChampionRoleUnderstood = user.StreetChampionRoleUnderstood;
             EFUser.SupportRadiusMiles = user.SupportRadiusMiles;
             EFUser.SupportVolunteersByPhone = user.SupportVolunteersByPhone;
             UpdateEFPersonalDetailsFromModelPersonalDetails(user.UserPersonalDetails, EFUser.PersonalDetails);

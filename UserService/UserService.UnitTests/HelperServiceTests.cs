@@ -60,9 +60,7 @@ namespace UserService.UnitTests
                         DisplayName = "Test",
                         EmailAddress = "test@test.com"
                     },
-                    IsVerified = true,
-                    SupportActivities = new List<SupportActivities>{ SupportActivities.Shopping},
-                    ChampionPostcodes= new List<string>{ "NG1 1AE" }
+                    SupportActivities = new List<SupportActivities>{ SupportActivities.Shopping},                    
                 },
                              new User()
                 {
@@ -72,10 +70,7 @@ namespace UserService.UnitTests
                         DisplayName = "Test",
                         EmailAddress = "test@test.com"
                     },
-                    IsVerified = false,
                     SupportActivities = new List<SupportActivities>{ SupportActivities.Shopping},
-                    ChampionPostcodes= new List<string>{ "NG1 1AB" }
-
                 }
             };
 
@@ -132,7 +127,6 @@ namespace UserService.UnitTests
             var users =  await _helperService.GetHelpersWithinRadius("T35T 3TY", IsVerifiedType.IsNotVerified, new CancellationToken());
             _volunteerCache.Verify(x => x.GetCachedVolunteersAsync(VolunteerType.Helper | VolunteerType.StreetChampion, IsVerifiedType.IsNotVerified, It.IsAny<CancellationToken>()), Times.Once);
             Assert.AreEqual(1, users.Count());
-            Assert.AreEqual(false, users.First().User.IsVerified);
 
         }
         [Test]
@@ -140,8 +134,7 @@ namespace UserService.UnitTests
         {
             var users = await _helperService.GetHelpersWithinRadius("T35T 3TY", IsVerifiedType.IsVerified, new CancellationToken());
             _volunteerCache.Verify(x => x.GetCachedVolunteersAsync(VolunteerType.Helper | VolunteerType.StreetChampion, IsVerifiedType.IsVerified, It.IsAny<CancellationToken>()), Times.Once);
-            Assert.AreEqual(1, users.Count());
-            Assert.AreEqual(true, users.First().User.IsVerified);
+            Assert.AreEqual(1, users.Count());            
         }
     }
 }
