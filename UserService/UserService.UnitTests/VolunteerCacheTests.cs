@@ -70,8 +70,7 @@ namespace UserService.UnitTests
             VolunteerCache volunteerCache = new VolunteerCache(_memDistCache.Object, _volunteersForCacheGetter.Object);
 
             VolunteerType volunteerType = VolunteerType.Helper | VolunteerType.StreetChampion;
-            IsVerifiedType isVerifiedType = IsVerifiedType.IsVerified | IsVerifiedType.IsNotVerified;
-            IEnumerable<CachedVolunteerDto> result = await volunteerCache.GetCachedVolunteersAsync(volunteerType, isVerifiedType, CancellationToken.None);
+            IEnumerable<CachedVolunteerDto> result = await volunteerCache.GetCachedVolunteersAsync(volunteerType, CancellationToken.None);
 
             Assert.AreEqual(4, result.Count());
             Assert.IsTrue(result.Any(x => x.UserId == 1));
@@ -87,8 +86,7 @@ namespace UserService.UnitTests
             VolunteerCache volunteerCache = new VolunteerCache(_memDistCache.Object, _volunteersForCacheGetter.Object);
 
             VolunteerType volunteerType = VolunteerType.StreetChampion;
-            IsVerifiedType isVerifiedType = IsVerifiedType.IsVerified | IsVerifiedType.IsNotVerified;
-            IEnumerable<CachedVolunteerDto> result = await volunteerCache.GetCachedVolunteersAsync(volunteerType, isVerifiedType, CancellationToken.None);
+            IEnumerable<CachedVolunteerDto> result = await volunteerCache.GetCachedVolunteersAsync(volunteerType, CancellationToken.None);
 
             Assert.AreEqual(2, result.Count());
             Assert.IsTrue(result.Any(x => x.UserId == 3));
@@ -102,41 +100,11 @@ namespace UserService.UnitTests
 
             VolunteerType volunteerType = VolunteerType.Helper;
             IsVerifiedType isVerifiedType = IsVerifiedType.IsVerified | IsVerifiedType.IsNotVerified;
-            IEnumerable<CachedVolunteerDto> result = await volunteerCache.GetCachedVolunteersAsync(volunteerType, isVerifiedType, CancellationToken.None);
+            IEnumerable<CachedVolunteerDto> result = await volunteerCache.GetCachedVolunteersAsync(volunteerType, CancellationToken.None);
 
             Assert.AreEqual(2, result.Count());
             Assert.IsTrue(result.Any(x => x.UserId == 1));
             Assert.IsTrue(result.Any(x => x.UserId == 2));
         }
-
-        [Test]
-        public async Task GetAllVerfied()
-        {
-            VolunteerCache volunteerCache = new VolunteerCache(_memDistCache.Object, _volunteersForCacheGetter.Object);
-
-            VolunteerType volunteerType = VolunteerType.Helper | VolunteerType.StreetChampion;
-            IsVerifiedType isVerifiedType = IsVerifiedType.IsVerified;
-            IEnumerable<CachedVolunteerDto> result = await volunteerCache.GetCachedVolunteersAsync(volunteerType, isVerifiedType, CancellationToken.None);
-
-            Assert.AreEqual(2, result.Count());
-            Assert.IsTrue(result.Any(x => x.UserId == 1));
-            Assert.IsTrue(result.Any(x => x.UserId == 3));
-        }
-
-
-        [Test]
-        public async Task GetAllNonVerfied()
-        {
-            VolunteerCache volunteerCache = new VolunteerCache(_memDistCache.Object, _volunteersForCacheGetter.Object);
-
-            VolunteerType volunteerType = VolunteerType.Helper | VolunteerType.StreetChampion;
-            IsVerifiedType isVerifiedType = IsVerifiedType.IsNotVerified;
-            IEnumerable<CachedVolunteerDto> result = await volunteerCache.GetCachedVolunteersAsync(volunteerType, isVerifiedType, CancellationToken.None);
-
-            Assert.AreEqual(2, result.Count());
-            Assert.IsTrue(result.Any(x => x.UserId == 2));
-            Assert.IsTrue(result.Any(x => x.UserId == 4));
-        }
-
     }
 }

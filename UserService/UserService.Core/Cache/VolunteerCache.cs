@@ -23,12 +23,12 @@ namespace UserService.Core.Cache
         /// <summary>
         /// Get volunteers using cache. 
         /// </summary>
-        public async Task<IEnumerable<CachedVolunteerDto>> GetCachedVolunteersAsync(VolunteerType volunteerType, IsVerifiedType isVerifiedType, CancellationToken cancellationToken)
+        public async Task<IEnumerable<CachedVolunteerDto>> GetCachedVolunteersAsync(VolunteerType volunteerType, CancellationToken cancellationToken)
         {
             // Don't refresh data in cache because this will be refreshed through a Timed trigger.  This is because getting dependencies on a new thread using IServiceScopeFactory throws an error in Azure Functions (Scope disposed{no name, Parent={no name}} is disposed and scoped instances are disposed and no longer available).
             IEnumerable<CachedVolunteerDto> cachedVolunteerDtos = await _memDistCache.GetCachedDataAsync(async (token) => await _volunteersForCacheGetter.GetAllVolunteersAsync(token), CacheKey.AllCachedVolunteerDtos.ToString(), RefreshBehaviour.DontRefreshData, cancellationToken);
 
-            List<CachedVolunteerDto> matchingVolunteers = cachedVolunteerDtos.Where(x => x.VolunteerType.HasAnyFlags(volunteerType) && x.IsVerifiedType.HasAnyFlags(isVerifiedType)).ToList();
+            List<CachedVolunteerDto> matchingVolunteers = cachedVolunteerDtos.Where(x => x.VolunteerType.HasAnyFlags(volunteerType)).ToList();
 
             return matchingVolunteers;
         }

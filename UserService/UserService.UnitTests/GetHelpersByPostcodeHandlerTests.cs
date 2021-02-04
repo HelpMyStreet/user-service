@@ -38,8 +38,6 @@ namespace UserService.UnitTests
                         EmailAddress = "test@test.com"
                     },
                     SupportActivities = new List<SupportActivities>{ SupportActivities.Shopping},
-                    ChampionPostcodes= new List<string>{ "NG1 1AE" }
-
                 },
                     Distance = 1,
                 }
@@ -48,7 +46,7 @@ namespace UserService.UnitTests
             _repository = new Mock<IRepository>();
 
             _helperService = new Mock<IHelperService>();
-            _helperService.Setup(x => x.GetHelpersWithinRadius(It.IsAny<string>(), It.IsAny<IsVerifiedType>(), It.IsAny<CancellationToken>())).ReturnsAsync(() => _helpers);
+            _helperService.Setup(x => x.GetHelpersWithinRadius(It.IsAny<string>(), It.IsAny<double?>(), It.IsAny<CancellationToken>())).ReturnsAsync(() => _helpers);
             _users = new List<User>()
             {
                 new User()
@@ -75,7 +73,7 @@ namespace UserService.UnitTests
 
             Assert.AreEqual(1, result.Users.Count);
             Assert.AreEqual(1, result.Users.FirstOrDefault().ID);
-            _helperService.Verify(X => X.GetHelpersWithinRadius("NG1 1AE", IsVerifiedType.IsVerified, It.IsAny<CancellationToken>()));
+            _helperService.Verify(X => X.GetHelpersWithinRadius("NG1 1AE", It.IsAny<double?>(), It.IsAny<CancellationToken>()));
                                     
         }
     }

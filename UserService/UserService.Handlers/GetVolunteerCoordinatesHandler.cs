@@ -59,7 +59,7 @@ namespace UserService.Handlers
             }
             else
             {
-                cachedVolunteerDtos = await _volunteerCache.GetCachedVolunteersAsync(request.VolunteerTypeEnum, request.IsVerifiedTypeEnum, cancellationToken);
+                cachedVolunteerDtos = await _volunteerCache.GetCachedVolunteersAsync(request.VolunteerTypeEnum, cancellationToken);
 
                 cachedVolunteerDtosWithinBoundary = cachedVolunteerDtos.WhereWithinBoundary(request.SWLatitude, request.SWLongitude, request.NELatitude, request.NELongitude)
                    .GroupBy(x => new { x.Postcode, x.Latitude, x.Longitude })

@@ -23,14 +23,13 @@ namespace UserService.Core.Services
         }
 
 
-        public async Task<IEnumerable<HelperWithinRadiusDTO>> GetHelpersWithinRadius(string postcode, IsVerifiedType verifiedType, CancellationToken token)
+        public async Task<IEnumerable<HelperWithinRadiusDTO>> GetHelpersWithinRadius(string postcode, double? overrideVolunteerRadius, CancellationToken token)
         {
             var helpers = new List<HelperWithinRadiusDTO>();
             LatitudeAndLongitudeDTO comparePostcode = _repository.GetLatitudeAndLongitude(postcode);
 
             VolunteerType volunteerType = VolunteerType.Helper | VolunteerType.StreetChampion;
-            IsVerifiedType isVerifiedType = verifiedType;
-            Task<IEnumerable<CachedVolunteerDto>> cachedVolunteerDtosTask = _volunteerCache.GetCachedVolunteersAsync(volunteerType, isVerifiedType, token);
+            Task<IEnumerable<CachedVolunteerDto>> cachedVolunteerDtosTask = _volunteerCache.GetCachedVolunteersAsync(volunteerType, token);
 
             await Task.WhenAll(cachedVolunteerDtosTask);
             IEnumerable<CachedVolunteerDto> cachedVolunteerDtos = await cachedVolunteerDtosTask;
@@ -41,7 +40,7 @@ namespace UserService.Core.Services
             {
                 double distance = _distanceCalculator.GetDistanceInMiles(comparePostcode.Latitude, comparePostcode.Longitude, cachedVolunteerDto.Latitude, cachedVolunteerDto.Longitude);
 
-                bool isWithinSupportRadius = distance <= cachedVolunteerDto.SupportRadiusMiles;
+                bool isWithinSupportRadius = distance <= (overrideVolunteerRadius.HasValue? overrideVolunteerRadius.Value : cachedVolunteerDto.SupportRadiusMiles);
 
                 if (isWithinSupportRadius)
                 {
@@ -54,10 +53,6 @@ namespace UserService.Core.Services
 
             if (users.Any())
             {
-                if (isVerifiedType != IsVerifiedType.All)
-                {
-                    users = users.Where(x => x.IsVerified == (verifiedType == IsVerifiedType.IsVerified) ? true : false);
-                }
                 helpers = users.Select(x => new HelperWithinRadiusDTO { User = x, Distance = idsOfHelpersWithinRadius[x.ID] }).ToList();
             }
             return helpers;
