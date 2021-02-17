@@ -30,17 +30,16 @@ namespace UserService.Handlers
                 && request.RegistrationStepThree.Activities.Contains(HelpMyStreet.Utils.Enums.SupportActivities.Other))
             {
                 var otherActivities = _groupService.GetSupportActivitiesConfigurationAsync(cancellationToken).Result;
-                if(otherActivities!=null)
-                {
-                    var additionalActivities = otherActivities
-                        .Where(x => !request.RegistrationStepThree.Activities.Contains(x.SupportActivity) && x.AutoSignUpWhenOtherSelected==true)
-                        .Select(x=> x.SupportActivity)
-                        .ToList();
+                var registrationFormSupportActivities = _groupService.GetRegistrationFormSupportActivities(request.RegistrationStepThree.RegistrationFormVariant,cancellationToken).Result;
 
-                    if(additionalActivities!=null && additionalActivities.Count()>0)
-                    {
-                        request.RegistrationStepThree.Activities.AddRange(additionalActivities);
-                    }
+                if(otherActivities!=null && registrationFormSupportActivities!=null)
+                {
+                    var formActivities = registrationFormSupportActivities.Select(x => x.SupportActivity).ToList();
+
+                    otherActivities
+                        .Where(x => !formActivities.Contains(x.SupportActivity) && x.AutoSignUpWhenOtherSelected == true)
+                        .ToList()
+                        .ForEach(activity => request.RegistrationStepThree.Activities.Add(activity.SupportActivity));
                 }
             }
 

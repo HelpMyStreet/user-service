@@ -1,5 +1,6 @@
 ﻿using HelpMyStreet.Contracts.CommunicationService.Request;
 using HelpMyStreet.Contracts.UserService.Request;
+using HelpMyStreet.Utils.Enums;
 using HelpMyStreet.Utils.Models;
 using Moq;
 using NUnit.Framework;
@@ -18,11 +19,12 @@ namespace UserService.UnitTests
         private PutModifyRegistrationPageThreeHandler _classUnderTest;
         private Mock<IRepository> _repository;
         private Mock<ICommunicationService> _communicationService;
-        private Mock<IGroupService> _groupService;
-        private User _user;
+        private Mock<IGroupService> _groupService;     
         private int _userId;
         private List<SupportActivityConfiguration> _supportActivityConfigurations;
         private bool _emailSent;
+        private List<SupportActivityDetail> _supportActivityDetails;
+
 
         [SetUp]
         public void SetUp()
@@ -56,18 +58,60 @@ namespace UserService.UnitTests
             {
                new SupportActivityConfiguration()
                {
-                   SupportActivity = HelpMyStreet.Utils.Enums.SupportActivities.Shopping,
+                   SupportActivity = SupportActivities.Shopping,
                    AutoSignUpWhenOtherSelected = true
                },
                new SupportActivityConfiguration()
                {
-                   SupportActivity = HelpMyStreet.Utils.Enums.SupportActivities.Errands,
+                   SupportActivity = SupportActivities.Errands,
                    AutoSignUpWhenOtherSelected = true
                }
             };
 
             _groupService.Setup(x => x.GetSupportActivitiesConfigurationAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => _supportActivityConfigurations);
+
+            _supportActivityDetails = new List<SupportActivityDetail>()
+            {
+                new SupportActivityDetail()
+                {
+                    SupportActivity = SupportActivities.CommunityConnector
+                },
+                new SupportActivityDetail()
+                {
+                    SupportActivity = SupportActivities.CollectingPrescriptions
+                },
+                new SupportActivityDetail()
+                {
+                   SupportActivity = SupportActivities.Errands,
+                }
+            };
+
+            _groupService.Setup(x => x.GetRegistrationFormSupportActivities(It.IsAny<RegistrationFormVariant>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => _supportActivityDetails);
+        }
+
+        [Test]
+        public void WhenNonOtherActivitySelected_DoNotAdditionalActivities()
+        {
+            _emailSent = true;
+            _userId = 1;
+
+            var result = _classUnderTest.Handle(new PutModifyRegistrationPageThreeRequest()
+            {
+                RegistrationStepThree = new RegistrationStepThree()
+                {
+                    Activities = new List<SupportActivities>
+                    {
+                        SupportActivities.DogWalking
+                    },
+                    RegistrationFormVariant = RegistrationFormVariant.Default
+                }
+            },CancellationToken.None);
+            _groupService.Verify(x => x.GetSupportActivitiesConfigurationAsync(It.IsAny<CancellationToken>()), Times.Never);
+            _groupService.Verify(x => x.GetRegistrationFormSupportActivities(It.IsAny<RegistrationFormVariant>(), It.IsAny<CancellationToken>()), Times.Never);
+            _repository.Verify(x => x.ModifyUserRegistrationPageThree(It.IsAny<RegistrationStepThree>()), Times.Once);
+            _communicationService.Verify(x => x.RequestCommunicationAsync(It.IsAny<RequestCommunicationRequest>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Test]
@@ -80,34 +124,15 @@ namespace UserService.UnitTests
             {
                 RegistrationStepThree = new RegistrationStepThree()
                 {
-                    Activities = new List<HelpMyStreet.Utils.Enums.SupportActivities>
+                    Activities = new List<SupportActivities>
                     {
-                        HelpMyStreet.Utils.Enums.SupportActivities.DogWalking
-                    }
-                }
-            },CancellationToken.None);
-            _groupService.Verify(x => x.GetSupportActivitiesConfigurationAsync(It.IsAny<CancellationToken>()), Times.Never);
-            _repository.Verify(x => x.ModifyUserRegistrationPageThree(It.IsAny<RegistrationStepThree>()), Times.Once);
-            _communicationService.Verify(x => x.RequestCommunicationAsync(It.IsAny<RequestCommunicationRequest>(), It.IsAny<CancellationToken>()), Times.Once);
-        }
-
-        [Test]
-        public void WhenNonOtherActivitySelected_AddAdditionalActivities()
-        {
-            _emailSent = true;
-            _userId = 1;
-
-            var result = _classUnderTest.Handle(new PutModifyRegistrationPageThreeRequest()
-            {
-                RegistrationStepThree = new RegistrationStepThree()
-                {
-                    Activities = new List<HelpMyStreet.Utils.Enums.SupportActivities>
-                    {
-                        HelpMyStreet.Utils.Enums.SupportActivities.Other
-                    }
+                        SupportActivities.Other
+                    },
+                    RegistrationFormVariant = RegistrationFormVariant.Default
                 }
             }, CancellationToken.None);
             _groupService.Verify(x => x.GetSupportActivitiesConfigurationAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _groupService.Verify(x => x.GetRegistrationFormSupportActivities(It.IsAny<RegistrationFormVariant>(), It.IsAny<CancellationToken>()), Times.Once);
             _repository.Verify(x => x.ModifyUserRegistrationPageThree(It.IsAny<RegistrationStepThree>()), Times.Once);
             _communicationService.Verify(x => x.RequestCommunicationAsync(It.IsAny<RequestCommunicationRequest>(), It.IsAny<CancellationToken>()), Times.Once);
         }
