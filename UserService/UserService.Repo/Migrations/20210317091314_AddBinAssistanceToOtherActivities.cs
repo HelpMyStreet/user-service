@@ -38,14 +38,6 @@ namespace UserService.Repo.Migrations
 
             migrationBuilder.Sql(@"
                 INSERT INTO [User].[SupportActivity]([UserID],[ActivityID])
-                SELECT  UserID, 28
-                FROM    [User].[SupportActivity] sa
-                WHERE   ActivityID = 11 and 
-		                28 not in (select ActivityID from [User].[SupportActivity] a where a.UserID = sa.UserID )
-                ");
-
-            migrationBuilder.Sql(@"
-                INSERT INTO [User].[SupportActivity]([UserID],[ActivityID])
                 SELECT  UserID, 29
                 FROM    [User].[SupportActivity] sa
                 WHERE   ActivityID = 11 and 
