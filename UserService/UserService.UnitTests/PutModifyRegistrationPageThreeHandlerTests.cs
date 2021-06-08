@@ -18,7 +18,6 @@ namespace UserService.UnitTests
     {
         private PutModifyRegistrationPageThreeHandler _classUnderTest;
         private Mock<IRepository> _repository;
-        private Mock<ICommunicationService> _communicationService;
         private Mock<IGroupService> _groupService;     
         private int _userId;
         private List<SupportActivityConfiguration> _supportActivityConfigurations;
@@ -30,9 +29,8 @@ namespace UserService.UnitTests
         public void SetUp()
         {
             SetupRepository();
-            SetupCommunicationService();
             SetupGroupService();
-            _classUnderTest = new PutModifyRegistrationPageThreeHandler(_repository.Object, _communicationService.Object, _groupService.Object);
+            _classUnderTest = new PutModifyRegistrationPageThreeHandler(_repository.Object, _groupService.Object);
         }
 
         private void SetupRepository()
@@ -41,13 +39,6 @@ namespace UserService.UnitTests
 
             _repository.Setup(x => x.ModifyUserRegistrationPageThree(It.IsAny<RegistrationStepThree>()))
                 .Returns(() => _userId);
-        }
-
-        private void SetupCommunicationService()
-        {
-            _communicationService = new Mock<ICommunicationService>();
-            _communicationService.Setup(x => x.RequestCommunicationAsync(It.IsAny<RequestCommunicationRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(() => _emailSent);
         }
 
         private void SetupGroupService()
@@ -111,7 +102,6 @@ namespace UserService.UnitTests
             _groupService.Verify(x => x.GetSupportActivitiesConfigurationAsync(It.IsAny<CancellationToken>()), Times.Never);
             _groupService.Verify(x => x.GetRegistrationFormSupportActivities(It.IsAny<RegistrationFormVariant>(), It.IsAny<CancellationToken>()), Times.Never);
             _repository.Verify(x => x.ModifyUserRegistrationPageThree(It.IsAny<RegistrationStepThree>()), Times.Once);
-            _communicationService.Verify(x => x.RequestCommunicationAsync(It.IsAny<RequestCommunicationRequest>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Test]
@@ -134,7 +124,6 @@ namespace UserService.UnitTests
             _groupService.Verify(x => x.GetSupportActivitiesConfigurationAsync(It.IsAny<CancellationToken>()), Times.Once);
             _groupService.Verify(x => x.GetRegistrationFormSupportActivities(It.IsAny<RegistrationFormVariant>(), It.IsAny<CancellationToken>()), Times.Once);
             _repository.Verify(x => x.ModifyUserRegistrationPageThree(It.IsAny<RegistrationStepThree>()), Times.Once);
-            _communicationService.Verify(x => x.RequestCommunicationAsync(It.IsAny<RequestCommunicationRequest>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
     }
