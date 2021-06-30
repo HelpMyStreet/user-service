@@ -37,7 +37,7 @@ namespace UserService.UnitTests
                     IsVerifiedType = IsVerifiedType.IsVerified,
                     Latitude = 1,
                     Longitude = 2,
-                    SupportRadiusMiles = 2
+                    SupportRadiusMiles = 3
                 },
                 new CachedVolunteerDto()
                 {
@@ -119,6 +119,19 @@ namespace UserService.UnitTests
  
             var users = await _helperService.GetHelpersWithinRadius("T35T 3TY", It.IsAny<double?>(), new CancellationToken());
             Assert.AreEqual(2, users.Count());
+        }
+
+        [Test]
+        public async Task GivenMultipleVolsOnlyVolsWithinSupportRadiusReturned()
+        {
+            _distanceInMiles = 2;
+
+            var volunteers = _cachedVolunteerDtos.Where(y => y.SupportRadiusMiles >= _distanceInMiles).Select(x=> x.UserId).ToList();
+
+            _users = _users.Where(x => volunteers.Contains(x.ID));
+
+            var users = await _helperService.GetHelpersWithinRadius("T35T 3TY", It.IsAny<double?>(), new CancellationToken());
+            Assert.AreEqual(volunteers, users.Select(x => x.User.ID).ToList());
         }
     }
 }
