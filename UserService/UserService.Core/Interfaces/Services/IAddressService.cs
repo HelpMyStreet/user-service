@@ -8,5 +8,7 @@ namespace UserService.Core.Interfaces.Services
     public interface IAddressService
     {
         Task<GetPostcodeCoordinatesResponse> GetPostcodeCoordinatesAsync(GetPostcodeCoordinatesRequest getPostcodeCoordinatesRequest, CancellationToken cancellationToken);
+
+        Task<bool> IsValidPostcode(string postcode, CancellationToken cancellationToken);
     }
 }
