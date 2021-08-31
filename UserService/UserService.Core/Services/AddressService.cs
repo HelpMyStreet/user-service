@@ -11,6 +11,7 @@ using HelpMyStreet.Utils.Utils;
 using UserService.Core.Interfaces.Services;
 using Utf8Json.Resolvers;
 using HelpMyStreet.Utils.Enums;
+using Marvin.StreamExtensions;
 
 namespace UserService.Core.Services
 {
@@ -43,6 +44,20 @@ namespace UserService.Core.Services
             }
 
             return getPostcodeCoordinatesResponseWithWrapper.Content;
+        }
+
+        public async Task<bool> IsValidPostcode(string postcode, CancellationToken cancellationToken)
+        {
+            string path = $"api/getpostcode?postcode={postcode}";
+            ResponseWrapper<GetNearbyPostcodesResponse, AddressServiceErrorCode> nearbyPostcodeResponse;
+            using (HttpResponseMessage response = await _httpClientWrapper.GetAsync(HttpClientConfigName.AddressService, path, cancellationToken).ConfigureAwait(false))
+            {
+                response.EnsureSuccessStatusCode();
+                Stream stream = await response.Content.ReadAsStreamAsync();
+                nearbyPostcodeResponse = stream.ReadAndDeserializeFromJson<ResponseWrapper<GetNearbyPostcodesResponse, AddressServiceErrorCode>>();
+            }
+
+            return nearbyPostcodeResponse.HasContent && nearbyPostcodeResponse.IsSuccessful;
         }
     }
 }

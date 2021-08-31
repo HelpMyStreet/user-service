@@ -11,6 +11,7 @@ using HelpMyStreet.Contracts.UserService.Request;
 using HelpMyStreet.Contracts.Shared;
 using System.Net;
 using AzureFunctions.Extensions.Swashbuckle.Attribute;
+using UserService.Core.Exceptions;
 
 namespace UserService.AzureFunction
 {
@@ -37,6 +38,11 @@ namespace UserService.AzureFunction
 
                 PutModifyRegistrationPageTwoResponse response = await _mediator.Send(req);
                 return new OkObjectResult(ResponseWrapper<PutModifyRegistrationPageTwoResponse, UserServiceErrorCode>.CreateSuccessfulResponse(response));
+            }
+            catch (PostCodeException exc)
+            {
+                LogError.Log(log, exc, req);
+                return new ObjectResult(ResponseWrapper<PutModifyRegistrationPageTwoResponse, UserServiceErrorCode>.CreateUnsuccessfulResponse(UserServiceErrorCode.ValidationError, "Invalid Postcode")) { StatusCode = StatusCodes.Status400BadRequest };
             }
             catch (Exception exc)
             {
