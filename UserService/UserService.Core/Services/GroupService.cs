@@ -72,5 +72,42 @@ namespace UserService.Core.Services
                 }
             }
         }
+
+        public async Task<Dictionary<int, List<int>>> GetUserRoles(int userId, CancellationToken cancellationToken)
+        {
+            string path = $"api/GetUserRoles?userId={userId}";
+            using (HttpResponseMessage response = await _httpClientWrapper.GetAsync(HttpClientConfigName.GroupService, path, cancellationToken).ConfigureAwait(false))
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                var emailSentResponse = JsonConvert.DeserializeObject<ResponseWrapper<GetUserRolesResponse, CommunicationServiceErrorCode>>(jsonResponse);
+                if (emailSentResponse.HasContent && emailSentResponse.IsSuccessful)
+                {
+                    return emailSentResponse.Content.UserGroupRoles;
+                }
+                else
+                {
+                    throw new Exception($"Unable to retrieve user roles for userId {userId}");
+                }
+            }
+        }
+
+        public async Task<GroupPermissionOutcome> PostRevokeRole(PostRevokeRoleRequest request, CancellationToken cancellationToken)
+        {
+            string path = $"api/PostRevokeRole";
+            var jsonContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+            using (HttpResponseMessage response = await _httpClientWrapper.PostAsync(HttpClientConfigName.GroupService, path, jsonContent, cancellationToken).ConfigureAwait(false))
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                var emailSentResponse = JsonConvert.DeserializeObject<ResponseWrapper<PostRevokeRoleResponse, CommunicationServiceErrorCode>>(jsonResponse);
+                if (emailSentResponse.HasContent && emailSentResponse.IsSuccessful)
+                {
+                    return emailSentResponse.Content.Outcome;
+                }
+                else
+                {
+                    throw new Exception($"Unable to revoke roles for userId {request.UserID}");
+                }
+            }
+        }
     }
 }
