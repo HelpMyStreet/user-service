@@ -19,6 +19,7 @@ using UserService.Core.Interfaces.Repositories;
 using UserService.Repo.EntityFramework.Entities;
 using model = HelpMyStreet.Utils.Models;
 using UserService.Core.Contracts;
+using HelpMyStreet.Contracts;
 
 namespace UserService.Repo
 {
@@ -696,6 +697,59 @@ u.[ID] <= @ToUser1Id
         {
             history.ForEach(u => UpdateLastLogin(u.FirebaseUserId, dtChecked, u.LastSignInTimestamp));
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<NewsTickerMessage>> GetNewsTickerMessages(int? groupId, CancellationToken cancellationToken)
+        {
+            List<NewsTickerMessage> result = new List<NewsTickerMessage>();
+            int volunteerCount = 0;
+            DateTime dtLessThan7Days = DateTime.UtcNow.Date.AddDays(-7);
+            DateTime dtLessThan24Hours = DateTime.UtcNow.AddHours(24);
+
+            int newVolunteerCountLast7Days = 0;
+            int newVolunteerCount24Hours = 0;
+
+            if (groupId.HasValue)
+            { 
+                volunteerCount = _context.User.Count(x => x.ReferringGroupId==groupId.Value); 
+                newVolunteerCountLast7Days = _context.User.Count(x => x.ReferringGroupId == groupId.Value && x.DateCreated > dtLessThan7Days);
+                newVolunteerCount24Hours = _context.User.Count(x => x.ReferringGroupId == groupId.Value && x.DateCreated > dtLessThan24Hours);
+            }
+            else
+            {
+                volunteerCount = _context.User.Count();
+                newVolunteerCountLast7Days = _context.User.Count(x => x.DateCreated > dtLessThan7Days);
+                newVolunteerCount24Hours = _context.User.Count(x => x.DateCreated > dtLessThan24Hours);
+            }
+            
+            if(volunteerCount>=5)
+            {
+                result.Add(new NewsTickerMessage()
+                {
+                    Number = volunteerCount,
+                    Message = $"**{volunteerCount}** volunteers waiting to help"
+                });
+            }
+
+            if (newVolunteerCountLast7Days >= 5 && newVolunteerCount24Hours<=1)
+            {
+                result.Add(new NewsTickerMessage()
+                {
+                    Number = newVolunteerCountLast7Days,
+                    Message = $"**{newVolunteerCountLast7Days}** joined this week"
+                });
+            }
+
+            if (newVolunteerCount24Hours > 1)
+            {
+                result.Add(new NewsTickerMessage()
+                {
+                    Number = newVolunteerCount24Hours,
+                    Message = $"**{newVolunteerCount24Hours}** new volunteers joined today"
+                });
+            }
+
+            return result;
         }
     }
 }
