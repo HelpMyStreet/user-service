@@ -59,7 +59,6 @@ namespace UserService.Core.Services
                 users.Users.ToList().ForEach(user => history.Add(new UserHistory()
                 {
                     FirebaseUserId = user.Uid,
-                    EmailAddress = user.Email,
                     CreationTimestamp = user.UserMetaData.CreationTimestamp,
                     LastSignInTimestamp = user.UserMetaData.LastSignInTimestamp
                 }));

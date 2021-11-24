@@ -18,6 +18,7 @@ using UserService.Core.Dto;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Repo.EntityFramework.Entities;
 using model = HelpMyStreet.Utils.Models;
+using UserService.Core.Contracts;
 
 namespace UserService.Repo
 {
@@ -26,7 +27,7 @@ namespace UserService.Repo
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
-        private readonly IOptionsSnapshot<ConnectionStrings> _connectionStrings;
+        private readonly IOptionsSnapshot<ConnectionStrings> _connectionStrings;        
 
         public Repository(ApplicationDbContext context, IMapper mapper, IOptionsSnapshot<ConnectionStrings> connectionStrings)
         {
@@ -672,13 +673,30 @@ u.[ID] <= @ToUser1Id
             return success;
         }
 
-        public async Task<List<model.User>> GetAllUsers(CancellationToken cancellationToken)
+        public async Task<List<model.User>> GetAllUsers()
         {
             return _context.User.Select(x => new model.User()
             {
                 ID = x.Id,
                 FirebaseUID = x.FirebaseUid
             }).ToList();            
+        }
+
+        private void UpdateLastLogin(string firebaseUserID, DateTime? dateLastLogin)
+        {
+            var user = _context.User.FirstOrDefault(x => x.FirebaseUid == firebaseUserID);
+            DateTime dtChecked = DateTime.UtcNow;
+            if (user != null)
+            {
+                user.DateLastLoginChecked = dtChecked;
+                user.DateLastLogin = dateLastLogin;
+            }
+        }
+
+        public async Task UpdateLoginChecks(List<UserHistory> history)
+        {
+            history.ForEach(u => UpdateLastLogin(u.FirebaseUserId, u.LastSignInTimestamp));
+            await _context.SaveChangesAsync();
         }
     }
 }
