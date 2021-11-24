@@ -1,13 +1,7 @@
-﻿using HelpMyStreet.Utils.Utils;
-using MediatR;
-using System.Linq;
+﻿using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 using UserService.Core.Interfaces.Repositories;
-using UserService.Core.Interfaces.Services;
-using HelpMyStreet.Contracts.UserService.Request;
-using HelpMyStreet.Contracts.UserService.Response;
-using HelpMyStreet.Utils.Enums;
 using HelpMyStreet.Contracts;
 
 namespace UserService.Handlers
