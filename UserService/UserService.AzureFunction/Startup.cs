@@ -105,6 +105,7 @@ namespace UserService.AzureFunction
             builder.Services.AddTransient<ICoordinatedResetCache, CoordinatedResetCache>();
             builder.Services.AddTransient<IVolunteersFilteredByMinDistanceGetter, VolunteersFilteredByMinDistanceGetter>();
             builder.Services.AddTransient<IMinDistanceFilter, MinDistanceFilter>();
+            builder.Services.AddTransient<ITrackLoginService, TrackLoginService>();
 
             // add cache
             RedisConfig redisConfig = new RedisConfig();

@@ -1,9 +1,11 @@
 ﻿using HelpMyStreet.Contracts.CommunicationService.Request;
+using HelpMyStreet.Contracts.GroupService.Request;
 using HelpMyStreet.Utils.Models;
 using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using UserService.Core.Interfaces.Repositories;
@@ -18,6 +20,8 @@ namespace UserService.UnitTests
         private Mock<IRepository> _repository;
         private Mock<IAuthService> _authService;
         private Mock<ICommunicationService> _communicationService;
+        private Mock<IGroupService> _groupService;
+        private Dictionary<int, List<int>> _userRoles;
 
         private User _user;
         private bool _authSuccess;
@@ -30,7 +34,8 @@ namespace UserService.UnitTests
             SetupRepository();
             SetupAuthService();
             SetupCommunicationService();
-            _classUnderTest = new DeleteUserHandler(_repository.Object, _authService.Object, _communicationService.Object);
+            SetupGroupService();
+            _classUnderTest = new DeleteUserHandler(_repository.Object, _authService.Object, _communicationService.Object, _groupService.Object) ;
         }
 
         private void SetupRepository()
@@ -58,9 +63,17 @@ namespace UserService.UnitTests
                 .ReturnsAsync(() => _deleteContact);
         }
 
+        private void SetupGroupService()
+        {
+            _groupService = new Mock<IGroupService>();
+            _groupService.Setup(x => x.GetUserRoles(It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => _userRoles);
+        }
+
         [Test]
         public void Success()
         {
+            int userId = 1;
             _user = new User()
             {
                 PostalCode = "POSTCODE",
@@ -72,17 +85,24 @@ namespace UserService.UnitTests
             _authSuccess = true;
             _success = true;
             _deleteContact = true;
+            _userRoles = new Dictionary<int, List<int>>()
+            {
+                {-1,new List<int>(){1,2,3 } },
+                {-2,new List<int>(){1,2,3 } }
+            };
 
             var result = _classUnderTest.Handle(new HelpMyStreet.Contracts.UserService.Request.DeleteUserRequest()
             {
                 Postcode = "POSTCODE",
-                UserID = 1,
+                UserID = userId,
             }, CancellationToken.None).Result;
 
             Assert.AreEqual(result.Success, _success);
             _authService.Verify(x => x.DeleteUser(It.IsAny<string>()), Times.Once);
             _repository.Verify(x => x.GetUserByID(It.IsAny<int>()), Times.Once);
             _repository.Verify(x => x.DeleteUserAsync(It.IsAny<int>(),It.IsAny<CancellationToken>()), Times.Once);
+            _groupService.Verify(x => x.GetUserRoles(It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Once);
+            _groupService.Verify(x => x.PostRevokeRole(It.IsAny<PostRevokeRoleRequest>(), It.IsAny<CancellationToken>()), Times.Exactly(_userRoles.Sum(x => x.Value.Count)));
         }
 
         [Test]
@@ -102,6 +122,8 @@ namespace UserService.UnitTests
             _authService.Verify(x => x.DeleteUser(It.IsAny<string>()), Times.Never);
             _repository.Verify(x => x.GetUserByID(It.IsAny<int>()), Times.Once);
             _repository.Verify(x => x.DeleteUserAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
+            _groupService.Verify(x => x.GetUserRoles(It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
+            _groupService.Verify(x => x.PostRevokeRole(It.IsAny<PostRevokeRoleRequest>(), It.IsAny<CancellationToken>()), Times.Never);
         }
 
         [Test]
@@ -124,6 +146,8 @@ namespace UserService.UnitTests
             _authService.Verify(x => x.DeleteUser(It.IsAny<string>()), Times.Never);
             _repository.Verify(x => x.GetUserByID(It.IsAny<int>()), Times.Once);
             _repository.Verify(x => x.DeleteUserAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
+            _groupService.Verify(x => x.GetUserRoles(It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
+            _groupService.Verify(x => x.PostRevokeRole(It.IsAny<PostRevokeRoleRequest>(), It.IsAny<CancellationToken>()), Times.Never);
         }
 
 
@@ -147,6 +171,8 @@ namespace UserService.UnitTests
             _authService.Verify(x => x.DeleteUser(It.IsAny<string>()), Times.Once);
             _repository.Verify(x => x.GetUserByID(It.IsAny<int>()), Times.Once);
             _repository.Verify(x => x.DeleteUserAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
+            _groupService.Verify(x => x.GetUserRoles(It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
+            _groupService.Verify(x => x.PostRevokeRole(It.IsAny<PostRevokeRoleRequest>(), It.IsAny<CancellationToken>()), Times.Never);
         }
     }
 }
