@@ -27,6 +27,8 @@ namespace UserService.Core.Services
 
         public async Task CheckLogins()
         {
+            DateTime dtChecked = DateTime.UtcNow;
+
             var users = await _repository.GetAllUsers();
 
             var tasks = users.ChunkBy(100).Select(async (chunk) =>
@@ -36,7 +38,7 @@ namespace UserService.Core.Services
 
             List<UserHistory> history = (await Task.WhenAll(tasks)).SelectMany(rss => rss).ToList();
 
-            await _repository.UpdateLoginChecks(history);
+            await _repository.UpdateLoginChecks(dtChecked, history);
 
             int i = 1;
 

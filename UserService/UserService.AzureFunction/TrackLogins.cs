@@ -18,7 +18,7 @@ namespace UserService.AzureFunction
             _trackLoginService = trackLoginService;
         }
         [FunctionName("TrackLogins")]
-        public async Task Run([TimerTrigger("%TrackLoginsCronExpression%")]TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("%TrackLoginsCronExpression%", RunOnStartup =true)]TimerInfo myTimer, ILogger log)
         {
             await _trackLoginService.CheckLogins();
         }

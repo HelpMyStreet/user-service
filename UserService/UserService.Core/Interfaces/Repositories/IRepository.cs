@@ -12,7 +12,7 @@ namespace UserService.Core.Interfaces.Repositories
 {
     public interface IRepository
     {
-        Task UpdateLoginChecks(List<UserHistory> history);
+        Task UpdateLoginChecks(DateTime dtChecked, List<UserHistory> history);
         Task<List<User>> GetAllUsers();
         Task<bool> DeleteUserAsync(int userId, CancellationToken cancellationToken);
 

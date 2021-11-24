@@ -682,10 +682,9 @@ u.[ID] <= @ToUser1Id
             }).ToList();            
         }
 
-        private void UpdateLastLogin(string firebaseUserID, DateTime? dateLastLogin)
+        private void UpdateLastLogin(string firebaseUserID, DateTime dtChecked, DateTime? dateLastLogin)
         {
             var user = _context.User.FirstOrDefault(x => x.FirebaseUid == firebaseUserID);
-            DateTime dtChecked = DateTime.UtcNow;
             if (user != null)
             {
                 user.DateLastLoginChecked = dtChecked;
@@ -693,9 +692,9 @@ u.[ID] <= @ToUser1Id
             }
         }
 
-        public async Task UpdateLoginChecks(List<UserHistory> history)
+        public async Task UpdateLoginChecks(DateTime dtChecked, List<UserHistory> history)
         {
-            history.ForEach(u => UpdateLastLogin(u.FirebaseUserId, u.LastSignInTimestamp));
+            history.ForEach(u => UpdateLastLogin(u.FirebaseUserId, dtChecked, u.LastSignInTimestamp));
             await _context.SaveChangesAsync();
         }
     }
