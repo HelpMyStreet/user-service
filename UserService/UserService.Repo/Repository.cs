@@ -698,13 +698,5 @@ u.[ID] <= @ToUser1Id
             history.ForEach(u => UpdateLastLogin(u.FirebaseUserId, dtChecked, u.LastSignInTimestamp));
             await _context.SaveChangesAsync();
         }
-
-        public async Task<int> GetActiveUserCount()
-        {
-            DateTime dtMinLoginDate = DateTime.Now.AddDays(-90);
-
-            var activeUserCount = _context.User.Count(x => x.DateLastLogin >= dtMinLoginDate);
-            return activeUserCount;
-        }
     }
 }
