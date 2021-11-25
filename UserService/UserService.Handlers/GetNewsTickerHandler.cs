@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UserService.Core.Interfaces.Repositories;
 using HelpMyStreet.Contracts;
+using System.Collections.Generic;
 
 namespace UserService.Handlers
 {
@@ -17,11 +18,23 @@ namespace UserService.Handlers
 
         public async Task<NewsTickerResponse> Handle(NewsTickerRequest request, CancellationToken cancellationToken)
         {
-
-            return new NewsTickerResponse()
+            NewsTickerResponse response = new NewsTickerResponse()
             {
-                Messages = await _repository.GetNewsTickerMessages(request.GroupId, cancellationToken)
+                Messages = new List<NewsTickerMessage>()
             };
+
+            int activeUserCount = await _repository.GetActiveUserCount();
+
+            if (activeUserCount >= 5)
+            {
+                response.Messages.Add(new NewsTickerMessage()
+                {
+                    Number = activeUserCount,
+                    Message = $"**{activeUserCount}** volunteers waiting to help"
+                });
+            }
+
+            return response;
         }
     }
 }

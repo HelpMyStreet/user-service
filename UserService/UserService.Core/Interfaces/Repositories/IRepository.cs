@@ -13,11 +13,10 @@ namespace UserService.Core.Interfaces.Repositories
 {
     public interface IRepository
     {
-        Task<List<NewsTickerMessage>> GetNewsTickerMessages(int? groupId, CancellationToken cancellationToken);
+        Task<int> GetActiveUserCount();
         Task UpdateLoginChecks(DateTime dtChecked, List<UserHistory> history);
         Task<List<User>> GetAllUsers();
         Task<bool> DeleteUserAsync(int userId, CancellationToken cancellationToken);
-
         Task<List<UserRegistrationStep>> GetIncompleteRegistrationStatusAsync(CancellationToken cancellationToken);
 
         Task<List<UserDetails>> GetUserDetailsAsync(CancellationToken cancellationToken);
