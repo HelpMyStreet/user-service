@@ -19,6 +19,7 @@ using UserService.Core.Interfaces.Repositories;
 using UserService.Repo.EntityFramework.Entities;
 using model = HelpMyStreet.Utils.Models;
 using UserService.Core.Contracts;
+using HelpMyStreet.Contracts;
 
 namespace UserService.Repo
 {
