@@ -41,10 +41,10 @@ namespace UserService.Core.Services
             using (HttpResponseMessage response = await _httpClientWrapper.PostAsync(HttpClientConfigName.GroupService, path, jsonContent, cancellationToken).ConfigureAwait(false))
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
-                var emailSentResponse = JsonConvert.DeserializeObject<ResponseWrapper<GetRegistrationFormSupportActivitiesResponse, CommunicationServiceErrorCode>>(jsonResponse);
-                if (emailSentResponse.HasContent && emailSentResponse.IsSuccessful)
+                var deserializedResponse = JsonConvert.DeserializeObject<ResponseWrapper<GetRegistrationFormSupportActivitiesResponse, CommunicationServiceErrorCode>>(jsonResponse);
+                if (deserializedResponse.HasContent && deserializedResponse.IsSuccessful)
                 {
-                    return emailSentResponse.Content.SupportActivityDetails;
+                    return deserializedResponse.Content.SupportActivityDetails;
                 }
                 else
                 {
@@ -61,10 +61,10 @@ namespace UserService.Core.Services
             using (HttpResponseMessage response = await _httpClientWrapper.PostAsync(HttpClientConfigName.GroupService, path, jsonContent, cancellationToken).ConfigureAwait(false))
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
-                var emailSentResponse = JsonConvert.DeserializeObject<ResponseWrapper<GetSupportActivitiesConfigurationResponse, CommunicationServiceErrorCode>>(jsonResponse);
-                if (emailSentResponse.HasContent && emailSentResponse.IsSuccessful)
+                var deserializedResponse = JsonConvert.DeserializeObject<ResponseWrapper<GetSupportActivitiesConfigurationResponse, CommunicationServiceErrorCode>>(jsonResponse);
+                if (deserializedResponse.HasContent && deserializedResponse.IsSuccessful)
                 {
-                    return emailSentResponse.Content.SupportActivityConfigurations;
+                    return deserializedResponse.Content.SupportActivityConfigurations;
                 }
                 else
                 {
@@ -79,10 +79,10 @@ namespace UserService.Core.Services
             using (HttpResponseMessage response = await _httpClientWrapper.GetAsync(HttpClientConfigName.GroupService, path, cancellationToken).ConfigureAwait(false))
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
-                var emailSentResponse = JsonConvert.DeserializeObject<ResponseWrapper<GetUserRolesResponse, CommunicationServiceErrorCode>>(jsonResponse);
-                if (emailSentResponse.HasContent && emailSentResponse.IsSuccessful)
+                var deserializedResponse = JsonConvert.DeserializeObject<ResponseWrapper<GetUserRolesResponse, CommunicationServiceErrorCode>>(jsonResponse);
+                if (deserializedResponse.HasContent && deserializedResponse.IsSuccessful)
                 {
-                    return emailSentResponse.Content.UserGroupRoles;
+                    return deserializedResponse.Content.UserGroupRoles;
                 }
                 else
                 {
@@ -98,10 +98,10 @@ namespace UserService.Core.Services
             using (HttpResponseMessage response = await _httpClientWrapper.PostAsync(HttpClientConfigName.GroupService, path, jsonContent, cancellationToken).ConfigureAwait(false))
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
-                var emailSentResponse = JsonConvert.DeserializeObject<ResponseWrapper<PostRevokeRoleResponse, CommunicationServiceErrorCode>>(jsonResponse);
-                if (emailSentResponse.HasContent && emailSentResponse.IsSuccessful)
+                var deserializedResponse = JsonConvert.DeserializeObject<ResponseWrapper<PostRevokeRoleResponse, CommunicationServiceErrorCode>>(jsonResponse);
+                if (deserializedResponse.HasContent && deserializedResponse.IsSuccessful)
                 {
-                    return emailSentResponse.Content.Outcome;
+                    return deserializedResponse.Content.Outcome;
                 }
                 else
                 {

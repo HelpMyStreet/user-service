@@ -30,6 +30,9 @@ namespace UserService.Repo.EntityFramework.Entities
         public int? ReferringGroupId { get; set; }
         public string Source { get; set; }
 
+        public DateTime? DateLastLoginChecked { get; set; }
+        public DateTime? DateLastLogin { get; set; }
+
         public virtual PersonalDetails PersonalDetails { get; set; }
         public virtual ICollection<ChampionPostcode> ChampionPostcode { get; set; }
         public virtual ICollection<SupportActivity> SupportActivity { get; set; }

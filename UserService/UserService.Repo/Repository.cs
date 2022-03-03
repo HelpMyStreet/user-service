@@ -18,6 +18,8 @@ using UserService.Core.Dto;
 using UserService.Core.Interfaces.Repositories;
 using UserService.Repo.EntityFramework.Entities;
 using model = HelpMyStreet.Utils.Models;
+using UserService.Core.Contracts;
+using HelpMyStreet.Contracts;
 
 namespace UserService.Repo
 {
@@ -26,7 +28,7 @@ namespace UserService.Repo
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
-        private readonly IOptionsSnapshot<ConnectionStrings> _connectionStrings;
+        private readonly IOptionsSnapshot<ConnectionStrings> _connectionStrings;        
 
         public Repository(ApplicationDbContext context, IMapper mapper, IOptionsSnapshot<ConnectionStrings> connectionStrings)
         {
@@ -47,7 +49,7 @@ namespace UserService.Repo
 
         public model.User GetUserByID(int userId)
         {
-            User user = _context.User
+            EntityFramework.Entities.User user = _context.User
                 .Include(i => i.PersonalDetails)
                 .Include(i => i.SupportActivity)
                 .Include(i => i.ChampionPostcode)
@@ -69,7 +71,7 @@ namespace UserService.Repo
 
         public model.User GetUserByFirebaseUserID(string firebaseUID)
         {
-            User user = _context.User
+            EntityFramework.Entities.User user = _context.User
                 .Include(i => i.PersonalDetails)
                 .Include(i => i.SupportActivity)
                 .Include(i => i.ChampionPostcode)
@@ -88,7 +90,7 @@ namespace UserService.Repo
 
         public List<model.User> GetUsersForIDs(List<int> userId)
         {
-            List<User> users = _context.User
+            List<EntityFramework.Entities.User> users = _context.User
                 .Include(i => i.PersonalDetails)
                 .Include(i => i.SupportActivity)
                 .Include(i => i.ChampionPostcode)
@@ -97,7 +99,7 @@ namespace UserService.Repo
                 .ToList();
 
             List<model.User> response = new List<model.User>();
-            foreach (User user in users)
+            foreach (EntityFramework.Entities.User user in users)
             {
                 response.Add(MapEFUserToModelUser(user));
             }
@@ -183,11 +185,11 @@ namespace UserService.Repo
 
         public int PostCreateUser(string firebaseUserId, string emailAddress, DateTime? dateCreated, int? referringGroupID, string source)
         {
-            User user = new User()
+            EntityFramework.Entities.User user = new EntityFramework.Entities.User()
             {
                 FirebaseUid = firebaseUserId,
                 DateCreated = dateCreated,
-                PersonalDetails = new PersonalDetails()
+                PersonalDetails = new EntityFramework.Entities.PersonalDetails()
                 {
                     EmailAddress = emailAddress
                 },
@@ -223,7 +225,7 @@ namespace UserService.Repo
         }
 
 
-        private model.User MapEFUserToModelUser(User user)
+        private model.User MapEFUserToModelUser(EntityFramework.Entities.User user)
         {
             return new model.User()
             {
@@ -246,7 +248,7 @@ namespace UserService.Repo
             };
         }
 
-        private model.UserPersonalDetails MapEFPersonalDetailsToModelPersonalDetails(PersonalDetails personalDetails)
+        private model.UserPersonalDetails MapEFPersonalDetailsToModelPersonalDetails(EntityFramework.Entities.PersonalDetails personalDetails)
         {
             return new model.UserPersonalDetails()
             {
@@ -269,7 +271,7 @@ namespace UserService.Repo
             };
         }
 
-        private void UpdateEFPersonalDetailsFromModelPersonalDetails(model.UserPersonalDetails userPersonalDetails, PersonalDetails EFPersonalDetails)
+        private void UpdateEFPersonalDetailsFromModelPersonalDetails(model.UserPersonalDetails userPersonalDetails, EntityFramework.Entities.PersonalDetails EFPersonalDetails)
         {
             EFPersonalDetails.FirstName = userPersonalDetails.FirstName;
             EFPersonalDetails.LastName = userPersonalDetails.LastName;
@@ -285,7 +287,7 @@ namespace UserService.Repo
             EFPersonalDetails.Locality = userPersonalDetails.Address.Locality;
             EFPersonalDetails.UnderlyingMedicalCondition = userPersonalDetails.UnderlyingMedicalCondition;
         }
-        private void UpdateEFUserFromUserModel(model.User user, User EFUser)
+        private void UpdateEFUserFromUserModel(model.User user, EntityFramework.Entities.User EFUser)
         {
             EFUser.FirebaseUid = user.FirebaseUID;
             EFUser.EmailSharingConsent = user.EmailSharingConsent;
@@ -362,7 +364,7 @@ namespace UserService.Repo
 
         public int ModifyUser(model.User user)
         {
-            User EFUser = _context.User
+            EntityFramework.Entities.User EFUser = _context.User
                 .Include(i => i.PersonalDetails)
                 .Where(a => a.Id == user.ID).FirstOrDefault();
 
@@ -408,7 +410,7 @@ namespace UserService.Repo
 
         public int ModifyUserRegistrationPageTwo(model.RegistrationStepTwo registrationStepTwo)
         {
-            User EFUser = _context.User
+            EntityFramework.Entities.User EFUser = _context.User
                 .Include(i => i.PersonalDetails)
                 .Include(i => i.RegistrationHistory)
                 .Where(a => a.Id == registrationStepTwo.UserID).FirstOrDefault();
@@ -435,7 +437,7 @@ namespace UserService.Repo
 
         public int ModifyUserRegistrationPageThree(model.RegistrationStepThree registrationStepThree)
         {
-            User EFUser = _context.User
+            EntityFramework.Entities.User EFUser = _context.User
                 .Include(i => i.PersonalDetails)
                 .Include(i => i.SupportActivity)
                 .Include(i => i.RegistrationHistory)
@@ -466,7 +468,7 @@ namespace UserService.Repo
 
         public int ModifyUserRegistrationPageFive(model.RegistrationStepFive registrationStepFive)
         {
-            User EFUser = _context.User
+            EntityFramework.Entities.User EFUser = _context.User
                 .Include(i => i.RegistrationHistory)
                 .Where(a => a.Id == registrationStepFive.UserID).FirstOrDefault();
 
@@ -479,7 +481,7 @@ namespace UserService.Repo
             return registrationStepFive.UserID;
         }
 
-        private void AddRegistrationHistoryForUser(User user, RegistrationSteps registrationStep)
+        private void AddRegistrationHistoryForUser(EntityFramework.Entities.User user, RegistrationSteps registrationStep)
         {
             var regHistory = user.RegistrationHistory.FirstOrDefault(w => w.RegistrationStep == (byte)registrationStep);
 
@@ -670,6 +672,31 @@ u.[ID] <= @ToUser1Id
                 success = true;
             }
             return success;
+        }
+
+        public async Task<List<model.User>> GetAllUsers()
+        {
+            return _context.User.Select(x => new model.User()
+            {
+                ID = x.Id,
+                FirebaseUID = x.FirebaseUid
+            }).ToList();            
+        }
+
+        private void UpdateLastLogin(string firebaseUserID, DateTime dtChecked, DateTime? dateLastLogin)
+        {
+            var user = _context.User.FirstOrDefault(x => x.FirebaseUid == firebaseUserID);
+            if (user != null)
+            {
+                user.DateLastLoginChecked = dtChecked;
+                user.DateLastLogin = dateLastLogin;
+            }
+        }
+
+        public async Task UpdateLoginChecks(DateTime dtChecked, List<UserHistory> history)
+        {
+            history.ForEach(u => UpdateLastLogin(u.FirebaseUserId, dtChecked, u.LastSignInTimestamp));
+            await _context.SaveChangesAsync();
         }
     }
 }
