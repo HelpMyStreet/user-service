@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using UserService.Core.Interfaces.Repositories;
 using HelpMyStreet.Contracts;
 using System.Collections.Generic;
+using HelpMyStreet.Utils.Models;
 
 namespace UserService.Handlers
 {
