@@ -54,6 +54,7 @@ namespace UserService.Repo
                 .Include(i => i.SupportActivity)
                 .Include(i => i.ChampionPostcode)
                 .Include(i => i.RegistrationHistory)
+                .Include(i => i.Biography)
                 .Where(x => x.Id == userId).FirstOrDefault();
 
             if (user != null)
@@ -76,6 +77,7 @@ namespace UserService.Repo
                 .Include(i => i.SupportActivity)
                 .Include(i => i.ChampionPostcode)
                 .Include(i => i.RegistrationHistory)
+                .Include(i => i.Biography)
                 .Where(x => x.FirebaseUid == firebaseUID).FirstOrDefault();
 
             if (user != null)
@@ -95,6 +97,7 @@ namespace UserService.Repo
                 .Include(i => i.SupportActivity)
                 .Include(i => i.ChampionPostcode)
                 .Include(i => i.RegistrationHistory)
+                .Include(i => i.Biography)
                 .Where(p => userId.Contains(p.Id))
                 .ToList();
 
@@ -244,7 +247,8 @@ namespace UserService.Repo
                 RegistrationHistory = GetRegistrationHistories(user.RegistrationHistory),
                 UserPersonalDetails = MapEFPersonalDetailsToModelPersonalDetails(user.PersonalDetails),
                 ReferringGroupId = user.ReferringGroupId,
-                Source = user.Source
+                Source = user.Source,
+                Biography = user.Biography?.OrderByDescending(x=> x.DateCreated).FirstOrDefault()?.Details
             };
         }
 
@@ -697,6 +701,18 @@ u.[ID] <= @ToUser1Id
         {
             history.ForEach(u => UpdateLastLogin(u.FirebaseUserId, dtChecked, u.LastSignInTimestamp));
             await _context.SaveChangesAsync();
+        }
+
+        public bool AddBiography(int userId, string details)
+        {
+            _context.Biography.Add(new Biography()
+            {
+                UserId = userId,
+                Details = details
+            });
+
+            var result = _context.SaveChanges();
+            return result == 1;
         }
     }
 }

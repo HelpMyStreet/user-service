@@ -13,6 +13,7 @@ namespace UserService.Core.Interfaces.Repositories
 {
     public interface IRepository
     {
+        bool AddBiography(int userId, string details);
         Task UpdateLoginChecks(DateTime dtChecked, List<UserHistory> history);
         Task<List<User>> GetAllUsers();
         Task<bool> DeleteUserAsync(int userId, CancellationToken cancellationToken);

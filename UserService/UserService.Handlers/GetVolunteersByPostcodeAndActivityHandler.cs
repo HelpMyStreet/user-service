@@ -8,6 +8,7 @@ using UserService.Core.Interfaces.Services;
 using HelpMyStreet.Contracts.UserService.Request;
 using HelpMyStreet.Contracts.UserService.Response;
 using HelpMyStreet.Utils.Enums;
+using HelpMyStreet.Utils.Models;
 
 namespace UserService.Handlers
 {
