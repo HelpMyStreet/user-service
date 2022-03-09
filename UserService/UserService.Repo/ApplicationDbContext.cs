@@ -28,6 +28,8 @@ namespace UserService.Repo
         public virtual DbSet<RegistrationHistory> RegistrationHistory { get; set; }
         public virtual DbSet<User> User { get; set; }
 
+        public virtual DbSet<Biography> Biography { get; set; }
+
         public virtual DbSet<PostcodeEntity> Postcode { get; set; }
 
         public virtual DbSet<DailyReport> DailyReport { get; set; }
@@ -197,6 +199,27 @@ namespace UserService.Repo
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_RegistrationHistory_User");
+            });
+
+            modelBuilder.Entity<Biography>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.DateCreated });
+
+                entity.ToTable("Biography", "UserPersonal");
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
+
+                entity.Property(e => e.DateCreated).HasColumnType("datetime");
+
+                entity.Property(e => e.DateCreated)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Biography)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Biography_User");
             });
 
             modelBuilder.Entity<User>(entity =>
