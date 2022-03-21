@@ -6,13 +6,17 @@ using HelpMyStreet.Contracts.ReportService.Response;
 using UserService.Core.Dto;
 using HelpMyStreet.Contracts.UserService.Response;
 using System.Threading;
+using UserService.Core.Contracts;
+using HelpMyStreet.Contracts;
 
 namespace UserService.Core.Interfaces.Repositories
 {
     public interface IRepository
     {
+        bool AddBiography(int userId, string details);
+        Task UpdateLoginChecks(DateTime dtChecked, List<UserHistory> history);
+        Task<List<User>> GetAllUsers();
         Task<bool> DeleteUserAsync(int userId, CancellationToken cancellationToken);
-
         Task<List<UserRegistrationStep>> GetIncompleteRegistrationStatusAsync(CancellationToken cancellationToken);
 
         Task<List<UserDetails>> GetUserDetailsAsync(CancellationToken cancellationToken);

@@ -12,6 +12,7 @@ namespace UserService.Repo.EntityFramework.Entities
             SupportActivity = new HashSet<SupportActivity>();
             SupportPostcode = new HashSet<SupportPostcode>();
             RegistrationHistory = new HashSet<RegistrationHistory>();
+            Biography = new HashSet<Biography>();
         }
 
         public int Id { get; set; }
@@ -30,10 +31,14 @@ namespace UserService.Repo.EntityFramework.Entities
         public int? ReferringGroupId { get; set; }
         public string Source { get; set; }
 
+        public DateTime? DateLastLoginChecked { get; set; }
+        public DateTime? DateLastLogin { get; set; }
+
         public virtual PersonalDetails PersonalDetails { get; set; }
         public virtual ICollection<ChampionPostcode> ChampionPostcode { get; set; }
         public virtual ICollection<SupportActivity> SupportActivity { get; set; }
         public virtual ICollection<SupportPostcode> SupportPostcode { get; set; }
         public virtual ICollection<RegistrationHistory> RegistrationHistory { get; set; }
+        public virtual ICollection<Biography> Biography { get; set; }
     }
 }

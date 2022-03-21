@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UserService.Repo;
 
 namespace UserService.Repo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211124121223_AddDateLastLogin")]
+    partial class AddDateLastLogin
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -184,25 +186,6 @@ namespace UserService.Repo.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Postcode_Staging","Staging");
-                });
-
-            modelBuilder.Entity("UserService.Repo.EntityFramework.Entities.Biography", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnName("UserID")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("DateCreated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Details")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("UserId", "DateCreated");
-
-                    b.ToTable("Biography","UserPersonal");
                 });
 
             modelBuilder.Entity("UserService.Repo.EntityFramework.Entities.ChampionPostcode", b =>
@@ -529,7 +512,7 @@ namespace UserService.Repo.Migrations
                     b.Property<DateTime?>("DateLastLogin")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DateLastLoginChecked")
+                    b.Property<DateTime>("DateLastLoginChecked")
                         .HasColumnType("datetime2");
 
                     b.Property<bool?>("EmailSharingConsent")
@@ -585,15 +568,6 @@ namespace UserService.Repo.Migrations
                         .HasName("UC_FirebaseUID");
 
                     b.ToTable("User","User");
-                });
-
-            modelBuilder.Entity("UserService.Repo.EntityFramework.Entities.Biography", b =>
-                {
-                    b.HasOne("UserService.Repo.EntityFramework.Entities.User", "User")
-                        .WithMany("Biography")
-                        .HasForeignKey("UserId")
-                        .HasConstraintName("FK_Biography_User")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("UserService.Repo.EntityFramework.Entities.ChampionPostcode", b =>
