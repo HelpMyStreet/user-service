@@ -16,7 +16,7 @@ namespace UserService.Repo.Migrations
                 INSERT INTO [User].[SupportActivity]([UserID],[ActivityID])
                 SELECT  UserID, 34
                 FROM    [User].[SupportActivity] sa
-                WHERE   ActivityID = 34 and 
+                WHERE   ActivityID = 11 and 
 		                34 not in (select ActivityID from [User].[SupportActivity] a where a.UserID = sa.UserID )
                 ");
         }
