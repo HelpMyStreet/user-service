@@ -5,9 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-	  <PackageReference Include="HelpMyStreet.CoreV3.Cache" Version="1.1.912" />
-	  <PackageReference Include="HelpMyStreet.CoreV3.Contracts" Version="1.1.912" />
-	  <PackageReference Include="HelpMyStreet.CoreV3.Utils" Version="1.1.912" />
+	  <PackageReference Include="HelpMyStreet.CoreV3.Cache" Version="1.1.930" />
+	  <PackageReference Include="HelpMyStreet.CoreV3.Contracts" Version="1.1.930" />
+	  <PackageReference Include="HelpMyStreet.CoreV3.Utils" Version="1.1.930" />
 	  <PackageReference Include="Marvin.StreamExtensions" Version="1.2.0" />
     <PackageReference Include="Enums.NET" Version="3.0.3" />
     <PackageReference Include="MediatR" Version="8.1.0" />
