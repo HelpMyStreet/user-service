@@ -15,7 +15,7 @@ namespace UserService.AzureFunction
             HttpRequestMessage req,
             [SwashBuckleClient] ISwashBuckleClient swashBuckleClient)
         {
-            return Task.FromResult(swashBuckleClient.CreateSwaggerDocumentResponse(req));
+            return Task.FromResult(swashBuckleClient.CreateSwaggerJsonDocumentResponse(req));
         }
 
         [SwaggerIgnore]
