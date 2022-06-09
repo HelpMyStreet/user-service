@@ -25,7 +25,7 @@ namespace UserService.UnitTests
         {
             _trackLoginService = new Mock<ITrackLoginService>();
 
-            _trackLoginService.Setup(x => x.DeleteUser(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            _trackLoginService.Setup(x => x.DeleteUser(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => _success);
 
             _classUnderTest = new DeleteUserHandler(_trackLoginService.Object);
@@ -46,7 +46,7 @@ namespace UserService.UnitTests
             }, cancellationToken).Result;
 
             Assert.AreEqual(_success, result.Success);
-            _trackLoginService.Verify(x => x.DeleteUser(userId, postcode, cancellationToken), Times.Once);
+            _trackLoginService.Verify(x => x.DeleteUser(userId, postcode,true, cancellationToken), Times.Once);
         }
     }
 

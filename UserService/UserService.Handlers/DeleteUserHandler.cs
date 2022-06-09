@@ -26,7 +26,7 @@ namespace UserService.Handlers
         {
             return new DeleteUserResponse() 
             { 
-                Success = await _trackLoginService.DeleteUser(request.UserID, request.Postcode, cancellationToken)
+                Success = await _trackLoginService.DeleteUser(request.UserID, request.Postcode, true, cancellationToken)
             };
         }
     }

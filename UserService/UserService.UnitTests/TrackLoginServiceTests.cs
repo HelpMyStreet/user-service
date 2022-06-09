@@ -196,7 +196,7 @@ namespace UserService.UnitTests
                 {-2,new List<int>(){1,2,3 } }
             };
 
-            var result = _classUnderTest.DeleteUser(userId, "POSTCODE", CancellationToken.None).Result;
+            var result = _classUnderTest.DeleteUser(userId, "POSTCODE", true, CancellationToken.None).Result;
 
             Assert.AreEqual(result, _success);
             _authService.Verify(x => x.DeleteUser(It.IsAny<string>()), Times.Once);
@@ -213,7 +213,7 @@ namespace UserService.UnitTests
             _authSuccess = false;
             _success = false;
 
-            var result = _classUnderTest.DeleteUser(1, "POSTCODE", CancellationToken.None).Result;
+            var result = _classUnderTest.DeleteUser(1, "POSTCODE", true, CancellationToken.None).Result;
 
             Assert.AreEqual(result, _success);
             _authService.Verify(x => x.DeleteUser(It.IsAny<string>()), Times.Never);
@@ -233,7 +233,7 @@ namespace UserService.UnitTests
             _authSuccess = false;
             _success = false;
 
-            var result = _classUnderTest.DeleteUser(1, "POSTCODE", CancellationToken.None).Result;
+            var result = _classUnderTest.DeleteUser(1, "POSTCODE", true, CancellationToken.None).Result;
 
             Assert.AreEqual(result, _success);
             _authService.Verify(x => x.DeleteUser(It.IsAny<string>()), Times.Never);
@@ -253,7 +253,7 @@ namespace UserService.UnitTests
             _authSuccess = false;
             _success = false;
 
-            var result = _classUnderTest.DeleteUser(1, "POSTCODE", CancellationToken.None).Result;
+            var result = _classUnderTest.DeleteUser(1, "POSTCODE", true, CancellationToken.None).Result;
 
             Assert.AreEqual(result, _success);
             _authService.Verify(x => x.DeleteUser(It.IsAny<string>()), Times.Once);

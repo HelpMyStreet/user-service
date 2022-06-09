@@ -12,6 +12,6 @@ namespace UserService.Core.Interfaces.Services
 
         Task ManageInactiveUsers(int yearsInActive);
 
-        Task<bool> DeleteUser(int userId, string postcode, CancellationToken cancellationToken);
+        Task<bool> DeleteUser(int userId, string postcode, bool checkPostcode, CancellationToken cancellationToken);
     }
 }
