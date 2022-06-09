@@ -716,12 +716,22 @@ u.[ID] <= @ToUser1Id
             return result == 1;
         }
 
-        public async Task<List<Tuple<int, DateTime?>>> GetInactiveUsers(int yearsInActive)
+        public async Task<List<UserLoginHistory>> GetInactiveUsers(int yearsInActive)
         {
             DateTime dtInactive = DateTime.UtcNow.Date.AddYears(-yearsInActive);
+            DateTime minDtLastChecked = DateTime.UtcNow.Date.AddDays(-1);
 
-            return _context.User.Where(x => x.DateLastLogin.HasValue && x.DateLastLogin < dtInactive)
-                .Select(c => new Tuple<int, DateTime?>(c.Id, c.DateLastLogin))
+            return _context.User
+                .Where(x => x.DateLastLoginChecked.HasValue && 
+                x.DateLastLoginChecked > minDtLastChecked &&
+                x.DateLastLogin.HasValue && 
+                x.DateLastLogin < dtInactive)
+                .Select(c =>  new UserLoginHistory()
+                {
+                    UserId = c.Id,
+                    Postcode = c.PostalCode,
+                    DateLastLogin = c.DateLastLogin
+                })
                 .ToList();
         }
     }

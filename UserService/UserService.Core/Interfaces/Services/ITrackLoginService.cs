@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using UserService.Core.Contracts;
 
@@ -9,6 +10,8 @@ namespace UserService.Core.Interfaces.Services
     {
         Task CheckLogins();
 
-        Task NotifyInactiveUsers(int yearsInActive);
+        Task ManageInactiveUsers(int yearsInActive);
+
+        Task<bool> DeleteUser(int userId, string postcode, CancellationToken cancellationToken);
     }
 }

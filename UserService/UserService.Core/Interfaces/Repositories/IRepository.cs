@@ -75,6 +75,6 @@ namespace UserService.Core.Interfaces.Repositories
 
         LatitudeAndLongitudeDTO GetLatitudeAndLongitude(string postCode);
 
-        Task<List<Tuple<int, DateTime?>>> GetInactiveUsers(int yearsInActive);
+        Task<List<UserLoginHistory>> GetInactiveUsers(int yearsInActive);
     }
 }
