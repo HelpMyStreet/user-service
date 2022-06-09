@@ -74,5 +74,7 @@ namespace UserService.Core.Interfaces.Repositories
         Task<IEnumerable<User>> GetVolunteersByIdsAsync(IEnumerable<int> userIds);
 
         LatitudeAndLongitudeDTO GetLatitudeAndLongitude(string postCode);
+
+        Task<List<Tuple<int, DateTime?>>> GetInactiveUsers(int yearsInActive);
     }
 }

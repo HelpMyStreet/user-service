@@ -248,7 +248,8 @@ namespace UserService.Repo
                 UserPersonalDetails = MapEFPersonalDetailsToModelPersonalDetails(user.PersonalDetails),
                 ReferringGroupId = user.ReferringGroupId,
                 Source = user.Source,
-                Biography = user.Biography?.OrderByDescending(x=> x.DateCreated).FirstOrDefault()?.Details
+                Biography = user.Biography?.OrderByDescending(x=> x.DateCreated).FirstOrDefault()?.Details,
+                DateLastLogin = user.DateLastLogin
             };
         }
 
@@ -713,6 +714,15 @@ u.[ID] <= @ToUser1Id
 
             var result = _context.SaveChanges();
             return result == 1;
+        }
+
+        public async Task<List<Tuple<int, DateTime?>>> GetInactiveUsers(int yearsInActive)
+        {
+            DateTime dtInactive = DateTime.UtcNow.Date.AddYears(-yearsInActive);
+
+            return _context.User.Where(x => x.DateLastLogin.HasValue && x.DateLastLogin < dtInactive)
+                .Select(c => new Tuple<int, DateTime?>(c.Id, c.DateLastLogin))
+                .ToList();
         }
     }
 }
