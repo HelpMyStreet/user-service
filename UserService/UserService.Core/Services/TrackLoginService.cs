@@ -86,7 +86,19 @@ namespace UserService.Core.Services
                 else if ((_systemClock.UtcNow - dateLastEmailSent.Value).TotalDays >= 30)
                 {
                     //Delete the user
-                    await DeleteUser(user.UserId, user.Postcode, false, cancellationToken);
+                    bool success = await DeleteUser(user.UserId, user.Postcode, false, cancellationToken);
+
+                    if(success)
+                    {
+                        await _communicationService.RequestCommunicationAsync(new RequestCommunicationRequest()
+                        {
+                            CommunicationJob = new CommunicationJob()
+                            {
+                                CommunicationJobType = CommunicationJobTypes.UserDeleted,
+                            },
+                            RecipientUserID = user.UserId
+                        }, CancellationToken.None);
+                    }
                 }
             });
         }
@@ -99,8 +111,15 @@ namespace UserService.Core.Services
             {
                 var result = _repository.GetUserByID(userId);
 
-                if (result != null && checkPostcode && result.PostalCode == postcode)
+                if (result != null)
                 {
+                    if(checkPostcode)
+                    {
+                        if(result.PostalCode != postcode)
+                        {
+                            return success;
+                        }
+                    }
                     success = _authService.DeleteUser(result.FirebaseUID).Result;
 
                     if (success)

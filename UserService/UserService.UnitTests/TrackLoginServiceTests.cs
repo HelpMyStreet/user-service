@@ -161,16 +161,36 @@ namespace UserService.UnitTests
             _users = new List<UserLoginHistory>();
             _users.Add(new UserLoginHistory() { UserId = userId, Postcode = "POSTCODE", DateLastLogin = new DateTime(2020, 1, 1) });
 
+            _user = new User()
+            {
+                PostalCode = "POSTCODE",
+                UserPersonalDetails = new UserPersonalDetails()
+                {
+                    EmailAddress = "EMAILADDRESS"
+                }
+            };
+            _authSuccess = true;
+            _userRoles = new Dictionary<int, List<int>>();
+            _success = true;
+            _deleteContact = true;
+
             var result = _classUnderTest.ManageInactiveUsers(2);
 
             _communicationService.Verify(
                 x => x.RequestCommunicationAsync(
                     It.Is<RequestCommunicationRequest>(
                         arg => _users.Select(x => x.UserId).ToList().Contains(arg.RecipientUserID.Value) &&
-                        arg.AdditionalParameters.ContainsKey("LastActiveDate") &
-                        arg.CommunicationJob.CommunicationJobType == HelpMyStreet.Contracts.RequestService.Response.CommunicationJobTypes.ImpendingUserDeletion
+                         arg.CommunicationJob.CommunicationJobType == HelpMyStreet.Contracts.RequestService.Response.CommunicationJobTypes.ImpendingUserDeletion
                 )
              , It.IsAny<CancellationToken>()), Times.Exactly(0));
+
+            _communicationService.Verify(
+                x => x.RequestCommunicationAsync(
+                    It.Is<RequestCommunicationRequest>(
+                        arg => _users.Select(x => x.UserId).ToList().Contains(arg.RecipientUserID.Value) &&
+                         arg.CommunicationJob.CommunicationJobType == HelpMyStreet.Contracts.RequestService.Response.CommunicationJobTypes.UserDeleted
+                )
+             , It.IsAny<CancellationToken>()), Times.Exactly(1));
 
             _repository.Verify(x => x.GetUserByID(userId), Times.Once);
         }
