@@ -282,5 +282,39 @@ namespace UserService.UnitTests
             _groupService.Verify(x => x.GetUserRoles(It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
             _groupService.Verify(x => x.PostRevokeRole(It.IsAny<PostRevokeRoleRequest>(), It.IsAny<CancellationToken>()), Times.Never);
         }
+
+        [Test]
+        public void Unsuccessful()
+        {
+            _users = new List<UserLoginHistory>();
+            _users.Add(new UserLoginHistory() { UserId = 1, Postcode = "POSTCODE", DateLastLogin = new DateTime(2020, 1, 1) });
+            _users.Add(new UserLoginHistory() { UserId = 2, Postcode = "POSTCODE", DateLastLogin = new DateTime(2020, 1, 1) });
+
+            _dateLastEmailSent = null;
+
+            _communicationService.SetupSequence(x => x.GetDateEmailLastSentAsync(It.IsAny<GetDateEmailLastSentRequest>(), It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new Exception("ErrorOccured"))
+                .ReturnsAsync(() => _dateLastEmailSent);
+            
+            var result = _classUnderTest.ManageInactiveUsers(2);
+            _communicationService.Verify(
+                x => x.RequestCommunicationAsync(
+                    It.Is<RequestCommunicationRequest>(
+                        arg => arg.RecipientUserID == 1 &&
+                        arg.AdditionalParameters.ContainsKey("LastActiveDate") &
+                        arg.CommunicationJob.CommunicationJobType == HelpMyStreet.Contracts.RequestService.Response.CommunicationJobTypes.ImpendingUserDeletion
+                )
+            , It.IsAny<CancellationToken>()), Times.Exactly(0));
+
+            _communicationService.Verify(
+                x => x.RequestCommunicationAsync(
+                    It.Is<RequestCommunicationRequest>(
+                        arg => arg.RecipientUserID == 2 &&
+                        arg.AdditionalParameters.ContainsKey("LastActiveDate") &
+                        arg.CommunicationJob.CommunicationJobType == HelpMyStreet.Contracts.RequestService.Response.CommunicationJobTypes.ImpendingUserDeletion
+                )
+            , It.IsAny<CancellationToken>()), Times.Once);
+            
+        }
     }
 }

@@ -61,46 +61,56 @@ namespace UserService.Core.Services
 
             inactiveUsers.ForEach(async user =>
             {
-                var dateLastEmailSent = await _communicationService.GetDateEmailLastSentAsync(
-                    new GetDateEmailLastSentRequest()
-                    {
-                        RecipientUserId = user.UserId,
-                        TemplateName = "ImpendingUserDeletion"
-                    }, cancellationToken);
-
-                if(!dateLastEmailSent.HasValue)
+                try
                 {
-                    await _communicationService.RequestCommunicationAsync(new RequestCommunicationRequest()
-                    {
-                        CommunicationJob = new CommunicationJob()
+                    var dateLastEmailSent = await _communicationService.GetDateEmailLastSentAsync(
+                        new GetDateEmailLastSentRequest()
                         {
-                            CommunicationJobType = CommunicationJobTypes.ImpendingUserDeletion,
-                        },
-                        RecipientUserID = user.UserId,
-                        AdditionalParameters = new Dictionary<string, string>()
-                    {
-                        { "LastActiveDate", user.DateLastLogin.Value.FriendlyPastDate() }
-                    }
-                    }, CancellationToken.None);
-                }
-                else if ((_systemClock.UtcNow - dateLastEmailSent.Value).TotalDays >= 30)
-                {
-                    //Delete the user
-                    bool success = await DeleteUser(user.UserId, user.Postcode, false, cancellationToken);
+                            RecipientUserId = user.UserId,
+                            TemplateName = "ImpendingUserDeletion"
+                        }, cancellationToken);
 
-                    if(success)
+
+                    if (!dateLastEmailSent.HasValue)
                     {
-                        await _communicationService.RequestCommunicationAsync(new RequestCommunicationRequest()
-                        {
-                            CommunicationJob = new CommunicationJob()
+                        await SendEmail(
+                            CommunicationJobTypes.ImpendingUserDeletion,
+                            user.UserId,
+                            new Dictionary<string, string>()
                             {
-                                CommunicationJobType = CommunicationJobTypes.UserDeleted,
-                            },
-                            RecipientUserID = user.UserId
-                        }, CancellationToken.None);
+                            { "LastActiveDate", user.DateLastLogin.Value.FriendlyPastDate() }
+                            }
+                        );
                     }
+                    else if ((_systemClock.UtcNow - dateLastEmailSent.Value).TotalDays >= 30)
+                    {
+                        //Delete the user
+                        bool success = await DeleteUser(user.UserId, user.Postcode, false, cancellationToken);
+
+                        if (success)
+                        {
+                            await SendEmail(CommunicationJobTypes.UserDeleted, user.UserId);
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    //try the next one
                 }
             });
+        }
+
+        private async Task SendEmail(CommunicationJobTypes communicationJobType, int? recipientUserId, Dictionary<string, string> additionalParameters = null)
+        {
+            await _communicationService.RequestCommunicationAsync(new RequestCommunicationRequest()
+            {
+                CommunicationJob = new CommunicationJob()
+                {
+                    CommunicationJobType = communicationJobType,
+                },
+                RecipientUserID = recipientUserId,
+                AdditionalParameters = additionalParameters
+            }, CancellationToken.None);
         }
 
         public async Task<bool> DeleteUser(int userId, string postcode, bool checkPostcode, CancellationToken cancellationToken)

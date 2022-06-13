@@ -52,8 +52,6 @@ namespace UserService.Core.Services
                 }
                 return null;
             }
-
-            throw new NotImplementedException();
         }
 
         public async Task<bool> PutNewMarketingContactAsync(PutNewMarketingContactRequest request, CancellationToken cancellationToken)
