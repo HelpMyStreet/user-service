@@ -1,8 +1,4 @@
-using System;
-using System.Threading;
 using System.Threading.Tasks;
-using HelpMyStreet.Contracts.CommunicationService.Request;
-using HelpMyStreet.Contracts.RequestService.Response;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using UserService.Core.Interfaces.Services;

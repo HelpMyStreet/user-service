@@ -9,6 +9,7 @@ using System.Text;
 using Newtonsoft.Json;
 using HelpMyStreet.Utils.Utils;
 using HelpMyStreet.Utils.Enums;
+using System;
 
 namespace UserService.Core.Services
 {
@@ -34,6 +35,22 @@ namespace UserService.Core.Services
                     return deleteMarketingContactResponse.Content;
                 }
                 return false;
+            }
+        }
+
+        public async Task<DateTime?> GetDateEmailLastSentAsync(GetDateEmailLastSentRequest request, CancellationToken cancellationToken)
+        {
+            string path = $"api/GetDateEmailLastSent";
+            var jsonContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+            using (HttpResponseMessage response = await _httpClientWrapper.GetAsync(HttpClientConfigName.CommunicationService, path, jsonContent, cancellationToken).ConfigureAwait(false))
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                var getDateEmailLastSentResponse = JsonConvert.DeserializeObject<ResponseWrapper<GetDateEmailLastSentResponse, CommunicationServiceErrorCode>>(jsonResponse);
+                if (getDateEmailLastSentResponse.HasContent && getDateEmailLastSentResponse.IsSuccessful)
+                {
+                    return getDateEmailLastSentResponse.Content.DateEmailSent;
+                }
+                return null;
             }
         }
 
