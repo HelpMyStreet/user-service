@@ -1,4 +1,5 @@
 ﻿using HelpMyStreet.Contracts.CommunicationService.Request;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,5 +10,7 @@ namespace UserService.Core.Interfaces.Services
         Task<bool> RequestCommunicationAsync(RequestCommunicationRequest requestCommunicationRequest, CancellationToken cancellationToken);
         Task<bool> PutNewMarketingContactAsync(PutNewMarketingContactRequest request, CancellationToken cancellationToken);
         Task<bool> DeleteMarketingContactAsync(DeleteMarketingContactRequest request, CancellationToken cancellationToken);
+        Task<DateTime?> GetDateEmailLastSentAsync(GetDateEmailLastSentRequest request, CancellationToken cancellationToken);
     }
+
 }
