@@ -40,9 +40,8 @@ namespace UserService.Core.Services
 
         public async Task<DateTime?> GetDateEmailLastSentAsync(GetDateEmailLastSentRequest request, CancellationToken cancellationToken)
         {
-            string path = $"api/GetDateEmailLastSent";
-            var jsonContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
-            using (HttpResponseMessage response = await _httpClientWrapper.GetAsync(HttpClientConfigName.CommunicationService, path, jsonContent, cancellationToken).ConfigureAwait(false))
+            string path = $"api/GetDateEmailLastSent?TemplateName={request.TemplateName}&RecipientUserId={request.RecipientUserId}";
+            using (HttpResponseMessage response = await _httpClientWrapper.GetAsync(HttpClientConfigName.CommunicationService, path, cancellationToken).ConfigureAwait(false))
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
                 var getDateEmailLastSentResponse = JsonConvert.DeserializeObject<ResponseWrapper<GetDateEmailLastSentResponse, CommunicationServiceErrorCode>>(jsonResponse);
