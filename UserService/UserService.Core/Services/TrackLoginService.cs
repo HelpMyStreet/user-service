@@ -58,18 +58,17 @@ namespace UserService.Core.Services
         {
             CancellationToken cancellationToken = CancellationToken.None;
             var inactiveUsers =  await _repository.GetInactiveUsers(yearsInActive);
-
-            inactiveUsers.ForEach(async user =>
+            
+            foreach(var user in inactiveUsers)
             {
                 try
                 {
                     var dateLastEmailSent = await _communicationService.GetDateEmailLastSentAsync(
-                        new GetDateEmailLastSentRequest()
-                        {
-                            RecipientUserId = user.UserId,
-                            TemplateName = "ImpendingUserDeletion"
-                        }, cancellationToken);
-
+                            new GetDateEmailLastSentRequest()
+                            {
+                                RecipientUserId = user.UserId,
+                                TemplateName = "ImpendingUserDeletion"
+                            }, cancellationToken);
 
                     if (!dateLastEmailSent.HasValue)
                     {
@@ -93,11 +92,11 @@ namespace UserService.Core.Services
                         }
                     }
                 }
-                catch (Exception)
+                catch(Exception exc)
                 {
-                    //try the next one
+                    string m = exc.ToString();
                 }
-            });
+            }
         }
 
         private async Task SendEmail(CommunicationJobTypes communicationJobType, int? recipientUserId, Dictionary<string, string> additionalParameters = null)
@@ -130,7 +129,18 @@ namespace UserService.Core.Services
                             return success;
                         }
                     }
-                    success = _authService.DeleteUser(result.FirebaseUID).Result;
+
+                    try
+                    {
+                        success = _authService.DeleteUser(result.FirebaseUID).Result;
+                    }
+                    catch(AggregateException exc)
+                    {
+                        if(exc.Flatten().Message.Contains("No user record found for the given identifier (USER_NOT_FOUND)."))
+                        {
+                            success = true;
+                        }
+                    }
 
                     if (success)
                     {

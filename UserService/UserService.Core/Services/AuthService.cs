@@ -42,9 +42,13 @@ namespace UserService.Core.Services
                 await _firebase.DeleteUserAsync(firebaseUserID);
                 return true;
             }
-            catch(Exception)
+            catch(FirebaseAuthException exc)
             {
-                return false;
+                throw exc;
+            }
+            catch(Exception exc )
+            {
+                throw exc;
             }
         }
 
