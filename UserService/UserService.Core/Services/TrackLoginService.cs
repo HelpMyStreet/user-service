@@ -88,7 +88,16 @@ namespace UserService.Core.Services
 
                         if (success)
                         {
-                            await SendEmail(CommunicationJobTypes.UserDeleted, user.UserId);
+                            await SendEmail(
+                                CommunicationJobTypes.UserDeleted, 
+                                user.UserId,
+                                new Dictionary<string, string>()
+                                {
+                                    { "RecipientDisplayName", user.DisplayName},
+                                    { "RecipientFirstName", user.FirstName},
+                                    { "EmailAddress", user.EmailAddress}
+                                }
+                            );
                         }
                     }
                 }

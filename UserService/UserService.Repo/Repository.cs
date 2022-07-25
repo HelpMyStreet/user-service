@@ -722,6 +722,7 @@ u.[ID] <= @ToUser1Id
             DateTime minDtLastChecked = DateTime.UtcNow.Date.AddDays(-1);
 
             return _context.User
+                .Include(x=> x.PersonalDetails)
                 .Where(x => x.DateLastLoginChecked.HasValue && 
                 x.DateLastLoginChecked > minDtLastChecked &&
                 x.DateLastLogin.HasValue && 
@@ -730,6 +731,9 @@ u.[ID] <= @ToUser1Id
                 {
                     UserId = c.Id,
                     Postcode = c.PostalCode,
+                    EmailAddress = c.PersonalDetails.EmailAddress,
+                    FirstName = c.PersonalDetails.FirstName,
+                    DisplayName = c.PersonalDetails.DisplayName,
                     DateLastLogin = c.DateLastLogin
                 })
                 .ToList();
