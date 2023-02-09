@@ -49,3 +49,4 @@ namespace UserService.AzureFunction
         }
     }
 }
+
